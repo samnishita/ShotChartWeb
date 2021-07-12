@@ -166,7 +166,7 @@ const ShotView = (props) => {
 
 
     async function getGridAverages() {
-        let response = await getSearchData("http://138.68.52.234:8080/shots_request?gridaverages=true")
+        let response = await getSearchData("https://138.68.52.234:8080/shots_request?gridaverages=true")
             .then(res => {
                 console.log("getGridAverages")
                 console.log(res.gridaverages)

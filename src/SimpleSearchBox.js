@@ -51,7 +51,7 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getInitData() {
-        let response = await getSearchData("http://138.68.52.234:8080/shots_request?init=true")
+        let response = await getSearchData("https://138.68.52.234:8080/shots_request?init=true")
             .then(res => {
                 //console.log("getInitData")
                 //console.log(res.init)
@@ -64,7 +64,7 @@ const SimpleSearchBox = (props) => {
         let players = {}
         let playersReverse = {}
         console.log("getInitAllPlayers")
-        let response = getSearchData("http://138.68.52.234:8080/shots_request?initallplayers=true")
+        let response = getSearchData("https://138.68.52.234:8080/shots_request?initallplayers=true")
             .then(res => {
                 for (let i = 0; i < res.initallplayers.length; i++) {
                     let nameArray = [3]
@@ -86,7 +86,7 @@ const SimpleSearchBox = (props) => {
         return response
     }
     function getActivePlayersData(year) {
-        let response = getSearchData(`http://138.68.52.234:8080/shots_request?activeplayers=${year}`)
+        let response = getSearchData(`https://138.68.52.234:8080/shots_request?activeplayers=${year}`)
             .then(res => {
                 let activePlayersArray = []
                 //let activePlayersJson = {}
@@ -120,10 +120,10 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getSeasonsData(year, playerId, playerFirstName, playerLastName) {
-        let response = await getSearchData(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+        let response = await getSearchData(`https://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 console.log("season response")
-                console.log(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+                console.log(`https://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
                 console.log(res)
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
@@ -278,7 +278,7 @@ const SimpleSearchBox = (props) => {
         console.log(selectedPlayerRef.current.id)
         console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
 
-        let url = `http://138.68.52.234:8080/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
+        let url = `https://138.68.52.234:8080/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log("Fetching " + url)
         const response = await fetch(url, {
             method: 'GET'
@@ -392,7 +392,7 @@ function justDisplay() {
 
 }
 async function getData() {
-    const response = await fetch("http://138.68.52.234:8080/shots_request?initallplayers=true", {
+    const response = await fetch("https://138.68.52.234:8080/shots_request?initallplayers=true", {
         method: 'GET'
     }).then(response => response.json())
         .then(result => {
