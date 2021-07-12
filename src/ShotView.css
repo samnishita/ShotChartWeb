@@ -1,0 +1,46 @@
+@font-face{
+    font-family: 'MonserratLight';
+    src: url('./fonts/Montserrat-Light.ttf') format('truetype');
+}
+
+#court-image{
+    transform: rotate(180deg);
+    object-fit: cover;
+    max-width :60%;
+    height: 100%;
+}
+
+.ShotView{
+    color: white;
+    font-family: 'MonserratLight';
+    background-color: yellow;
+    height:100%;
+    width:100%;
+}
+
+button{
+    font-family: 'MonserratLight';
+    background-color: lightgray;
+}
+
+#imageview-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightslategray;
+    
+}
+
+.imageview-child{
+    position:absolute;
+    align-items: center;
+}
+
+.rectangle {
+    fill:white;
+    background-color: lightgreen;
+    height:30.0px;
+    stroke:black;
+    stroke-width: 0.0 ;
+    width:30.0px ;
+}

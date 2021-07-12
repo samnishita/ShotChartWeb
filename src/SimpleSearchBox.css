@@ -1,0 +1,82 @@
+@font-face{
+    font-family: 'MonserratLight';
+    src: url('./fonts/Montserrat-Light.ttf') format('truetype');
+}
+.SimpleSearchBox{
+    text-align: center;
+    font-family: 'MonserratLight';
+    color: white;
+    height: 40vh;
+}
+.SimpleSearchBox .search-box-body{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.SimpleSearchBox .search-box-inner-body {
+    text-align: center;
+    align-items: center;
+}
+
+.search-box-body button{
+    text-align: center;
+    font-family: 'MonserratLight';
+    background-color: lightgray;
+}
+
+.search-box-body .dropdown-button{
+    position: relative;
+    width: 70%;
+}
+
+.dropdown-content{
+    display: none;
+    background-color: #f1f1f1;
+    color: black;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    position: absolute;
+    left:0;
+    width:100%;
+}
+.show {display: block;}
+
+.SimpleSearchBox .dropdown-content.scrollable {
+    height: 20vh;
+    scroll-behavior: smooth;
+    overflow-y:scroll;
+}
+
+.SimpleSearchBox .dropdown-item{
+    padding: 0.5vh;
+    margin:0px;
+}
+
+.SimpleSearchBox .dropdown-item:hover{
+    background-color: #ddd;
+}
+
+.SimpleSearchBox .scrollable::-webkit-scrollbar-track:vertical {
+    color: transparent;
+}
+
+.SimpleSearchBox .scrollable::-webkit-scrollbar-track:horizontal {
+    color: transparent;
+}
+
+.SimpleSearchBox .scrollable::-webkit-scrollbar {
+    -webkit-appearance: none;
+    background-color: transparent;
+    width: 16px;
+}
+
+.SimpleSearchBox .scrollable::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    background-color: #C1C1C1;
+    border-color: transparent;
+    border-radius: 9px 8px 8px 9px;
+    border-style: solid;
+    border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
+}

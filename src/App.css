@@ -1,7 +1,26 @@
 .App {
+  display: grid;
+  grid-auto-columns: auto ;
   text-align: center;
+  height: 100vh;
+  overflow-y:auto;
+  background-image: linear-gradient(135deg, #434343 25% , 65%, #cdcccc);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  align-content: flex-start;
+ }
+
+.BaseGrid {
+  display: inline-grid;
+  grid-template-columns: 35% 65%;
 }
 
+.basegrid-grid-item {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+/*
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +54,5 @@
   to {
     transform: rotate(360deg);
   }
-}
+}*/
+

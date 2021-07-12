@@ -1,0 +1,18 @@
+.SearchTypeButtons{
+text-align: center;
+align-content: space-around;
+color: white;
+}
+
+#simple-search-button{
+    width: 13vw;
+    font-size: 2vh;
+    margin:5px 10px 15px 10px;
+}
+
+#advanced-search-button{
+    width: 13vw;
+    font-size: 2vh;
+    margin:5px 10px 15px 10px;
+}
+

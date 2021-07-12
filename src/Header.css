@@ -1,0 +1,50 @@
+@font-face{
+    font-family: 'JosefinSansLight';
+    src: url('./fonts/JosefinSans-Light.ttf') format('truetype');
+}
+@font-face{
+    font-family: 'MonserratLight';
+    src: url('./fonts/Montserrat-Light.ttf') format('truetype');
+}
+.Header {
+    display: inline-grid;
+    grid-template-columns: auto auto ;
+    font-family: 'JosefinSansLight';
+    color: white;
+    height: min-content;
+    border-bottom: 1.5vh solid white;
+}
+
+#versionText{
+    font-size: 25%;
+    font-family: 'MonserratLight';
+}
+.header-grid-item {
+   /*  background-color: rgba(255, 255, 255, 0.1);
+   border: 1px solid rgba(0, 0, 0, 0.8);*/
+    padding: 20px 0px 10px 0px ;
+    height:7.5% ;
+    font-size: 30px ;
+  }
+
+ #title {
+    text-align: left;
+    font-size: 9vh;
+    padding-left: 20px;
+  }
+
+  #date-accuracy{
+      text-align: right;
+  }
+
+  #accuracy-title {
+    text-align: center;
+    font-family: 'MonserratLight';
+    font-size: 2vh;
+    padding-bottom: 1%;
+  }
+  #accuracy-date {
+    font-family: 'MonserratLight';
+    text-align: center;
+    font-size: 3.5vh;
+  }
