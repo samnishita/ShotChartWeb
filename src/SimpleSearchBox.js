@@ -51,7 +51,8 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getInitData() {
-        let response = await getSearchData("https://138.68.52.234:8443/shots_request?init=true")
+        //let response = await getSearchData("http://138.68.52.234:8080/shots_request?init=true")
+        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?init=true")
             .then(res => {
                 //console.log("getInitData")
                 //console.log(res.init)
@@ -63,8 +64,9 @@ const SimpleSearchBox = (props) => {
     function getInitPlayersData() {
         let players = {}
         let playersReverse = {}
-        console.log("getInitAllPlayers")
-        let response = getSearchData("https://138.68.52.234:8443/shots_request?initallplayers=true")
+        console.log("getInitPlayersData()")
+        //let response = getSearchData("http://138.68.52.234:8080/shots_request?initallplayers=true")
+        let response = getSearchData("https://customnbashotcharts.com:8443/shots_request?initallplayers=true")
             .then(res => {
                 for (let i = 0; i < res.initallplayers.length; i++) {
                     let nameArray = [3]
@@ -76,9 +78,9 @@ const SimpleSearchBox = (props) => {
                 }
                 initPlayers = players
                 initPlayersReverseMap = playersReverse
-                console.log("SETTING initPlayers/initPlayersReverseMap")
-                console.log(initPlayers)
-                console.log(initPlayersReverseMap)
+                //console.log("SETTING initPlayers/initPlayersReverseMap")
+                //console.log(initPlayers)
+                //console.log(initPlayersReverseMap)
                 initPlayersRef.current = initPlayers
                 initPlayersReverseMapRef.current = initPlayersReverseMap
                 return res
@@ -86,7 +88,8 @@ const SimpleSearchBox = (props) => {
         return response
     }
     function getActivePlayersData(year) {
-        let response = getSearchData(`https://138.68.52.234:8443/shots_request?activeplayers=${year}`)
+        //let response = getSearchData(`http://138.68.52.234:8080/shots_request?activeplayers=${year}`)
+        let response = getSearchData(`https://customnbashotcharts.com:8443/shots_request?activeplayers=${year}`)
             .then(res => {
                 let activePlayersArray = []
                 //let activePlayersJson = {}
@@ -120,11 +123,12 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getSeasonsData(year, playerId, playerFirstName, playerLastName) {
-        let response = await getSearchData(`https://138.68.52.234:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+        // let response = await getSearchData(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+        let response = await getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
-                console.log("season response")
-                console.log(`https://138.68.52.234:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
-                console.log(res)
+                console.log("getSeasonsData()")
+                //console.log(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+                //console.log(res)
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
                     activeSeasonsRes.push("Preseason")
@@ -135,7 +139,7 @@ const SimpleSearchBox = (props) => {
                 if (res.singleseason[0].playoffs === 1) {
                     activeSeasonsRes.push("Playoffs")
                 }
-                console.log("getSeasonsData: ")
+                //console.log("getSeasonsData: ")
                 //console.log(activeSeasonsRes)
                 if (!activeSeasonsRes.includes(selectedSeasonRef.current)) {
                     if (activeSeasonsRes.includes("Regular Season")) {
@@ -151,7 +155,7 @@ const SimpleSearchBox = (props) => {
 
     function displayAllYears(currentYear) {
         if (yearDisplay.length === 0) {
-            console.log("displayAllYears")
+            console.log("displayAllYears()")
             let year = Number(currentYear.substring(0, 4));
             let subYearString;
             let elements = []
@@ -169,10 +173,10 @@ const SimpleSearchBox = (props) => {
     }
 
     function displayActivePlayers() {
-        console.log("displayPlayers")
+        console.log("displayActivePlayers()")
         let playerElements = []
-        console.log(activePlayers)
-        console.log(activePlayers[0])
+        //console.log(activePlayers)
+        //console.log(activePlayers[0])
         //activePlayers.forEach(value =>{
         activePlayers.forEach(value => {
             //console.log(value)
@@ -184,25 +188,25 @@ const SimpleSearchBox = (props) => {
     }
 
     function displayActiveSeasons() {
-        console.log("displayActiveSeasons")
+        console.log("displayActiveSeasons()")
         let activeSeasonsElements = []
         Object.values(activeSeasons).map(value => activeSeasonsElements.push(<p className='dropdown-item season-display' onClick={(event) => handleSeasonButtonClick(event)}>{value}</p>));
         setActiveSeasonsDisplay(activeSeasonsElements)//, console.log(activeSeasons)
     }
 
     async function handleYearButtonClick(event) {
-        console.log('YEAR BUTTON CLICKED')
+        console.log('handleYearButtonClick()')
         if (event.target.classList.contains("year-display") && selectedYearRef.current !== event.target.textContent) {
             //console.log("selectedYear: " + selectedYearRef.current + ", " + event.target.textContent)
             setSelectedYear(event.target.textContent, console.log("Set selected year to " + event.target.textContent));
             //console.log("event.target.textContent: " + event.target.textContent)
             let response = await getActivePlayersData(event.target.textContent)
-            console.log("response")
-            console.log(response)
-            console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
+            //console.log("response")
+            //console.log(response)
+            //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
             let names = []
             response.forEach(each => names.push(each.displayname))
-            console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
+            //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
             if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
                 //let firstPlayer = Object.values(response)[0];
                 let firstPlayer = response[0]
@@ -220,9 +224,8 @@ const SimpleSearchBox = (props) => {
         }
     }
     async function handlePlayerButtonClick(event) {
-        console.log('PLAYER BUTTON CLICKED')
+        console.log('handlePlayerButtonClick()')
         if (event.target.classList.contains("player-display") && selectedPlayer !== event.target.textContent) {
-            console.log("player button clicked")
             //console.log(initPlayersReverseMapRef.current)
             //console.log(event.target.getAttribute('playerid'))
             setSelectedPlayer({
@@ -230,13 +233,11 @@ const SimpleSearchBox = (props) => {
                 playerfirstname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][1],
                 playerlastname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][2]
             }, console.log("Set selected player to " + event.target.textContent));
-            console.log("setting season data here")
             getSeasonsData(selectedYearRef.current, initPlayersRef.current[event.target.textContent][0], initPlayersRef.current[event.target.textContent][1], initPlayersRef.current[event.target.textContent][2])
         }
-
     }
     async function handleSeasonButtonClick(event) {
-        console.log('SEASON BUTTON CLICKED')
+        console.log('handleSeasonButtonClick()')
         if (event.target.classList.contains("season-display") && selectedSeason !== event.target.textContent) {
             setSelectedSeason(event.target.textContent)
         }
@@ -258,7 +259,7 @@ const SimpleSearchBox = (props) => {
     window.onclick = hideDD;
 
     function handleDDButtonClick(event, type) {
-        console.log("handleDDButtonClick")
+        console.log("handleDDButtonClick()")
         hideDD(event);
         var dropdowns = document.getElementsByClassName("dropdown-content");
         var i;
@@ -272,23 +273,24 @@ const SimpleSearchBox = (props) => {
     };
 
     async function runSimpleSearch(event) {
-        console.log("search")
-        console.log(initPlayersReverseMapRef.current)
-        console.log(selectedPlayerRef.current)
-        console.log(selectedPlayerRef.current.id)
-        console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
+        console.log("runSimpleSearch()")
+        // console.log(initPlayersReverseMapRef.current)
+        // console.log(selectedPlayerRef.current)
+        // console.log(selectedPlayerRef.current.id)
+        //console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
 
-        let url = `https://138.68.52.234:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
+        //let url = `http://138.68.52.234:8080/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
+        let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log("Fetching " + url)
         const response = await fetch(url, {
             method: 'GET'
         }).then(res => res.json())
             .then(data => {
-                console.log("URL RESPONSE FROM " + url + ": ")
-                console.log(data)
+                //console.log("URL RESPONSE FROM " + url + ": ")
+                //console.log(data)
                 props.updateLatestSimpleSearchData(data)
                 //props.updateLatestSimpleViewType("Traditional")
-                props.updateLatestSimpleViewType("Traditional")
+                props.updateLatestSimpleViewType(latestSimpleViewType)
                 setShotPercentageData(data)
                 return data
             }).catch(error => console.log('error', error))
@@ -296,7 +298,7 @@ const SimpleSearchBox = (props) => {
     }
 
     function handleViewSelectionButtonClick(event) {
-        props.updateLatestSimpleViewType(event.target.textContent)
+        //props.updateLatestSimpleViewType(event.target.textContent)
         setLatestSimpleViewType(event.target.textContent)
     }
 
@@ -392,7 +394,7 @@ function justDisplay() {
 
 }
 async function getData() {
-    const response = await fetch("https://138.68.52.234:8443/shots_request?initallplayers=true", {
+    const response = await fetch("http://138.68.52.234:8080/shots_request?initallplayers=true", {
         method: 'GET'
     }).then(response => response.json())
         .then(result => {

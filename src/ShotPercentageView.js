@@ -1,15 +1,14 @@
 import './ShotPercentageView.css'
 
 const ShotPercentageView = (props) => {
-    console.log("updating shots")
-    console.log(props.simpleShotData.simplesearch)
+    console.log("Updating ShotPercentageView")
+    //console.log(props.simpleShotData.simplesearch)
     let twoPMakes = 0;
     let twoPTotal = 0;
     let threePMakes = 0;
     let threePTotal = 0;
     let fgFrac = "--", fgPerc = "--", twoPFrac = "--", twoPPerc = "--", threePFrac = "--", threePPerc = "--"
     if (props.simpleShotData.simplesearch) {
-
         props.simpleShotData.simplesearch.forEach(each => {
             if (each.make == 1 && each.shottype === "2PT Field Goal") {
                 twoPMakes++
