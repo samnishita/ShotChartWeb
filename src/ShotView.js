@@ -1,6 +1,7 @@
 import './ShotView.css'
 import tradCourt from './images/newbackcourt.png'
 import transparentCourt from './images/transparent.png'
+import newBackcourt from './images/newbackcourt.png'
 import Svg, { Circle, Path, Line, Rect } from 'react-native-svg';
 
 import { View, Dimensions, StyleSheet } from 'react-native';
@@ -539,72 +540,100 @@ const ShotView = (props) => {
             let centerY = heightAltered / 2
             let strokeWidth = scaleNumber(3)
             let stroke = "rgba(0,0,0,1)"
+            let fontSizeFrac = scaleNumber(18)
+            let fontSizePerc = scaleNumber(16)
+            let fontWidth = scaleNumber(10 * fontSizeFrac)
+            let divStyles = {
+                position: "absolute",
+                width: fontWidth,
+                backgroundColor: "transparent"
+            }
+            let labelFracStyle = {
+                fontSize: fontSizeFrac,
+                margin: "0px"
+            }
+            let labelPercStyle = {
+                fontSize: fontSizePerc,
+                margin: "0px"
+            }
+            let centerLabelX = centerX - fontWidth / 2
             switch (i) {
                 case 1:
-                    let r1 = 4
-                    d = `m ${centerX - scaleNumber(39)} ${centerY - scaleNumber(233)}  l ${scaleNumber(78)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r1)},${scaleNumber(3.7)} 0 0,1 ${scaleNumber(-77)},0 l0 ${scaleNumber(-56)}`
+                    d = `m ${centerX - scaleNumber(39)} ${centerY - scaleNumber(233)}  l ${scaleNumber(78)} 0 l0 ${scaleNumber(56)} a${scaleNumber(4)},${scaleNumber(3.7)} 0 0,1 ${scaleNumber(-77)},0 l0 ${scaleNumber(-56)}`
+                    divStyles.transform = `translate(${centerLabelX}px,${scaleNumber(23)}px)`
                     break;
                 case 2:
-                    let r2 = 5
-                    d = `m ${centerX - scaleNumber(80)} ${centerY - scaleNumber(233)} l ${scaleNumber(158)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r2)},${scaleNumber(5.25)} 0 0,1 ${scaleNumber(-157)},0 l0 ${scaleNumber(-56)}`
+                    d = `m ${centerX - scaleNumber(80)} ${centerY - scaleNumber(233)} l ${scaleNumber(41)} 0 l0 ${scaleNumber(56)} a${scaleNumber(4)},${scaleNumber(3.7)} 0 0,0 ${scaleNumber(77)},0  l0 ${scaleNumber(-56)} l${scaleNumber(40)} 0 l0 ${scaleNumber(56)}a${scaleNumber(5)},${scaleNumber(5.25)} 0 0,1 ${scaleNumber(-157)},0 l0 ${scaleNumber(-56)}`
+                    divStyles.transform = `translate(${centerLabelX}px,${scaleNumber(120)}px)`
                     break;
                 case 3:
                     let r3 = 85, r3_2 = 170
                     d = `m ${centerX - scaleNumber(160)} ${centerY - scaleNumber(233)} l ${scaleNumber(81)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r3)},${scaleNumber(r3)} 0 0,0 ${scaleNumber(38.7)},${scaleNumber(71.2)} l${scaleNumber(-41)} ${scaleNumber(73)} a${scaleNumber(r3_2)},${scaleNumber(r3_2)} 0 0,1 ${scaleNumber(-78.6)} ${scaleNumber(-145)}  l0 ${scaleNumber(-56)}`
+                    divStyles.transform = `translate(${centerLabelX - scaleNumber(115)}px,${scaleNumber(85)}px)`
                     break;
                 case 4:
                     let r4 = 85, r4_2 = 160
                     d = `m ${centerX - scaleNumber(40)} ${centerY - scaleNumber(105)}  a${scaleNumber(r4)},${scaleNumber(r4)} 0 0,0 ${scaleNumber(80)} 0 l${scaleNumber(41)} ${scaleNumber(71.8)} a${scaleNumber(r4_2)},${scaleNumber(r4_2)} 0 0,1 ${scaleNumber(-162)} 0 l${scaleNumber(41)} ${scaleNumber(-73)}`
+                    divStyles.transform = `translate(${centerLabelX}px,${scaleNumber(180)}px)`
                     break;
                 case 5:
                     let r5 = 85, r5_2 = 170
                     d = `m ${centerX + scaleNumber(78)} ${centerY - scaleNumber(233)} l ${scaleNumber(80)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r5_2)},${scaleNumber(r5_2)} 0 0,1 ${scaleNumber(-77.4)} ${scaleNumber(143.5)} l${scaleNumber(-41)} ${scaleNumber(-72.6)} a${scaleNumber(r5)},${scaleNumber(r5)} 0 0,0 ${scaleNumber(38.7)},${scaleNumber(-71.2)}  l0 ${scaleNumber(-56)}`
+                    divStyles.transform = `translate(${centerLabelX + scaleNumber(115)}px,${scaleNumber(85)}px)`
                     break;
                 case 6:
                     let r6 = 200
                     d = `m ${centerX - scaleNumber(219)} ${centerY - scaleNumber(233)}  l ${scaleNumber(59)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r6)},${scaleNumber(r6)} 0 0,0 ${scaleNumber(24)},${scaleNumber(88.5)} l${scaleNumber(-60)} ${scaleNumber(40)}  a${scaleNumber(r6)},${scaleNumber(r6)} 0 0,1 ${scaleNumber(-22.75)},${scaleNumber(-48)} l0 ${scaleNumber(-137)}`
+                    divStyles.transform = `translate(${centerLabelX - scaleNumber(180)}px,${scaleNumber(130)}px)`
                     break;
                 case 7:
                     let r7 = 150, r7_2 = 230
                     d = `m ${centerX - scaleNumber(136)} ${centerY - scaleNumber(89)}  a${scaleNumber(r7)},${scaleNumber(r7)} 0 0,0 ${scaleNumber(80)} ${scaleNumber(68)} l${scaleNumber(-22)} ${scaleNumber(65)} a${scaleNumber(r7_2)},${scaleNumber(r7_2)} 0 0,1 ${scaleNumber(-118)} ${scaleNumber(-92.5)} l${scaleNumber(60)} ${scaleNumber(-40)}`
+                    divStyles.transform = `translate(${centerLabelX - scaleNumber(120)}px,${scaleNumber(215)}px)`
                     break;
                 case 8:
                     let r8 = 150, r8_2 = 230
                     d = `m ${centerX + scaleNumber(-57)} ${centerY - scaleNumber(21)}  a${scaleNumber(r8)},${scaleNumber(r8)} 0 0,0 ${scaleNumber(113)} 0 l${scaleNumber(21.5)} ${scaleNumber(65)} a${scaleNumber(r8_2)},${scaleNumber(r8_2)} 0 0,1 ${scaleNumber(-155.5)} 0 l${scaleNumber(22)} ${scaleNumber(-65)} `
+                    divStyles.transform = `translate(${centerLabelX}px,${scaleNumber(257)}px)`
                     break;
                 case 9:
                     let r9 = 150, r9_2 = 230
                     d = `m ${centerX + scaleNumber(135)} ${centerY - scaleNumber(90)} l${scaleNumber(61)} ${scaleNumber(42)} a${scaleNumber(r9_2)},${scaleNumber(r9_2)} 0 0,1 ${scaleNumber(-118)} ${scaleNumber(92.5)} l${scaleNumber(-22)} ${scaleNumber(-66)} a${scaleNumber(r9)},${scaleNumber(r9)} 0 0,0 ${scaleNumber(80)} ${scaleNumber(-70)}  `
+                    divStyles.transform = `translate(${centerLabelX + scaleNumber(120)}px,${scaleNumber(215)}px)`
                     break;
                 case 10:
                     let r10 = 200
                     d = `m ${centerX + scaleNumber(158)} ${centerY - scaleNumber(233)}  l ${scaleNumber(60.5)} 0 l0 ${scaleNumber(137)} a${scaleNumber(r10)},${scaleNumber(r10)} 0 0,1 ${scaleNumber(-22.75)},${scaleNumber(48)}  l${scaleNumber(-60)} ${scaleNumber(-41.5)}  a${scaleNumber(r10)},${scaleNumber(r10)} 0 0,0 ${scaleNumber(23)},${scaleNumber(-88.5)} l0 ${scaleNumber(-56)}`
+                    divStyles.transform = `translate(${centerLabelX + scaleNumber(180)}px,${scaleNumber(130)}px)`
                     break;
                 case 11:
                     d = `m ${centerX - scaleNumber(248)} ${centerY - scaleNumber(233)}  l${scaleNumber(30)} 0 l0 ${scaleNumber(137)}l${scaleNumber(-30)} 0 l0 ${scaleNumber(-137)}`
+                    divStyles.transform = `translate(${centerLabelX - scaleNumber(215)}px,${scaleNumber(35)}px)`
                     break;
                 case 12:
                     let r12 = 220
                     d = `m ${centerX - scaleNumber(248)} ${centerY - scaleNumber(96)} l${scaleNumber(30)} 0 a${scaleNumber(r12)},${scaleNumber(r12)} 0 0,0 ${scaleNumber(129)},${scaleNumber(136)} l${scaleNumber(-77)} ${scaleNumber(193)} l${scaleNumber(-82)} 0 l0 ${scaleNumber(-330)}`
+                    divStyles.transform = `translate(${centerLabelX - scaleNumber(170)}px,${scaleNumber(305)}px)`
                     break;
                 case 13:
                     let r13 = 245
                     d = `m ${centerX - scaleNumber(90)} ${centerY + scaleNumber(40)}  a${scaleNumber(r13)},${scaleNumber(r13)} 0 0,0 ${scaleNumber(179)},0 l${scaleNumber(77)} ${scaleNumber(193.5)} l${scaleNumber(-333)} 0 l${scaleNumber(77)} ${scaleNumber(-193)}`
+                    divStyles.transform = `translate(${centerLabelX}px,${scaleNumber(340)}px)`
                     break;
                 case 14:
                     let r14 = 220
                     d = `m ${centerX + scaleNumber(219)} ${centerY - scaleNumber(96)} l${scaleNumber(30)} 0 l0 ${scaleNumber(330)} l${scaleNumber(-83)} 0 l${scaleNumber(-77)} ${scaleNumber(-193.5)} a${scaleNumber(r14)},${scaleNumber(r14)} 0 0,0 ${scaleNumber(130)},${scaleNumber(-137)}  `
+                    divStyles.transform = `translate(${centerLabelX + scaleNumber(170)}px,${scaleNumber(305)}px)`
                     break;
                 case 15:
                     d = `m ${centerX + scaleNumber(219)} ${centerY - scaleNumber(233)}  l${scaleNumber(30)} 0 l0 ${scaleNumber(137)}l${scaleNumber(-30)} 0 l0 ${scaleNumber(-137)}`
+                    divStyles.transform = `translate(${centerLabelX + scaleNumber(215)}px,${scaleNumber(35)}px)`
                     break;
             }
             coloredZones.push(<Path id={zoneId} d={d} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />)
-            let percent = ""
-
-            zoneLabels.push(<div height={heightAltered} width={widthAltered} position="absolute">
-                <p >{`${allZones[i][0]}/${allZones[i][1]}`}</p>
-                <p >{`${allZones[i][0] / allZones[i][1]}%`}</p>
+            zoneLabels.push(<div height={heightAltered} width={widthAltered} style={divStyles}>
+                <p className="labelFrac" style={labelFracStyle}>{`${allZones[i][0]}/${allZones[i][1]}`}</p>
+                <p className="labelPerc" style={labelPercStyle}>{`${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(1)}%`}</p>
             </div>)
         }
 
@@ -612,11 +641,26 @@ const ShotView = (props) => {
         // let r345 = 5
         //let d345 = `m ${centerX - scaleNumber(160)} ${centerY - scaleNumber(233)} l ${scaleNumber(318)} 0 l0 ${scaleNumber(56)} a${scaleNumber(r345)},${scaleNumber(5.25)} 0 0,1 ${scaleNumber(-318)},0 l0 ${scaleNumber(-56)}`
         //<Path id="zone345" d={d345} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
-        return (<div>
-            <Svg className="imageview-child" height={heightAltered} width={widthAltered}>
-                {coloredZones}
-            </Svg>
-        </div>)
+        let styles = {
+            position: "absolute",
+            transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
+        }
+        let styleImage = {
+            position: "absolute",
+            width: width,
+            height: "auto",
+            transform: `rotate(180deg) translate(${-(widthAltered - width) / 2}px, ${-(heightAltered - height) / 2}px)`,
+        }
+        return (
+            <div id="inner-imageview-div" style={styles}>
+                <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
+                    {coloredZones}
+                </Svg>
+                <img src={transparentCourt} style={styleImage}></img>
+                {zoneLabels}
+
+            </div>
+        )
     }
     async function getZoneAverages() {
         console.log("getZoneAverages()")
@@ -652,8 +696,8 @@ const ShotView = (props) => {
         <div className='ShotView'>
             <p>Title Goes Here</p>
             <div id="imageview-div"  >
-                {determineView(props.latestSimpleViewType)}
                 <img src={transparentCourt} id="court-image"></img>
+                {determineView(props.latestSimpleViewType)}
             </div>
             <br></br>
             <button onClick={() => props.updateLatestSimpleViewType("Traditional")} >Traditional</button>

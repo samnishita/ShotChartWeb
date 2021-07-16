@@ -2,6 +2,10 @@
     font-family: 'MonserratLight';
     src: url('./fonts/Montserrat-Light.ttf') format('truetype');
 }
+@font-face{
+    font-family: 'MontserratSemibold';
+    src: url('./fonts/Montserrat-SemiBold.ttf') format('truetype');
+}
 
 #court-image{
     transform: rotate(180deg);
@@ -43,4 +47,11 @@ button{
     stroke:black;
     stroke-width: 0.0 ;
     width:30.0px ;
+}
+
+.labelFrac {
+    font-family: 'MontserratSemibold';
+}
+.labelPerc {
+    font-family: 'MontserratSemibold';
 }
