@@ -21,6 +21,9 @@ const ShotView = (props) => {
         setAllHeatTiles([])
         //chooseCourt()
     }, [props.simpleShotData])
+    useEffect(() => {
+        determineView(props.latestSimpleViewType)
+    }, [allGridTiles, allHeatTiles, props.simpleShotData])
 
 
     function hideElement(elementId) {

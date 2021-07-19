@@ -337,9 +337,6 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button id="run-simple-search-button" onClick={e => runSimpleSearch()}>
-                        Run It
-                    </button>
                     <button class="dropdown-button" id="view-selector" onClick={e => handleDDButtonClick(e, "view-selection-dd")}>
                         {latestSimpleViewType}
                         <div className="dropdown-content" id="view-selection-dd">
@@ -349,6 +346,10 @@ const SimpleSearchBox = (props) => {
                             <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>
                         </div>
                     </button>
+                    <button id="run-simple-search-button" onClick={e => runSimpleSearch()}>
+                        Run It
+                    </button>
+
                 </div>
             </div>
             <ShotPercentageView simpleShotData={shotPercentageData} />
