@@ -22,7 +22,7 @@ const ShotView = (props) => {
         //chooseCourt()
     }, [props.simpleShotData])
     useEffect(() => {
-        determineView(props.latestSimpleViewType)
+        // determineView(props.latestSimpleViewType)
     }, [allGridTiles, allHeatTiles, props.simpleShotData])
 
 
@@ -114,11 +114,6 @@ const ShotView = (props) => {
     }
 
     console.log("Updating ShotView")
-    // console.log(props.simpleShotData)
-    //const [currentView, setCurrentView] = useState(props.viewType)
-
-    // const currentViewRef = useRef({});
-    //currentViewRef.current = currentView;
 
     function displayTraditional() {
         console.log("displayTraditional()")
@@ -168,7 +163,8 @@ const ShotView = (props) => {
         switch (viewType) {
             case "Traditional":
                 console.log("Displaying Traditional")
-                return displayTraditional()
+                let response = displayTraditional()
+                return response
             case "Grid":
                 if (allGridTiles.length === 0) {
                     console.log("Displaying Grid")
@@ -614,19 +610,8 @@ const ShotView = (props) => {
                 let zoneId = `zone${i}`
                 let centerX = widthAltered / 2
                 let centerY = heightAltered / 2
-                let fontSizeFrac = scaleNumber(18)
-                let fontSizePerc = scaleNumber(16)
-                let fontWidth = scaleNumber(10 * fontSizeFrac)
-                let centerLabelX = centerX - fontWidth / 2
                 let strokeWidth = scaleNumber(3)
                 let stroke = "rgba(0,0,0,1)"
-                let divStyles = {
-                    position: "absolute",
-                    width: fontWidth,
-                    backgroundColor: "transparent",
-                    zIndex: 1
-                }
-
                 switch (i) {
                     case 1:
                         d = `m ${centerX - scaleNumber(39)} ${centerY - scaleNumber(233)}  l ${scaleNumber(78)} 0 l0 ${scaleNumber(56)} a${scaleNumber(4)},${scaleNumber(3.7)} 0 0,1 ${scaleNumber(-77)},0 l0 ${scaleNumber(-56)}`

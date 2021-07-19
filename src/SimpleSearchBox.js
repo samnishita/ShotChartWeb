@@ -123,7 +123,7 @@ const SimpleSearchBox = (props) => {
         let response = await getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 console.log("getSeasonsData()")
-                //console.log(res)
+                console.log(res)
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
                     activeSeasonsRes.push("Preseason")
@@ -139,8 +139,10 @@ const SimpleSearchBox = (props) => {
                 if (!activeSeasonsRes.includes(selectedSeasonRef.current)) {
                     if (activeSeasonsRes.includes("Regular Season")) {
                         setSelectedSeason("Regular Season")
+                        console.log("Includes Regular Season")
                     } else {
                         setSelectedSeason(activeSeasonsRes[activeSeasonsRes.length - 1])
+                        console.log("Does Not Include Regular Season")
                     }
                 }
                 setActiveSeasons(activeSeasonsRes)
@@ -230,7 +232,11 @@ const SimpleSearchBox = (props) => {
     }
     async function handleSeasonButtonClick(event) {
         console.log('handleSeasonButtonClick()')
-        if (event.target.classList.contains("season-display") && selectedSeason !== event.target.textContent) {
+        console.log(`selectedSeason: ${selectedSeasonRef.current}`)
+        console.log(`event.target.textContent: ${event.target.textContent}`)
+        console.log(event.target.classList.contains("season-display"))
+        if (event.target.classList.contains("season-display") && selectedSeasonRef.current !== event.target.textContent) {
+            console.log(`Setting season to ${event.target.textContent}`)
             setSelectedSeason(event.target.textContent)
         }
     }
@@ -314,9 +320,7 @@ const SimpleSearchBox = (props) => {
             <div className="search-box-body">
                 <div className="search-box-inner-body">
                     <h6>Choose your search parameters</h6>
-                    <button class="dropdown-button" onClick={(e) => {
-                        handleDDButtonClick(e, "season-dd");
-                    }}>
+                    <button class="dropdown-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
                         {selectedYear}
                         <div className="dropdown-content scrollable" id="season-dd">
                             {yearDisplay}
