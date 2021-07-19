@@ -3,7 +3,7 @@ import tradCourt from './images/newbackcourt.png'
 import transparentCourt from './images/transparent.png'
 import Svg, { Circle, Path, Line, Rect, Defs, RadialGradient, Stop } from 'react-native-svg';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
     const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
@@ -11,20 +11,45 @@ const ShotView = (props) => {
     const [allHeatTiles, setAllHeatTiles] = useState([])
     const [gridAverages, setGridAverages] = useState([])
     const [zoneAverages, setZoneAverages] = useState([])
-    useEffect(() => { handleResize() }, [size])
+    const [whatToDisplay, setWhatToDisplay] = useState([])
+    const [allShots, setAllShots] = useState(props.simpleShotData.simplesearch)
+    const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
+    const whatToDisplayRef = useRef({})
+    whatToDisplayRef.current = whatToDisplay
+    const allShotsRef = useRef({})
+    allShotsRef.current = allShots
+    const latestSimpleViewTypeRef = useRef({})
+    latestSimpleViewTypeRef.current = latestSimpleViewType
+    const allGridTilesRef = useRef({})
+    allGridTilesRef.current = allGridTiles
+    const gridAveragesRef = useRef({})
+    gridAveragesRef.current = gridAverages
+    const allHeatTilesRef = useRef({})
+    allHeatTilesRef.current = allHeatTiles
+    const zoneAveragesRef = useRef({})
+    zoneAveragesRef.current = zoneAverages
+    //useEffect(() => { handleResize() }, [size])
     useEffect(() => {
         window.addEventListener('resize', handleResize)
-        chooseCourt()
+        //chooseCourt()
     }, [])
     useEffect(() => {
         setAllGridTiles([])
         setAllHeatTiles([])
+        setAllShots(props.simpleShotData.simplesearch)
         //chooseCourt()
     }, [props.simpleShotData])
     useEffect(() => {
-        // determineView(props.latestSimpleViewType)
-    }, [allGridTiles, allHeatTiles, props.simpleShotData])
-
+        chooseCourt()
+        let buffer = []
+        console.log(props.latestSimpleViewType)
+        buffer.push(determineView(props.latestSimpleViewType))
+        let zoneLabels = generateZoneLabels()
+        if (zoneLabels) {
+            buffer.push(zoneLabels)
+        }
+        setWhatToDisplay(buffer)
+    }, [allGridTiles, allHeatTiles, props.simpleShotData, props.latestSimpleViewType])
 
     function hideElement(elementId) {
         if (document.getElementById(elementId).classList.contains('show')) {
@@ -38,18 +63,20 @@ const ShotView = (props) => {
     }
 
     function chooseCourt() {
-        switch (props.latestSimpleViewType) {
+        switch (latestSimpleViewTypeRef.current) {
             case "Traditional":
                 if (typeof (props.simpleShotData.simplesearch) === 'undefined') {
                     showElement("transparent-court")
                     hideElement("trad-court")
                     hideElement("transparent-court-on-top")
                     hideElement("gray-background")
+                    console.log("Showing transparent-court")
                 } else {
                     showElement("trad-court")
                     hideElement("transparent-court")
                     hideElement("transparent-court-on-top")
                     hideElement("gray-background")
+                    console.log("Showing trad-court")
                 }
                 break;
             case "Grid":
@@ -57,34 +84,47 @@ const ShotView = (props) => {
                 showElement("gray-background")
                 hideElement("trad-court")
                 hideElement("transparent-court-on-top")
+                console.log("Showing transparent-court & gray-background")
                 break;
             case "Heat":
                 showElement("transparent-court")
                 hideElement("gray-background")
                 hideElement("trad-court")
                 hideElement("transparent-court-on-top")
+                console.log("Showing transparent-court")
                 break;
             case "Zone":
                 showElement("transparent-court-on-top")
                 hideElement("trad-court")
                 hideElement("gray-background")
                 hideElement("transparent-court")
+                console.log("Showing transparent-court-on-top")
                 break;
         }
     }
+
     function handleResize() {
         //console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
         if (size[0] !== window.innerHeight || size[1] !== window.innerWidth) {
             console.log("Size Not Okay")
             console.log(`${window.innerHeight}!=${size[0]} OR ${window.innerWidth}!=${size[1]}`)
-            setWindowSize([window.innerHeight, window.innerWidth], () => {
-                determineView(props.latestSimpleViewType, true)
-            })
+            setWindowSize([window.innerHeight, window.innerWidth])
+            console.log("props.latestSimpleViewType: " + latestSimpleViewTypeRef.current)
+            //setWhatToDisplay(determineView(latestSimpleViewTypeRef.current))
+            let buffer = []
+            console.log(props.latestSimpleViewType)
+            buffer.push(determineView(latestSimpleViewTypeRef.current))
+            let zoneLabels = generateZoneLabels()
+            if (zoneLabels) {
+                buffer.push(zoneLabels)
+            }
+            setWhatToDisplay(buffer)
         } else {
             console.log("Size Okay")
             console.log(`${window.innerHeight}=${size[0]} AND ${window.innerWidth}=${size[1]}`)
         }
     }
+
     function resizeGrid() {
         console.log(allGridTiles.length > 0)
         if (allGridTiles.length > 0) {
@@ -108,7 +148,6 @@ const ShotView = (props) => {
                 {allNewTiles}
             </Svg>
             chooseCourt()
-
             return allNewTilesWrapper
         }
     }
@@ -117,8 +156,10 @@ const ShotView = (props) => {
 
     function displayTraditional() {
         console.log("displayTraditional()")
-        let allShots = props.simpleShotData.simplesearch
+        //let allShots = props.simpleShotData.simplesearch
+        let allShots = allShotsRef.current
         //console.log(allShots)
+        //console.log(allShotsRef.current)
         let tradArray = []
         if (allShots) {
             const height = document.getElementById('trad-court').clientHeight
@@ -138,19 +179,19 @@ const ShotView = (props) => {
                         tradArray.push(<Line x1={widthAltered / 2 + rad + each.x * width / 500} y1={heightAltered / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={widthAltered / 2 - rad + each.x * width / 500} y2={heightAltered / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
                     }
                 }
-                //translate="200, 200"
             })
             let styles = {
                 position: "absolute",
                 transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
             }
-            chooseCourt()
+            //chooseCourt()
             let tradArrayWrapper = (
                 <div id="inner-imageview-div" style={styles}>
                     <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
                         {tradArray}
                     </Svg>
                 </div>)
+            console.log(tradArrayWrapper)
             return tradArrayWrapper
         }
         // console.log("Returning Traditional")
@@ -160,6 +201,7 @@ const ShotView = (props) => {
 
     function determineView(viewType) {
         console.log("Determining viewtype: " + viewType)
+        //chooseCourt()
         switch (viewType) {
             case "Traditional":
                 console.log("Displaying Traditional")
@@ -181,13 +223,17 @@ const ShotView = (props) => {
                 }
                 return resizeHeat()
         }
+        console.log("Returning: ")
+        //console.log(response)
+        return <div></div>
     }
 
     function displayGrid() {
         //console.log("gridAverages before: ")
         //console.log(gridAverages)
         //console.log(typeof (gridAverages))
-        if (props.simpleShotData.simplesearch) {
+
+        if (allShotsRef.current) {
             let allTiles = {}
             let squareSizeOrig = 10
             for (let j = -55; j < 400; j = j + squareSizeOrig) {
@@ -201,8 +247,8 @@ const ShotView = (props) => {
             }
             let factor = 0.007;
             //console.log(allTiles)
-            let shots = props.simpleShotData.simplesearch.filter(param => param.y <= 400)
-            let shotCounter = props.simpleShotData.simplesearch.length
+            let shots = allShotsRef.current.filter(param => param.y <= 400)
+            let shotCounter = allShotsRef.current.length
             Object.keys(allTiles).forEach(eachTile => {
                 let upperBoundX = allTiles[eachTile].x + 5 + squareSizeOrig * 1.5
                 let lowerBoundX = allTiles[eachTile].x + 5 - squareSizeOrig * 1.5
@@ -275,7 +321,7 @@ const ShotView = (props) => {
                 }
                 //console.log("squareSide: " + squareSide)
                 temp = "(" + allTiles[eachTile].x + "," + allTiles[eachTile].y + ")";
-                avg = gridAverages[temp]
+                avg = gridAveragesRef.current[temp]
                 //console.log("avg: " + avg)
                 let tileFill = ""
                 //console.log("tileValues[eachTile]: " + tileValues[eachTile])
@@ -349,7 +395,7 @@ const ShotView = (props) => {
         return response
     }
     function generateZoneLabels() {
-        if (props.simpleShotData.simplesearch && props.latestSimpleViewType === "Zone") {
+        if (allShotsRef.current && latestSimpleViewTypeRef.current === "Zone") {
             let allZones = mapShotsToZones()
             let zoneLabels = []
             const height = document.getElementById('transparent-court-on-top').clientHeight
@@ -367,7 +413,6 @@ const ShotView = (props) => {
                 fontSize: fontSizePerc,
                 margin: "0px"
             }
-
             for (let i = 1; i < allZones.length; i++) {
                 let divStyles = { position: "absolute", width: fontWidth, backgroundColor: "transparent", zIndex: 1 }
                 switch (i) {
@@ -428,10 +473,11 @@ const ShotView = (props) => {
             }
             return zoneLabels
         }
+        return
     }
 
     function mapShotsToZones() {
-        let allShots = props.simpleShotData.simplesearch
+        let allShots = allShotsRef.current
         if (allShots) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
@@ -569,14 +615,12 @@ const ShotView = (props) => {
         return <div></div>
     }
 
-
     function displayZone() {
         chooseCourt()
-        if (props.simpleShotData.simplesearch) {
+        if (allShotsRef.current) {
             let allZones = mapShotsToZones()
             //console.log(allZones)
             let coloredZones = []
-            let zoneLabels = []
             let fill = ""
             //console.log(zoneAverages)
             const height = document.getElementById('transparent-court-on-top').clientHeight
@@ -589,7 +633,7 @@ const ShotView = (props) => {
                 if (allZones[i][1] === 0) {
                     fill = "rgba(178,178,178, 1)"
                 } else {
-                    let diff = allZones[i][2] - zoneAverages[i]
+                    let diff = allZones[i][2] - zoneAveragesRef.current[i]
                     if (diff > 0.06) {
                         fill = "rgba(252,33,33, 1)"
                     } else if (diff < 0.06 && diff >= 0.04) {
@@ -703,7 +747,7 @@ const ShotView = (props) => {
         return response
     }
     function displayHeat() {
-        if (props.simpleShotData.simplesearch) {
+        if (allShotsRef.current) {
             let allTiles = {}
             for (let x = -250; x < 250; x++) {
                 for (let y = -55; y < 400; y++) {
@@ -714,8 +758,8 @@ const ShotView = (props) => {
                     }
                 }
             }
-            let shots = props.simpleShotData.simplesearch.filter(param => param.y <= 400)
-            let shotCounter = props.simpleShotData.simplesearch.length
+            let shots = allShotsRef.current.filter(param => param.y <= 400)
+            let shotCounter = allShotsRef.current.length
             shots.forEach(eachShot => {
                 // console.log(`${eachShot.x},${eachShot.y}`)
                 //console.log(allTiles[`tile_${eachShot.x}_${eachShot.y}`])
@@ -768,7 +812,7 @@ const ShotView = (props) => {
                 }
             })
             let heatTileInfo = []
-            console.log("maxValue: " + maxValue)
+            // console.log("maxValue: " + maxValue)
             if (maxValue != 0) {
                 maxValue = maxValue * (500 * 1.0 / shotCounter);
                 let maxCutoff = 0.00004 * shotCounter / maxValue + 0.3065;
@@ -902,14 +946,25 @@ const ShotView = (props) => {
                 <img src={transparentCourt} className="court-image" id="transparent-court"></img>
                 <img src={tradCourt} className="court-image" id="trad-court" ></img>
                 <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
-                {determineView(props.latestSimpleViewType)}
-                {generateZoneLabels()}
+                {whatToDisplayRef.current}
             </div>
             <br></br>
-            <button onClick={() => props.updateLatestSimpleViewType("Traditional")} >Traditional</button>
-            <button onClick={() => props.updateLatestSimpleViewType("Grid")} >Grid</button>
-            <button onClick={() => props.updateLatestSimpleViewType("Zone")} >Zone</button>
-            <button onClick={() => props.updateLatestSimpleViewType("Heat")} >Heat</button>
+            <button onClick={() => {
+                props.updateLatestSimpleViewType("Traditional")
+                setLatestSimpleViewType("Traditional")
+            }} >Traditional</button>
+            <button onClick={() => {
+                props.updateLatestSimpleViewType("Grid")
+                setLatestSimpleViewType("Grid")
+            }} >Grid</button>
+            <button onClick={() => {
+                props.updateLatestSimpleViewType("Zone")
+                setLatestSimpleViewType("Zone")
+            }} >Zone</button>
+            <button onClick={() => {
+                props.updateLatestSimpleViewType("Heat")
+                setLatestSimpleViewType("Heat")
+            }} >Heat</button>
         </div>
     )
 }

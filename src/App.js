@@ -10,6 +10,10 @@ const App = () => {
   const [latestSimpleSearchData, setLatestSimpleSearchData] = useState({})
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
   const [title, setTitle] = useState("")
+  useEffect(() => {
+    console.log("Simple Search Data Changed")
+    console.log(latestSimpleSearchData)
+  }, [latestSimpleSearchData])
 
   const latestSimpleViewTypeRef = useRef({});
   latestSimpleViewTypeRef.current = latestSimpleViewType;
