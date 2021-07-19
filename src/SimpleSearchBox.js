@@ -21,7 +21,6 @@ const SimpleSearchBox = (props) => {
     const [shotPercentageData, setShotPercentageData] = useState({})
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
 
-
     //STATE REFS
     const selectedYearRef = useRef({});
     selectedYearRef.current = selectedYear;
@@ -31,7 +30,6 @@ const SimpleSearchBox = (props) => {
     selectedSeasonRef.current = selectedSeason;
     const initPlayersRef = useRef({})
     const initPlayersReverseMapRef = useRef({})
-
 
     let initState = ""
     let initPlayers = "";
@@ -51,7 +49,6 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getInitData() {
-        //let response = await getSearchData("http://138.68.52.234:8080/shots_request?init=true")
         let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?init=true")
             .then(res => {
                 //console.log("getInitData")
@@ -65,7 +62,6 @@ const SimpleSearchBox = (props) => {
         let players = {}
         let playersReverse = {}
         console.log("getInitPlayersData()")
-        //let response = getSearchData("http://138.68.52.234:8080/shots_request?initallplayers=true")
         let response = getSearchData("https://customnbashotcharts.com:8443/shots_request?initallplayers=true")
             .then(res => {
                 for (let i = 0; i < res.initallplayers.length; i++) {
@@ -127,7 +123,6 @@ const SimpleSearchBox = (props) => {
         let response = await getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 console.log("getSeasonsData()")
-                //console.log(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
                 //console.log(res)
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
@@ -177,7 +172,6 @@ const SimpleSearchBox = (props) => {
         let playerElements = []
         //console.log(activePlayers)
         //console.log(activePlayers[0])
-        //activePlayers.forEach(value =>{
         activePlayers.forEach(value => {
             //console.log(value)
             // console.log(value.displayname)
@@ -208,9 +202,7 @@ const SimpleSearchBox = (props) => {
             response.forEach(each => names.push(each.displayname))
             //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
             if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
-                //let firstPlayer = Object.values(response)[0];
                 let firstPlayer = response[0]
-                //setSelectedPlayer(initPlayersRef.current[firstPlayer][1] + " " + initPlayersRef.current[firstPlayer][2]);
                 setSelectedPlayer({
                     id: firstPlayer.playerinfo.id,
                     playerfirstname: firstPlayer.playerinfo.playerfirstname,
@@ -272,14 +264,13 @@ const SimpleSearchBox = (props) => {
         document.getElementById(type).classList.toggle("show")
     };
 
-    async function runSimpleSearch(event) {
+    async function runSimpleSearch() {
         console.log("runSimpleSearch()")
         // console.log(initPlayersReverseMapRef.current)
         // console.log(selectedPlayerRef.current)
         // console.log(selectedPlayerRef.current.id)
         //console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
 
-        //let url = `http://138.68.52.234:8080/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log("Fetching " + url)
         const response = await fetch(url, {
@@ -288,8 +279,8 @@ const SimpleSearchBox = (props) => {
             .then(data => {
                 //console.log("URL RESPONSE FROM " + url + ": ")
                 //console.log(data)
+                props.setTitle(`${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}, ${selectedYearRef.current} ${selectedSeasonRef.current}`)
                 props.updateLatestSimpleSearchData(data)
-                //props.updateLatestSimpleViewType("Traditional")
                 props.updateLatestSimpleViewType(latestSimpleViewType)
                 setShotPercentageData(data)
                 return data
@@ -301,7 +292,6 @@ const SimpleSearchBox = (props) => {
         //props.updateLatestSimpleViewType(event.target.textContent)
         setLatestSimpleViewType(event.target.textContent)
     }
-
 
     useEffect(() => {
         getInitData()
@@ -347,7 +337,7 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button id="simple-search-button" onClick={e => runSimpleSearch(e)}>
+                    <button id="run-simple-search-button" onClick={e => runSimpleSearch()}>
                         Run It
                     </button>
                     <button class="dropdown-button" id="view-selector" onClick={e => handleDDButtonClick(e, "view-selection-dd")}>
@@ -364,58 +354,5 @@ const SimpleSearchBox = (props) => {
             <ShotPercentageView simpleShotData={shotPercentageData} />
         </div>
     )
-
-    /*
-    let div = ""
-    //let divs = []
-    const [divs, setDivs] = useState([])
-    display()
-    function display() {
-        console.log("here")
-        /**
-         console.log(getData().then(response => {
-             let data = response
-             console.log("data" + data)
-             return data
-         }))*/
-    /*let food = getData().then(response => {
-        let data = response
-        return data
-    })
-
-    food.then(response => response.forEach(each => {
-        //setDivs(...divs, divs.push(each))
-    }))
-
-    //console.log(getData().then(data => data.json()))
-}
-
-function justDisplay() {
-
-}
-async function getData() {
-    const response = await fetch("http://138.68.52.234:8080/shots_request?initallplayers=true", {
-        method: 'GET'
-    }).then(response => response.json())
-        .then(result => {
-            // console.log(result)
-            return result
-        })
-        .catch(error => console.log('error', error))
-    //console.log(response.initallplayers)
-    //console.log(response.initallplayers[0])
-    let array = []
-    response.initallplayers.forEach(element => {
-        array.push(<div>{element}</div>)
-    });
-    //console.log(array)
-    return array;
-}
-
-useEffect(() => {
-    justDisplay()
-}, [])
-
-return <div>0</div> */
 }
 export default SimpleSearchBox

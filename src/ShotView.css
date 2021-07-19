@@ -7,19 +7,23 @@
     src: url('./fonts/Montserrat-SemiBold.ttf') format('truetype');
 }
 
-#court-image{
+.court-image{
     transform: rotate(180deg);
     object-fit: cover;
     max-width :60%;
     height: 100%;
-}
+    display: none;
+}.show {display: block;}
+
 
 .ShotView{
     color: white;
     font-family: 'MonserratLight';
-    background-color: yellow;
     height:100%;
     width:100%;
+    overflow: auto;
+    scroll-behavior: smooth;
+    overflow-y:scroll;
 }
 
 button{
@@ -29,15 +33,17 @@ button{
 
 #imageview-div{
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
-    background-color: lightslategray;
-    
 }
 
 .imageview-child{
     position:absolute;
     align-items: center;
+}
+#zones-underneath{
+    z-index: 0;
 }
 
 .rectangle {
@@ -54,4 +60,25 @@ button{
 }
 .labelPerc {
     font-family: 'MontserratSemibold';
+}
+#transparent-court-on-top{
+    position: relative;
+    transform: rotate(180deg);
+    object-fit: cover;
+    max-width :60%;
+    height: 100%;
+    z-index: 1;
+}
+
+#view-title{
+    padding: 10px 0px 10px 0px;
+    font-size: 2vh;
+    text-align: center;
+    height: 2.5vh ;
+}
+
+#gray-background{
+    height: 100%;
+    width: 100%;
+    position: absolute;
 }
