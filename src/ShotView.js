@@ -31,20 +31,22 @@ const ShotView = (props) => {
     //useEffect(() => { handleResize() }, [size])
     useEffect(() => {
         window.addEventListener('resize', handleResize)
-        //chooseCourt()
     }, [])
+    useEffect(() => {
+        setLatestSimpleViewType(props.latestSimpleViewType)
+    }, [props.latestSimpleViewType])
     useEffect(() => {
         setAllGridTiles([])
         setAllHeatTiles([])
         setAllShots(props.simpleShotData.simplesearch)
-        //chooseCourt()
+        chooseCourt(props.latestSimpleViewType)
     }, [props.simpleShotData])
     useEffect(() => {
-        chooseCourt()
+        chooseCourt(props.latestSimpleViewType)
         let buffer = []
         console.log(props.latestSimpleViewType)
         buffer.push(determineView(props.latestSimpleViewType))
-        let zoneLabels = generateZoneLabels()
+        let zoneLabels = generateZoneLabels(props.latestSimpleViewType)
         if (zoneLabels) {
             buffer.push(zoneLabels)
         }
@@ -62,10 +64,10 @@ const ShotView = (props) => {
         }
     }
 
-    function chooseCourt() {
-        switch (latestSimpleViewTypeRef.current) {
+    function chooseCourt(view) {
+        switch (view) {
             case "Traditional":
-                if (typeof (props.simpleShotData.simplesearch) === 'undefined') {
+                if (typeof (allShotsRef.current) === 'undefined') {
                     showElement("transparent-court")
                     hideElement("trad-court")
                     hideElement("transparent-court-on-top")
@@ -114,7 +116,7 @@ const ShotView = (props) => {
             let buffer = []
             console.log(props.latestSimpleViewType)
             buffer.push(determineView(latestSimpleViewTypeRef.current))
-            let zoneLabels = generateZoneLabels()
+            let zoneLabels = generateZoneLabels(latestSimpleViewTypeRef.current)
             if (zoneLabels) {
                 buffer.push(zoneLabels)
             }
@@ -147,7 +149,6 @@ const ShotView = (props) => {
             let allNewTilesWrapper = <Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
                 {allNewTiles}
             </Svg>
-            chooseCourt()
             return allNewTilesWrapper
         }
     }
@@ -184,7 +185,6 @@ const ShotView = (props) => {
                 position: "absolute",
                 transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
             }
-            //chooseCourt()
             let tradArrayWrapper = (
                 <div id="inner-imageview-div" style={styles}>
                     <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
@@ -201,7 +201,7 @@ const ShotView = (props) => {
 
     function determineView(viewType) {
         console.log("Determining viewtype: " + viewType)
-        //chooseCourt()
+        chooseCourt(viewType)
         switch (viewType) {
             case "Traditional":
                 console.log("Displaying Traditional")
@@ -394,8 +394,8 @@ const ShotView = (props) => {
             }).catch(error => console.log('error', error))
         return response
     }
-    function generateZoneLabels() {
-        if (allShotsRef.current && latestSimpleViewTypeRef.current === "Zone") {
+    function generateZoneLabels(view) {
+        if (allShotsRef.current && view === "Zone") {
             let allZones = mapShotsToZones()
             let zoneLabels = []
             const height = document.getElementById('transparent-court-on-top').clientHeight
@@ -616,7 +616,6 @@ const ShotView = (props) => {
     }
 
     function displayZone() {
-        chooseCourt()
         if (allShotsRef.current) {
             let allZones = mapShotsToZones()
             //console.log(allZones)
@@ -747,6 +746,7 @@ const ShotView = (props) => {
         return response
     }
     function displayHeat() {
+        console.log("displayHeat()")
         if (allShotsRef.current) {
             let allTiles = {}
             for (let x = -250; x < 250; x++) {
@@ -851,12 +851,18 @@ const ShotView = (props) => {
                         })
                     }
                 })
-                setAllHeatTiles(heatTileInfo)
+                if (heatTileInfo.length === 0) {
+                    setAllHeatTiles(<div></div>)
+                } else {
+                    setAllHeatTiles(heatTileInfo)
+
+                }
             }
         }
     }
 
     function resizeHeat() {
+        console.log("resizeHeat()")
         if (allHeatTiles.length > 0) {
             let circles1 = [], circles2 = [], circles3 = [], circles4 = [], circles5 = [], circles6 = [], circles7 = []
             let gradients = []
@@ -898,7 +904,6 @@ const ShotView = (props) => {
                 </RadialGradient>
                 gradients.push(eachGradient)
             })
-            chooseCourt()
             return (<Svg className="imageview-child" height={height * 1.1} width={width * 1.1} >
                 <Defs>
                     {gradients}
