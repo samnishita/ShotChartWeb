@@ -61,7 +61,8 @@ const SimpleSearchBox = (props) => {
                 }
                 let result = latestArray[0]
                 console.log(result)
-                document.getElementById(result).scrollIntoView({ behavior: 'auto' })
+                //document.getElementById(result).scrollIntoView({ behavior: 'auto', block: 'nearest' })
+                document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
                 setSelectedPlayer({
                     id: document.getElementById(result).getAttribute('playerid'),
                     playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
