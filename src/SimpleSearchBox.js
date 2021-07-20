@@ -2,6 +2,8 @@ import './SimpleSearchBox.css'
 import SearchTypeButtons from './SearchTypeButtons'
 import ShotPercentageView from './ShotPercentageView'
 import { useEffect, useState, useRef } from "react";
+import Svg, { Path, Line, Rect, Defs, RadialGradient, Stop } from 'react-native-svg';
+
 
 const SimpleSearchBox = (props) => {
     const currentYear = '2020-21'
@@ -20,7 +22,110 @@ const SimpleSearchBox = (props) => {
     const [activeSeasonsDisplay, setActiveSeasonsDisplay] = useState([])
     const [shotPercentageData, setShotPercentageData] = useState({})
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
+    const [keyPressedBuilder, setKeyPressedBuilder] = useState("")
+    const [keyPressedState, setKeyPressedState] = useState(() => (event) => {
+        //console.log("KEYDOWN")
+        //console.log(`${event.keyCode}: ${String.fromCharCode(event.keyCode)}`)
+        //console.log(`${event.target.id}`)
+        //console.log(activePlayersRef.current)
+        if (event.keyCode === 8 && keyPressedBuilderRef.current.length > 0) {
+            console.log("Backspace: " + keyPressedBuilderRef.current.substring(0, keyPressedBuilderRef.current.length - 1))
+            setKeyPressedBuilder(keyPressedBuilderRef.current.substring(0, keyPressedBuilderRef.current.length - 1))
+        } else if (event.keyCode === 222) {
+            console.log(keyPressedBuilderRef.current + "'")
+            setKeyPressedBuilder(keyPressedBuilderRef.current + "'")
+        } else if (event.keyCode === 189) {
+            console.log(keyPressedBuilderRef.current + "-")
+            setKeyPressedBuilder(keyPressedBuilderRef.current + "-")
+        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
+            console.log(keyPressedBuilderRef.current + String.fromCharCode(event.keyCode))
+            setKeyPressedBuilder(keyPressedBuilderRef.current + String.fromCharCode(event.keyCode))
+        }
+        switch (event.target.id) {
+            case "player-button":
+                let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
+                for (let i = 0; i < keyPressedBuilderRef.current.length; i++) {
+                    let tempArray = []
+                    //console.log(keyPressedBuilderRef.current.length)
+                    //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
+                    latestArray.forEach(eachPlayer => {
+                        if (eachPlayer.startsWith(keyPressedBuilderRef.current.substring(0, i + 1))) {
+                            // console.log(`Pushing ${eachPlayer}`)
+                            tempArray.push(eachPlayer)
+                        }
+                    })
+                    if (tempArray.length !== 0) {
+                        latestArray = tempArray
+                    }
+                    //console.log(latestArray)
+                }
+                let result = latestArray[0]
+                console.log(result)
+                document.getElementById(result).scrollIntoView({ behavior: 'auto' })
+                setSelectedPlayer({
+                    id: document.getElementById(result).getAttribute('playerid'),
+                    playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
+                    playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+                }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
+                );
+                break;
+            case "year-button":
+                let year = Number(currentYear.substring(0, 4));
+                let subYearString;
+                let years = []
+                while (year >= 1996) {
+                    if ((year - 1899) % 100 < 10) {
+                        subYearString = "0" + (year - 1899) % 100;
+                    } else {
+                        subYearString = "" + (year - 1899) % 100;
+                    }
+                    years.push(year + "-" + subYearString)
+                    year--;
+                }
+                for (let i = 0; i < keyPressedBuilderRef.current.length; i++) {
+                    let tempArray = []
+                    //console.log(keyPressedBuilderRef.current.length)
+                    //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
+                    years.forEach(eachYear => {
+                        if (eachYear.startsWith(keyPressedBuilderRef.current.substring(0, i + 1))) {
+                            tempArray.push(eachYear)
+                        }
+                    })
+                    if (tempArray.length !== 0) {
+                        years = tempArray
+                    }
+                    //console.log(latestArray)
+                }
+                let yearResult = years[0]
+                console.log(yearResult)
+                document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
+                setSelectedYear(document.getElementById(yearResult).textContent, console.log("Set selected year to " + document.getElementById(yearResult).textContent));
+                processYearChange(yearResult)
+        }
+    })
 
+    async function processYearChange(yearResult) {
+        let response = await getActivePlayersData(document.getElementById(yearResult).textContent)
+        //console.log("response")
+        //console.log(response)
+        //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
+        let names = []
+        response.forEach(each => names.push(each.displayname))
+        //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
+        if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
+            let firstPlayer = response[0]
+            setSelectedPlayer({
+                id: firstPlayer.playerinfo.id,
+                playerfirstname: firstPlayer.playerinfo.playerfirstname,
+                playerlastname: firstPlayer.playerinfo.playerlastname
+            })
+            console.log("Selected Player: " + firstPlayer.displayname)
+            getSeasonsData(document.getElementById(yearResult).textContent, firstPlayer.playerinfo.id, firstPlayer.playerinfo.playerfirstname, firstPlayer.playerinfo.playerlastname)
+        } else {
+            getSeasonsData(document.getElementById(yearResult).textContent, selectedPlayerRef.current.id, selectedPlayerRef.current.playerfirstname, selectedPlayerRef.current.playerlastname)
+        }
+
+    }
     //STATE REFS
     const selectedYearRef = useRef({});
     selectedYearRef.current = selectedYear;
@@ -28,8 +133,14 @@ const SimpleSearchBox = (props) => {
     selectedPlayerRef.current = selectedPlayer;
     const selectedSeasonRef = useRef({});
     selectedSeasonRef.current = selectedSeason;
+    const activePlayersRef = useRef({});
+    activePlayersRef.current = activePlayers;
     const initPlayersRef = useRef({})
     const initPlayersReverseMapRef = useRef({})
+    const keyPressedStateRef = useRef({});
+    keyPressedStateRef.current = keyPressedState;
+    const keyPressedBuilderRef = useRef({});
+    keyPressedBuilderRef.current = keyPressedBuilder;
 
     let initState = ""
     let initPlayers = "";
@@ -84,7 +195,6 @@ const SimpleSearchBox = (props) => {
         return response
     }
     function getActivePlayersData(year) {
-        //let response = getSearchData(`http://138.68.52.234:8080/shots_request?activeplayers=${year}`)
         let response = getSearchData(`https://customnbashotcharts.com:8443/shots_request?activeplayers=${year}`)
             .then(res => {
                 let activePlayersArray = []
@@ -123,7 +233,7 @@ const SimpleSearchBox = (props) => {
         let response = await getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 console.log("getSeasonsData()")
-                console.log(res)
+                //console.log(res)
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
                     activeSeasonsRes.push("Preseason")
@@ -162,7 +272,7 @@ const SimpleSearchBox = (props) => {
                 } else {
                     subYearString = "" + (year - 1899) % 100;
                 }
-                elements.push(<p className='dropdown-item year-display' onClick={(event) => handleYearButtonClick(event)}>{year + "-" + subYearString}</p>)
+                elements.push(<p className='dropdown-item year-display' id={year + "-" + subYearString} onClick={(event) => handleYearButtonClick(event)}>{year + "-" + subYearString}</p>)
                 year--;
             }
             setYearDisplay(elements)//, console.log(yearDisplay)
@@ -178,7 +288,7 @@ const SimpleSearchBox = (props) => {
             //console.log(value)
             // console.log(value.displayname)
             //console.log(value.playerinfo.id)
-            playerElements.push(<p className='dropdown-item player-display' playerid={value.playerinfo.id} onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</p>)
+            playerElements.push(<p className='dropdown-item player-display' id={value.displayname.toUpperCase()} playerid={value.playerinfo.id} onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</p>)
         });
         setActivePlayersDisplay(playerElements)//, console.log(activePlayersDisplay)
     }
@@ -242,14 +352,16 @@ const SimpleSearchBox = (props) => {
     }
 
     function hideDD(event) {
-        //console.log("hideDD: " + event.target)
-        if (!event.target.matches('.dropdown-button')) {
+        //console.log(event.target)
+        if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button-display') && !event.target.matches('.arrow-path') && !event.target.matches('.arrow-svg') && !event.target.matches('.arrow')) {
             var dropdowns = document.getElementsByClassName("dropdown-content");
-            var i;
-            for (i = 0; i < dropdowns.length; i++) {
+            for (let i = 0; i < dropdowns.length; i++) {
                 var openDropdown = dropdowns[i];
                 if (openDropdown.classList.contains('show')) {
                     openDropdown.classList.remove('show');
+                    window.removeEventListener('keydown', keyPressedStateRef.current)
+                    setKeyPressedBuilder("")
+                    console.log("Removing event listener")
                 }
             }
         }
@@ -258,16 +370,37 @@ const SimpleSearchBox = (props) => {
 
     function handleDDButtonClick(event, type) {
         console.log("handleDDButtonClick()")
+        //console.log(event)
         hideDD(event);
         var dropdowns = document.getElementsByClassName("dropdown-content");
         var i;
         for (i = 0; i < dropdowns.length; i++) {
             var dropdown = dropdowns[i];
             if (dropdown.id !== type) {
-                dropdown.classList.remove("show")
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    window.removeEventListener('keydown', keyPressedStateRef.current)
+                    setKeyPressedBuilder("")
+                    console.log("Removing event listener")
+                }
+            } else {
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    window.removeEventListener('keydown', keyPressedStateRef.current)
+                    setKeyPressedBuilder("")
+                    console.log("Removing event listener")
+                } else {
+                    window.addEventListener('keydown', keyPressedStateRef.current)
+                    console.log("Adding event listener")
+                    document.getElementById(type).classList.toggle("show")
+                }
+                //window.addEventListener('keydown', keyPressedStateRef.current)
+                // console.log("Adding event listener")
             }
         }
-        document.getElementById(type).classList.toggle("show")
+        //console.log(document.getElementById(type).classList)
+        //console.log(keyPressedStateRef.current)
+
     };
 
     async function runSimpleSearch() {
@@ -276,7 +409,6 @@ const SimpleSearchBox = (props) => {
         // console.log(selectedPlayerRef.current)
         // console.log(selectedPlayerRef.current.id)
         //console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
-
         let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log("Fetching " + url)
         const response = await fetch(url, {
@@ -295,7 +427,6 @@ const SimpleSearchBox = (props) => {
     }
 
     function handleViewSelectionButtonClick(event) {
-        //props.updateLatestSimpleViewType(event.target.textContent)
         setLatestSimpleViewType(event.target.textContent)
     }
 
@@ -306,6 +437,12 @@ const SimpleSearchBox = (props) => {
             getSeasonsData(currentYear, selectedPlayer.id, selectedPlayer.playerfirstname, selectedPlayer.playerlastname)
         })
         displayAllYears(currentYear)
+        window.addEventListener('keydown', function (event) {
+            if (event.keyCode == 32) {
+                console.log("SPACEBAR")
+                event.preventDefault();
+            }
+        });
     }, []);
 
     useEffect(() => {
@@ -320,29 +457,53 @@ const SimpleSearchBox = (props) => {
             <div className="search-box-body">
                 <div className="search-box-inner-body">
                     <h6>Choose your search parameters</h6>
-                    <button class="dropdown-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
-                        {selectedYear}
+                    <button class="dropdown-button" id="year-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
+                        <span className="dropdown-button-display">{selectedYear}</span>
+                        <span className="arrow">
+                            <Svg className="arrow-svg" height="20" width="20">
+                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                </Path>
+                            </Svg>
+                        </span>
                         <div className="dropdown-content scrollable" id="season-dd">
                             {yearDisplay}
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button" onClick={(e) => handleDDButtonClick(e, "player-dd")}>
-                        {selectedPlayer.playerfirstname} {selectedPlayer.playerlastname}
+                    <button class="dropdown-button" id="player-button" onClick={(e) => handleDDButtonClick(e, "player-dd")}>
+                        <span className="dropdown-button-display">{selectedPlayer.playerfirstname} {selectedPlayer.playerlastname}</span>
+                        <span className="arrow">
+                            <Svg className="arrow-svg" height="20" width="20">
+                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                </Path>
+                            </Svg>
+                        </span>
                         <div className="dropdown-content scrollable" id="player-dd">
                             {activePlayersDisplay}
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button" onClick={(e) => handleDDButtonClick(e, "season-type-dd")}>
-                        {selectedSeason}
+                    <button class="dropdown-button" id="season-type-button" onClick={(e) => handleDDButtonClick(e, "season-type-dd")}>
+                        <span className="dropdown-button-display">{selectedSeason}</span>
+                        <span className="arrow">
+                            <Svg className="arrow-svg" height="20" width="20">
+                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                </Path>
+                            </Svg>
+                        </span>
                         <div className="dropdown-content" id="season-type-dd">
                             {activeSeasonsDisplay}
                         </div>
                     </button>
                     <br></br>
                     <button class="dropdown-button" id="view-selector" onClick={e => handleDDButtonClick(e, "view-selection-dd")}>
-                        {latestSimpleViewType}
+                        <span className="dropdown-button-display">{latestSimpleViewType}</span>
+                        <span className="arrow">
+                            <Svg className="arrow-svg" height="20" width="20">
+                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                </Path>
+                            </Svg>
+                        </span>
                         <div className="dropdown-content" id="view-selection-dd">
                             <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Traditional</p>
                             <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Grid</p>

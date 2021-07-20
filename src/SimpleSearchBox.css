@@ -31,9 +31,19 @@
 .search-box-body .dropdown-button{
     position: relative;
     width: 70%;
+    background-color: rgb(219, 219, 219);
+}
+
+.dropdown-button:hover {
     background-color: white;
 }
 
+#run-simple-search-button{
+    background-color: rgb(219, 219, 219);
+}
+#run-simple-search-button:hover{
+    background-color: white;
+}
 
 .dropdown-content{
     display: none;
@@ -50,7 +60,6 @@
 
 .SimpleSearchBox .dropdown-content.scrollable {
     height: 20vh;
-    scroll-behavior: smooth;
     overflow-y:scroll;
 }
 
@@ -86,3 +95,13 @@
     border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
 }
 
+.arrow{
+    text-align: left;
+    display: inline-block;
+    width:20%;
+    position: absolute;
+}
+.dropdown-button-display{
+    display: inline-block;
+    min-width: 80%;
+}

@@ -128,7 +128,7 @@ const ShotView = (props) => {
     }
 
     function resizeGrid() {
-        console.log(allGridTiles.length > 0)
+        // console.log(allGridTiles.length > 0)
         if (allGridTiles.length > 0) {
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
@@ -191,7 +191,7 @@ const ShotView = (props) => {
                         {tradArray}
                     </Svg>
                 </div>)
-            console.log(tradArrayWrapper)
+            // console.log(tradArrayWrapper)
             return tradArrayWrapper
         }
         // console.log("Returning Traditional")
@@ -626,8 +626,8 @@ const ShotView = (props) => {
             const width = document.getElementById('transparent-court-on-top').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
-            console.log(`height: ${height}`)
-            console.log(`width: ${width}`)
+            // console.log(`height: ${height}`)
+            //console.log(`width: ${width}`)
             for (let i = 1; i < allZones.length; i++) {
                 if (allZones[i][1] === 0) {
                     fill = "rgba(178,178,178, 1)"
@@ -855,7 +855,6 @@ const ShotView = (props) => {
                     setAllHeatTiles(<div></div>)
                 } else {
                     setAllHeatTiles(heatTileInfo)
-
                 }
             }
         }
