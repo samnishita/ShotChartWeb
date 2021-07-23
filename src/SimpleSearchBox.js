@@ -406,6 +406,7 @@ const SimpleSearchBox = (props) => {
 
     async function runSimpleSearch() {
         console.log("runSimpleSearch()")
+        //props.setIsLoading(true)
         // console.log(initPlayersReverseMapRef.current)
         // console.log(selectedPlayerRef.current)
         // console.log(selectedPlayerRef.current.id)
@@ -419,8 +420,12 @@ const SimpleSearchBox = (props) => {
                 //console.log("URL RESPONSE FROM " + url + ": ")
                 //console.log(data)
                 props.setTitle(`${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}, ${selectedYearRef.current} ${selectedSeasonRef.current}`)
-                props.updateLatestSimpleSearchData(data)
                 props.updateLatestSimpleViewType(latestSimpleViewType)
+                props.updateLatestSimpleSearchData(data)
+                props.setAllSearchData({
+                    shots: data,
+                    view: latestSimpleViewType
+                })
                 setShotPercentageData(data)
                 return data
             }).catch(error => console.log('error', error))

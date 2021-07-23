@@ -7,20 +7,32 @@ import SearchTypeButtons from './SearchTypeButtons';
 import React, { useEffect, useState, useRef } from 'react';
 
 const App = () => {
-  const [latestSimpleSearchData, setLatestSimpleSearchData] = useState({})
+  const [latestSimpleSearchData, setLatestSimpleSearchData] = useState()
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
+  const [allSearchData, setAllSearchData] = useState({})
   const [title, setTitle] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadingAnimation, setLoadingAnimation] = useState("")
   useEffect(() => {
-    //console.log("Simple Search Data Changed")
-    //console.log(latestSimpleSearchData)
+    console.log(`isLoading changed to ${isLoading}`)
+  }, [isLoading])
+  useEffect(() => {
+    console.log(`latestSimpleSearchData changed to ${latestSimpleSearchData}`)
   }, [latestSimpleSearchData])
+  useEffect(() => {
+    console.log(`allSearchData changed to `)
+    console.log(allSearchData)
+  }, [allSearchData])
 
   const latestSimpleViewTypeRef = useRef({});
   latestSimpleViewTypeRef.current = latestSimpleViewType;
   const [whichSearchBox, setWhichSearchBox] = useState(<SimpleSearchBox updateLatestSimpleSearchData={processSimpleSearchData}
     updateLatestSimpleViewType={(inputViewType) => setLatestSimpleViewType(inputViewType, console.log("Updated view type with " + inputViewType))}
-    latestSimpleViewType={latestSimpleViewTypeRef.current} setTitle={setTitle} />)
-
+    latestSimpleViewType={latestSimpleViewTypeRef.current} setTitle={setTitle} setIsLoading={setIsLoading} setAllSearchData={setAllSearchData} />)
+  const isLoadingRef = useRef({});
+  isLoadingRef.current = isLoading;
+  const loadingAnimationRef = useRef({})
+  loadingAnimationRef.current = loadingAnimation
   function processSimpleSearchData(inputData) {
     setLatestSimpleSearchData(inputData, console.log("Updated latest search with" + inputData))
   }
@@ -49,8 +61,7 @@ const App = () => {
           {whichSearchBox}
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item">
-          <ShotView simpleShotData={latestSimpleSearchData} updateLatestSimpleViewType={(inputViewType) => setLatestSimpleViewType(inputViewType, console.log("Updated view type with " + inputViewType))}
-            latestSimpleViewType={latestSimpleViewTypeRef.current} title={title} />
+          <ShotView title={title} isLoading={isLoadingRef.current} setIsLoading={setIsLoading} allSearchData={allSearchData} />
         </div>
       </div>
     </div >
