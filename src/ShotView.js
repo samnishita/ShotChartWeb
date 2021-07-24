@@ -64,7 +64,6 @@ const ShotView = (props) => {
     useEffect(() => {
         console.log("useEffect for props.isLoading")
         console.log(`isLoading: ${props.isLoading}`)
-        //makeLoadingAnimation()
         if (props.isLoading) {
             console.log("Setting whatToDisplay to [] from useEffect(isLoading)")
             setWhatToDisplay([])
@@ -83,16 +82,7 @@ const ShotView = (props) => {
             if (allShotsRef.current && whatToDisplay.length === 0) {
                 console.log(document.getElementById("loadingAnimation"))
                 console.log("Generating whatToDisplay from useEffect(loadingAnimation)")
-                let buffer = []
-                buffer.push(determineView(localViewType.type))
-                let zoneLabels = generateZoneLabels(localViewType.type)
-                if (zoneLabels) {
-                    buffer.push(zoneLabels)
-                }
-                if (typeof (buffer[0]) !== 'undefined') {
-                    setWhatToDisplay(buffer)
-                }
-
+                generateWhatToDisplay()
             }
         }, 100)
     }, [loadingAnimation])
@@ -131,8 +121,8 @@ const ShotView = (props) => {
         } else {
             setAllHeatTiles([])
         }
-
     }, [allGridTiles])
+
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
         console.log(allHeatTiles)
@@ -204,6 +194,17 @@ const ShotView = (props) => {
         }
     }
 
+    function generateWhatToDisplay() {
+        let buffer = []
+        console.log(allShotsRef.current)
+        buffer.push(determineView(localViewTypeRef.current.type))
+        let zoneLabels = generateZoneLabels(localViewTypeRef.current.type)
+        if (zoneLabels) {
+            buffer.push(zoneLabels)
+        }
+        setWhatToDisplay(buffer)
+    }
+
     function handleResize() {
         console.log("handleResize()")
         //console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
@@ -213,17 +214,8 @@ const ShotView = (props) => {
             setWindowSize([window.innerHeight, window.innerWidth])
             // console.log("props.latestSimpleViewType: " + latestSimpleViewTypeRef.current)
             // console.log("props.latestSimpleViewType: " + props.latestSimpleViewType)
-            let buffer = []
-            //console.log(props.latestSimpleViewType)
             console.log(`Resizing with ${localViewTypeRef.current.type}`)
-            //console.log(props.allSearchData)
-            console.log(allShotsRef.current)
-            buffer.push(determineView(localViewTypeRef.current.type))
-            let zoneLabels = generateZoneLabels(localViewTypeRef.current.type)
-            if (zoneLabels) {
-                buffer.push(zoneLabels)
-            }
-            setWhatToDisplay(buffer)
+            generateWhatToDisplay()
         } else {
             console.log("Size Okay")
             console.log(`${window.innerHeight}=${size[0]} AND ${window.innerWidth}=${size[1]}`)
@@ -242,28 +234,23 @@ const ShotView = (props) => {
             let allNewTiles = []
             allGridTiles.forEach(eachTile => {
                 let squareSide = eachTile.squareSide * squareSize * 0.9
-                let tileFill = eachTile.tileFill
-                let transX = (eachTile.x + (squareSize - squareSide) / 2) * height / 470
-                let transY = (eachTile.y - 175 + (squareSize - squareSide) / 2) * height / 470
                 if (squareSide !== 0) {
-                    allNewTiles.push(<Rect x={widthAltered / 2 + transX} y={heightAltered / 2 + transY - 5} width={squareSide} height={squareSide} fill={tileFill} opacity="0.8" />)
+                    allNewTiles.push(<Rect x={widthAltered / 2 + (eachTile.x + (squareSize - squareSide) / 2) * height / 470}
+                        y={heightAltered / 2 + (eachTile.y - 175 + (squareSize - squareSide) / 2) * height / 470 - 5}
+                        width={squareSide} height={squareSide} fill={eachTile.tileFill} opacity="0.8" />)
                 }
             })
-            let allNewTilesWrapper = <Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
+            return (<Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
                 {allNewTiles}
-            </Svg>
-            return allNewTilesWrapper
+            </Svg>)
         }
     }
-
-    console.log("Updating ShotView")
-
     function displayTraditional() {
         console.log("displayTraditional()")
         // console.log(allShots)
         //console.log(allShotsRef.current)
         let tradArray = []
-        console.log(allShotsRef.current)
+        // console.log(allShotsRef.current)
         if (allShotsRef.current) {
             const height = document.getElementById('trad-court').clientHeight
             const width = document.getElementById('trad-court').clientWidth
@@ -271,9 +258,8 @@ const ShotView = (props) => {
             const widthAltered = width * 1.1
             const rad = 5 * height / 470;
             const strokeWidth = 2 * height / 470
-            console.log("height: " + height)
-            console.log("width: " + width)
-            //allShots.forEach(each => {
+            // console.log("height: " + height)
+            // console.log("width: " + width)
             allShotsRef.current.shots.simplesearch.forEach(each => {
                 if (each.y <= 410) {
                     if (each.make === 1) {
@@ -288,14 +274,12 @@ const ShotView = (props) => {
                 position: "absolute",
                 transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
             }
-            let tradArrayWrapper = (
-                <div id="inner-imageview-div" style={styles}>
-                    <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
-                        {tradArray}
-                    </Svg>
-                </div>)
+            return (<div id="inner-imageview-div" style={styles}>
+                <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
+                    {tradArray}
+                </Svg>
+            </div>)
             // console.log(tradArrayWrapper)
-            return tradArrayWrapper
         }
         // console.log("Returning Traditional")
         //console.log(tradArray)
@@ -309,28 +293,22 @@ const ShotView = (props) => {
         switch (viewType) {
             case "Traditional":
                 console.log("Displaying Traditional")
-                response = displayTraditional()
-                return response
+                return displayTraditional()
             case "Grid":
                 if (allGridTiles.length === 0) {
                     console.log("Displaying Grid")
                     displayGrid()
                 }
-                response = resizeGrid()
-                //console.log(response)
-                return response
+                return resizeGrid()
             case "Zone":
                 console.log("Displaying Zone")
-                response = displayZone()
-                return response
+                return displayZone()
             case "Heat":
                 if (allHeatTiles.length === 0) {
                     console.log("Displaying Heat")
                     displayHeat()
                 }
-                response = resizeHeat()
-                //console.log(response)
-                return response
+                return resizeHeat()
         }
         //console.log("Returning: ")
         //console.log(response)
@@ -347,11 +325,7 @@ const ShotView = (props) => {
             let squareSizeOrig = 10
             for (let j = -55; j < 400; j = j + squareSizeOrig) {
                 for (let i = -250; i < 250; i = i + squareSizeOrig) {
-                    let tempTile = {}
-                    tempTile.x = i
-                    tempTile.y = j
-                    tempTile.shotinfo = [0.0, 0.0, 0.0];
-                    allTiles[`tile_${i}_${j}`] = tempTile
+                    allTiles[`tile_${i}_${j}`] = { x: i, y: j, shotinfo: [0.0, 0.0, 0.0] }
                 }
             }
             let factor = 0.007;
@@ -371,34 +345,13 @@ const ShotView = (props) => {
                         }
                     }
                 })
-            })
-            Object.values(allTiles).forEach(each => {
-                if (each.shotinfo[1] !== 0) {
-                    each.shotinfo[2] = each.shotinfo[0] / each.shotinfo[1]
+                if (allTiles[eachTile].shotinfo[1] !== 0) {
+                    allTiles[eachTile].shotinfo[2] = allTiles[eachTile].shotinfo[0] / allTiles[eachTile].shotinfo[1]
                 }
             })
-            let predictedValue = 0, aSum = 0, bSum = 0, p = 2, value = 0, offset = 10, maxDistanceBetweenNodes = 20, calcDistance = 0;
+            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = 20, calcDistance = 0;
             let tileValues = {}
-            Object.keys(allTiles).forEach(eachTile => {
-                if (allTiles[eachTile].x % offset === 0 && (allTiles[eachTile].y - 5) % offset === 0) {
-                    aSum = 0;
-                    bSum = 0;
-                    Object.keys(allTiles).forEach(eachTile2 => {
-                        calcDistance = getDistance(allTiles[eachTile], allTiles[eachTile2])
-                        if (eachTile !== eachTile2 && calcDistance < maxDistanceBetweenNodes) {
-                            value = allTiles[eachTile2].shotinfo[2]
-                            aSum = aSum + (value / Math.pow(calcDistance, p));
-                            bSum = bSum + (1 / Math.pow(getDistance(allTiles[eachTile], allTiles[eachTile2]), p));
-                        }
-                    })
-                    predictedValue = aSum / bSum;
-                    tileValues[eachTile] = predictedValue
-                }
-            })
-            // console.log("tileValues")
-            //console.log(tileValues)
-            let min = 1;
-            let minFactor = 0.00045;
+            let min = 1, minFactor = 0.00045;
             // console.log("shotCounter: " + shotCounter)
             if (shotCounter * minFactor > 1) {
                 min = shotCounter * minFactor;
@@ -411,62 +364,61 @@ const ShotView = (props) => {
             if (maxShotsPerMaxSquare == 0) {
                 maxShotsPerMaxSquare = 1;
             }
-            //let squareSize = width / 50;
-            //let allSquares = []
             let temp, avg;
             let squareElements = []
-            //console.log("maxShotsPerMaxSquare: " + maxShotsPerMaxSquare)
             Object.keys(allTiles).forEach(eachTile => {
-                let squareSide = 0
-                //console.log("allTiles[eachTile].shotinfo[1]: " + allTiles[eachTile].shotinfo[1])
-                let eachTileShotCount = allTiles[eachTile].shotinfo[1]
-                //console.log("eachTileShotCount: " + eachTileShotCount)
-                if (eachTileShotCount < maxShotsPerMaxSquare && eachTileShotCount > min) {
-                    squareSide = eachTileShotCount / maxShotsPerMaxSquare
-                    //squareSide = eachTileShotCount / maxShotsPerMaxSquare * squareSize * 0.9
-                } else if (eachTileShotCount > maxShotsPerMaxSquare) {
-                    //squareSide = squareSize * 0.9
-                    squareSide = 1
+                if (allTiles[eachTile].x % offset === 0 && (allTiles[eachTile].y - 5) % offset === 0) {
+                    aSum = 0;
+                    bSum = 0;
+                    Object.keys(allTiles).forEach(eachTile2 => {
+                        calcDistance = getDistance(allTiles[eachTile], allTiles[eachTile2])
+                        if (eachTile !== eachTile2 && calcDistance < maxDistanceBetweenNodes) {
+                            aSum = aSum + (allTiles[eachTile2].shotinfo[2] / Math.pow(calcDistance, p));
+                            bSum = bSum + (1 / Math.pow(getDistance(allTiles[eachTile], allTiles[eachTile2]), p));
+                        }
+                    })
+                    tileValues[eachTile] = aSum / bSum;
+                    let squareSide = 0
+                    //console.log("allTiles[eachTile].shotinfo[1]: " + allTiles[eachTile].shotinfo[1])
+                    let eachTileShotCount = allTiles[eachTile].shotinfo[1]
+                    //console.log("eachTileShotCount: " + eachTileShotCount)
+                    if (eachTileShotCount < maxShotsPerMaxSquare && eachTileShotCount > min) {
+                        squareSide = eachTileShotCount / maxShotsPerMaxSquare
+                        //squareSide = eachTileShotCount / maxShotsPerMaxSquare * squareSize * 0.9
+                    } else if (eachTileShotCount > maxShotsPerMaxSquare) {
+                        //squareSide = squareSize * 0.9
+                        squareSide = 1
+                    }
+                    //console.log("squareSide: " + squareSide)
+                    temp = "(" + allTiles[eachTile].x + "," + allTiles[eachTile].y + ")";
+                    avg = gridAveragesRef.current[temp]
+                    //console.log("avg: " + avg)
+                    let tileFill = ""
+                    //console.log("tileValues[eachTile]: " + tileValues[eachTile])
+                    if (tileValues[eachTile] > avg + 0.07) {
+                        tileFill = "#fc2121"
+                    } else if (tileValues[eachTile] > avg + 0.05 && tileValues[eachTile] <= avg + 0.07) {
+                        tileFill = "#ff6363"
+                    } else if (tileValues[eachTile] > avg + 0.015 && tileValues[eachTile] <= avg + 0.05) {
+                        tileFill = "#ff9c9c"
+                    } else if (tileValues[eachTile] > avg - 0.015 && tileValues[eachTile] <= avg + 0.015) {
+                        tileFill = "white"
+                    } else if (tileValues[eachTile] > avg - 0.05 && tileValues[eachTile] <= avg - 0.015) {
+                        tileFill = "#aed9ff"
+                    } else if (tileValues[eachTile] > avg - 0.07 && tileValues[eachTile] <= avg - 0.05) {
+                        tileFill = "#8bc9ff"
+                    } else {
+                        tileFill = "#7babff"
+                    }
+                    squareElements.push({
+                        x: allTiles[eachTile].x,
+                        y: allTiles[eachTile].y,
+                        tileFill: tileFill,
+                        squareSide: squareSide
+                    })
                 }
-                //console.log("squareSide: " + squareSide)
-                temp = "(" + allTiles[eachTile].x + "," + allTiles[eachTile].y + ")";
-                avg = gridAveragesRef.current[temp]
-                //console.log("avg: " + avg)
-                let tileFill = ""
-                //console.log("tileValues[eachTile]: " + tileValues[eachTile])
-                if (tileValues[eachTile] > avg + 0.07) {
-                    tileFill = "#fc2121"
-                    //square.setFill(Color.web("#fc2121"));
-                } else if (tileValues[eachTile] > avg + 0.05 && tileValues[eachTile] <= avg + 0.07) {
-                    tileFill = "#ff6363"
-                    //square.setFill(Color.web("#ff6363"));
-                } else if (tileValues[eachTile] > avg + 0.015 && tileValues[eachTile] <= avg + 0.05) {
-                    tileFill = "#ff9c9c"
-                    //square.setFill(Color.web("#ff9c9c"));
-                } else if (tileValues[eachTile] > avg - 0.015 && tileValues[eachTile] <= avg + 0.015) {
-                    tileFill = "white"
-                    //square.setFill(Color.WHITE);
-                } else if (tileValues[eachTile] > avg - 0.05 && tileValues[eachTile] <= avg - 0.015) {
-                    tileFill = "#aed9ff"
-                    //square.setFill(Color.web("#aed9ff"));
-                } else if (tileValues[eachTile] > avg - 0.07 && tileValues[eachTile] <= avg - 0.05) {
-                    tileFill = "#8bc9ff"
-                    //square.setFill(Color.web("#8bc9ff"));
-                } else {
-                    tileFill = "#7babff"
-                    //square.setFill(Color.web("#7babff"));
-                }
-                squareElements.push({
-                    x: allTiles[eachTile].x,
-                    y: allTiles[eachTile].y,
-                    tileFill: tileFill,
-                    squareSide: squareSide
-                })
             })
             setAllGridTiles(squareElements)
-            //console.log("allGridTiles")
-            //console.log(allGridTiles)
-            //console.log("Returning Grid")
             //console.log(squareElements)
         }
     }
@@ -479,11 +431,8 @@ const ShotView = (props) => {
         console.log("getGridAverages()")
         let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
             .then(res => {
-                //console.log("getGridAverages")
-                //console.log(res.gridaverages)
                 let averageJson = {}
                 res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                //console.log(averageJson)
                 return averageJson
             })
         return response
@@ -587,8 +536,7 @@ const ShotView = (props) => {
         if (allShotsRef.current) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
-                let array = [0, 0, 0]
-                allZones.push(array)
+                allZones.push([0, 0, 0])
             }
             function addShot(i, make) {
                 allZones[i][1] = allZones[i][1] + 1
@@ -842,11 +790,8 @@ const ShotView = (props) => {
         console.log("getZoneAverages()")
         let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
             .then(res => {
-                //console.log("getGridAverages")
-                //console.log(res.gridaverages)
                 let averageJson = {}
                 res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                //console.log(averageJson)
                 return averageJson
             })
         return response
@@ -858,23 +803,14 @@ const ShotView = (props) => {
             let allTiles = {}
             for (let x = -250; x < 250; x++) {
                 for (let y = -55; y < 400; y++) {
-                    allTiles[`tile_${x}_${y}`] = {
-                        x: x,
-                        y: y,
-                        shotinfo: [0.0, 0.0, 0.0]
-                    }
+                    allTiles[`tile_${x}_${y}`] = { x: x, y: y, shotinfo: [0.0, 0.0, 0.0] }
                 }
             }
             //console.log("FILTER")
             let shots = allShotsRef.current.shots.simplesearch.filter(param => param.y <= 400)
             let shotCounter = allShotsRef.current.shots.simplesearch.length
             ///console.log("SHOTS FOREACH")
-            //let shots = allShotsRef.current.filter(param => param.y <= 400)
-            //let shotCounter = allShotsRef.current.length
             shots.forEach(eachShot => {
-                // console.log(`${eachShot.x},${eachShot.y}`)
-                //console.log(allTiles[`tile_${eachShot.x}_${eachShot.y}`])
-                //console.log(allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo)
                 // setTimeout(() => {
                 allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] = allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] + 1
                 if (eachShot.make === 1) {
@@ -890,9 +826,8 @@ const ShotView = (props) => {
                     //console.log(each)
                 }
             })
-            let aSum = 0, bSum = 0, p = 2, value = 0, offset = 15, maxDistanceBetweenNodes = 30, calcDistance = 0;
+            let aSum = 0, bSum = 0, p = 2, offset = 15, maxDistanceBetweenNodes = 30
             let tileValues = {}
-            //console.log("Running IDW")
             //console.log("ALLTILES FOREACH 2")
             let allKeys = Object.keys(allTiles)
             //console.log("GATHERED ALLKEYS")
@@ -909,7 +844,6 @@ const ShotView = (props) => {
                     let upperBoundY = allTiles[allKeys[counter]].y + maxDistanceBetweenNodes < 400 ? allTiles[allKeys[counter]].y + maxDistanceBetweenNodes : 399
                     for (let i = lowerBoundX; i <= upperBoundX; i++) {
                         for (let j = lowerBoundY; j <= upperBoundY; j++) {
-                            //let tempTile = allTiles[`tile_${i}_${j}`]
                             //console.log(allTiles[`tile_${i}_${j}`])
                             let calcDistance = getDistance(allTiles[allKeys[counter]], allTiles[`tile_${i}_${j}`])
                             if (calcDistance < maxDistanceBetweenNodes && calcDistance > 0) {
@@ -921,7 +855,6 @@ const ShotView = (props) => {
                     }
                     tileValues[allKeys[counter]] = aSum / bSum;
                 }
-
                 // }, 100);
                 counter++;
             }
@@ -1198,6 +1131,13 @@ const ShotView = (props) => {
             return (<span></span>)
         }
     }
+
+    function handleViewTypeButtonClick(viewType) {
+        if (!props.isLoading && localViewType.type !== viewType && allShotsRef.current) {
+            console.log(`${viewType} Button Clicked`)
+            setLocalViewType({ type: viewType, isOriginal: false })
+        }
+    }
     return (
         <div className='ShotView'>
             <p id="view-title">{props.title}</p>
@@ -1214,30 +1154,10 @@ const ShotView = (props) => {
                 {loadingAnimation}
             </div>
             <br></br>
-            <button onClick={() => {
-                if (!props.isLoading && localViewType.type !== "Traditional" && allShotsRef.current) {
-                    console.log("Traditional Button Clicked")
-                    setLocalViewType({ type: "Traditional", isOriginal: false })
-                }
-            }} >Traditional</button>
-            <button onClick={() => {
-                if (!props.isLoading && localViewType.type !== "Grid" && allShotsRef.current) {
-                    console.log("Grid Button Clicked")
-                    setLocalViewType({ type: "Grid", isOriginal: false })
-                }
-            }} >Grid</button>
-            <button onClick={() => {
-                if (!props.isLoading && localViewType.type !== "Zone" && allShotsRef.current) {
-                    console.log("Zone Button Clicked")
-                    setLocalViewType({ type: "Zone", isOriginal: false })
-                }
-            }} >Zone</button>
-            <button onClick={() => {
-                if (!props.isLoading && localViewType.type !== "Heat" && allShotsRef.current) {
-                    console.log("Heat Button Clicked")
-                    setLocalViewType({ type: "Heat", isOriginal: false })
-                }
-            }} >Heat</button>
+            <button onClick={() => handleViewTypeButtonClick("Traditional")} >Traditional</button>
+            <button onClick={() => handleViewTypeButtonClick("Grid")} >Grid</button>
+            <button onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
+            <button onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
         </div>
     )
 }

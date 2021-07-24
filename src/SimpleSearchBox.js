@@ -142,8 +142,6 @@ const SimpleSearchBox = (props) => {
     keyPressedStateRef.current = keyPressedState;
     const keyPressedBuilderRef = useRef({});
     keyPressedBuilderRef.current = keyPressedBuilder;
-
-    let initState = ""
     let initPlayers = "";
     let initPlayersReverseMap = ""
 
@@ -157,16 +155,6 @@ const SimpleSearchBox = (props) => {
                 //console.log(data)
                 return data
             }).catch(error => console.log('error', error))
-        return response
-    }
-
-    async function getInitData() {
-        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?init=true")
-            .then(res => {
-                //console.log("getInitData")
-                //console.log(res.init)
-                initState = res
-            })
         return response
     }
 
@@ -437,7 +425,6 @@ const SimpleSearchBox = (props) => {
     }
 
     useEffect(() => {
-        getInitData()
         getInitPlayersData().then(res => {
             getActivePlayersData(currentYear)
             getSeasonsData(currentYear, selectedPlayer.id, selectedPlayer.playerfirstname, selectedPlayer.playerlastname)
