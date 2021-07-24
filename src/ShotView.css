@@ -83,6 +83,16 @@ button{
     position: absolute;
 }
 @keyframes spin {
-    from {transform:rotate(0deg);}
-    to {transform:rotate(360deg);}
+    from {transform:rotate(0deg)
+   }
+    to {transform:rotate(360deg)
+        }
   }
+
+  @keyframes FillIn {
+    from {
+      fill: rgb(0, 195, 255);
+    }
+    to {
+      fill: rgb(0, 195, 255,0.1);
+    }}
