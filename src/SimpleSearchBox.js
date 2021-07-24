@@ -4,7 +4,6 @@ import ShotPercentageView from './ShotPercentageView'
 import { useEffect, useState, useRef } from "react";
 import Svg, { Path, Line, Rect, Defs, RadialGradient, Stop } from 'react-native-svg';
 
-
 const SimpleSearchBox = (props) => {
     const currentYear = '2020-21'
     //STATES
@@ -22,111 +21,6 @@ const SimpleSearchBox = (props) => {
     const [activeSeasonsDisplay, setActiveSeasonsDisplay] = useState([])
     const [shotPercentageData, setShotPercentageData] = useState({})
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
-    const [keyPressedBuilder, setKeyPressedBuilder] = useState("")
-    const [keyPressedState, setKeyPressedState] = useState(() => (event) => {
-        //console.log("KEYDOWN")
-        //console.log(`${event.keyCode}: ${String.fromCharCode(event.keyCode)}`)
-        //console.log(`${event.target.id}`)
-        //console.log(activePlayersRef.current)
-        if (event.keyCode === 8 && keyPressedBuilderRef.current.length > 0) {
-            console.log("Backspace: " + keyPressedBuilderRef.current.substring(0, keyPressedBuilderRef.current.length - 1))
-            setKeyPressedBuilder(keyPressedBuilderRef.current.substring(0, keyPressedBuilderRef.current.length - 1))
-        } else if (event.keyCode === 222) {
-            console.log(keyPressedBuilderRef.current + "'")
-            setKeyPressedBuilder(keyPressedBuilderRef.current + "'")
-        } else if (event.keyCode === 189) {
-            console.log(keyPressedBuilderRef.current + "-")
-            setKeyPressedBuilder(keyPressedBuilderRef.current + "-")
-        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
-            console.log(keyPressedBuilderRef.current + String.fromCharCode(event.keyCode))
-            setKeyPressedBuilder(keyPressedBuilderRef.current + String.fromCharCode(event.keyCode))
-        }
-        switch (event.target.id) {
-            case "player-button":
-                let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
-                for (let i = 0; i < keyPressedBuilderRef.current.length; i++) {
-                    let tempArray = []
-                    //console.log(keyPressedBuilderRef.current.length)
-                    //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
-                    latestArray.forEach(eachPlayer => {
-                        if (eachPlayer.startsWith(keyPressedBuilderRef.current.substring(0, i + 1))) {
-                            // console.log(`Pushing ${eachPlayer}`)
-                            tempArray.push(eachPlayer)
-                        }
-                    })
-                    if (tempArray.length !== 0) {
-                        latestArray = tempArray
-                    }
-                    //console.log(latestArray)
-                }
-                let result = latestArray[0]
-                console.log(result)
-                //document.getElementById(result).scrollIntoView({ behavior: 'auto', block: 'nearest' })
-                document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
-                setSelectedPlayer({
-                    id: document.getElementById(result).getAttribute('playerid'),
-                    playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
-                    playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
-                }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
-                );
-                break;
-            case "year-button":
-                let year = Number(currentYear.substring(0, 4));
-                let subYearString;
-                let years = []
-                while (year >= 1996) {
-                    if ((year - 1899) % 100 < 10) {
-                        subYearString = "0" + (year - 1899) % 100;
-                    } else {
-                        subYearString = "" + (year - 1899) % 100;
-                    }
-                    years.push(year + "-" + subYearString)
-                    year--;
-                }
-                for (let i = 0; i < keyPressedBuilderRef.current.length; i++) {
-                    let tempArray = []
-                    //console.log(keyPressedBuilderRef.current.length)
-                    //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
-                    years.forEach(eachYear => {
-                        if (eachYear.startsWith(keyPressedBuilderRef.current.substring(0, i + 1))) {
-                            tempArray.push(eachYear)
-                        }
-                    })
-                    if (tempArray.length !== 0) {
-                        years = tempArray
-                    }
-                    //console.log(latestArray)
-                }
-                let yearResult = years[0]
-                console.log(yearResult)
-                document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
-                setSelectedYear(document.getElementById(yearResult).textContent, console.log("Set selected year to " + document.getElementById(yearResult).textContent));
-                processYearChange(yearResult)
-        }
-    })
-
-    async function processYearChange(yearResult) {
-        let response = await getActivePlayersData(document.getElementById(yearResult).textContent)
-        //console.log("response")
-        //console.log(response)
-        //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
-        let names = []
-        response.forEach(each => names.push(each.displayname))
-        //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
-        if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
-            let firstPlayer = response[0]
-            setSelectedPlayer({
-                id: firstPlayer.playerinfo.id,
-                playerfirstname: firstPlayer.playerinfo.playerfirstname,
-                playerlastname: firstPlayer.playerinfo.playerlastname
-            })
-            console.log("Selected Player: " + firstPlayer.displayname)
-            getSeasonsData(document.getElementById(yearResult).textContent, firstPlayer.playerinfo.id, firstPlayer.playerinfo.playerfirstname, firstPlayer.playerinfo.playerlastname)
-        } else {
-            getSeasonsData(document.getElementById(yearResult).textContent, selectedPlayerRef.current.id, selectedPlayerRef.current.playerfirstname, selectedPlayerRef.current.playerlastname)
-        }
-
-    }
     //STATE REFS
     const selectedYearRef = useRef({});
     selectedYearRef.current = selectedYear;
@@ -138,10 +32,7 @@ const SimpleSearchBox = (props) => {
     activePlayersRef.current = activePlayers;
     const initPlayersRef = useRef({})
     const initPlayersReverseMapRef = useRef({})
-    const keyPressedStateRef = useRef({});
-    keyPressedStateRef.current = keyPressedState;
-    const keyPressedBuilderRef = useRef({});
-    keyPressedBuilderRef.current = keyPressedBuilder;
+
     let initPlayers = "";
     let initPlayersReverseMap = ""
 
@@ -299,6 +190,7 @@ const SimpleSearchBox = (props) => {
             //console.log("response")
             //console.log(response)
             //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
+            //TRY MAP
             let names = []
             response.forEach(each => names.push(each.displayname))
             //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
@@ -348,9 +240,7 @@ const SimpleSearchBox = (props) => {
                 var openDropdown = dropdowns[i];
                 if (openDropdown.classList.contains('show')) {
                     openDropdown.classList.remove('show');
-                    window.removeEventListener('keydown', keyPressedStateRef.current)
-                    setKeyPressedBuilder("")
-                    console.log("Removing event listener")
+                    props.removeEventListener()
                 }
             }
         }
@@ -362,30 +252,41 @@ const SimpleSearchBox = (props) => {
         //console.log(event)
         hideDD(event);
         var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
+        let shouldAddEventListener = false
+        for (let i = 0; i < dropdowns.length; i++) {
             var dropdown = dropdowns[i];
             if (dropdown.id !== type) {
                 if (dropdown.classList.contains('show')) {
                     dropdown.classList.remove('show');
-                    window.removeEventListener('keydown', keyPressedStateRef.current)
-                    setKeyPressedBuilder("")
-                    console.log("Removing event listener")
+                    //window.removeEventListener('keydown', keyPressedStateRef.current)
+                    //setKeyPressedBuilder("")
+                    //console.log("Removing event listener")
+                    props.removeEventListener()
                 }
             } else {
                 if (dropdown.classList.contains('show')) {
                     dropdown.classList.remove('show');
+                    /*
                     window.removeEventListener('keydown', keyPressedStateRef.current)
                     setKeyPressedBuilder("")
                     console.log("Removing event listener")
+                    */
+                    props.removeEventListener()
                 } else {
+                    /*
                     window.addEventListener('keydown', keyPressedStateRef.current)
                     console.log("Adding event listener")
+                    */
+                    //props.addEventListener()
+                    shouldAddEventListener = true
                     document.getElementById(type).classList.toggle("show")
                 }
                 //window.addEventListener('keydown', keyPressedStateRef.current)
                 // console.log("Adding event listener")
             }
+        }
+        if (shouldAddEventListener) {
+            props.addEventListener()
         }
         //console.log(document.getElementById(type).classList)
         //console.log(keyPressedStateRef.current)
@@ -437,7 +338,28 @@ const SimpleSearchBox = (props) => {
             }
         });
     }, []);
+    async function processYearChange(yearResult) {
+        let response = await getActivePlayersData(document.getElementById(yearResult).textContent)
+        //console.log("response")
+        //console.log(response)
+        //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
+        let names = []
+        response.forEach(each => names.push(each.displayname))
+        //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
+        if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
+            let firstPlayer = response[0]
+            setSelectedPlayer({
+                id: firstPlayer.playerinfo.id,
+                playerfirstname: firstPlayer.playerinfo.playerfirstname,
+                playerlastname: firstPlayer.playerinfo.playerlastname
+            })
+            console.log("Selected Player: " + firstPlayer.displayname)
+            getSeasonsData(document.getElementById(yearResult).textContent, firstPlayer.playerinfo.id, firstPlayer.playerinfo.playerfirstname, firstPlayer.playerinfo.playerlastname)
+        } else {
+            getSeasonsData(document.getElementById(yearResult).textContent, selectedPlayerRef.current.id, selectedPlayerRef.current.playerfirstname, selectedPlayerRef.current.playerlastname)
+        }
 
+    }
     useEffect(() => {
         displayActivePlayers()
     }, [activePlayers])
@@ -445,16 +367,87 @@ const SimpleSearchBox = (props) => {
         displayActiveSeasons()
     }, [activeSeasons])
 
+    useEffect(() => {
+        console.log("props.keyPressedBuilder")
+        //console.log(props.keyPressedBuilder.id)
+        //console.log(typeof (props.keyPressedBuilder.id))
+        let classes = ""
+        if (typeof (props.keyPressedBuilder.id) === 'string') {
+            classes = props.keyPressedBuilder.id
+        } else if (props.keyPressedBuilder.id !== null) {
+            classes = props.keyPressedBuilder.id.baseVal
+        }
+        //console.log(classes)
+        if (classes.indexOf('player-dd') !== -1) {
+            let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
+            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
+                let tempArray = []
+                //console.log(keyPressedBuilderRef.current.length)
+                //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
+                latestArray.forEach(eachPlayer => {
+                    if (eachPlayer.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
+                        // console.log(`Pushing ${eachPlayer}`)
+                        tempArray.push(eachPlayer)
+                    }
+                })
+                if (tempArray.length !== 0) {
+                    latestArray = tempArray
+                }
+                //console.log(latestArray)
+            }
+            let result = latestArray[0]
+            //document.getElementById(result).scrollIntoView({ behavior: 'auto', block: 'nearest' })
+            document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
+            setSelectedPlayer({
+                id: document.getElementById(result).getAttribute('playerid'),
+                playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
+                playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+            }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
+            );
+        }
+        else if (classes.indexOf('year-dd') !== -1) {
+            let year = Number(currentYear.substring(0, 4));
+            let subYearString, years = []
+            while (year >= 1996) {
+                if ((year - 1899) % 100 < 10) {
+                    subYearString = "0" + (year - 1899) % 100;
+                } else {
+                    subYearString = "" + (year - 1899) % 100;
+                }
+                years.push(year + "-" + subYearString)
+                year--;
+            }
+            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
+                let tempArray = []
+                //console.log(keyPressedBuilderRef.current.length)
+                //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
+                years.forEach(eachYear => {
+                    if (eachYear.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
+                        tempArray.push(eachYear)
+                    }
+                })
+                if (tempArray.length !== 0) {
+                    years = tempArray
+                }
+                //console.log(latestArray)
+            }
+            let yearResult = years[0]
+            document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
+            setSelectedYear(document.getElementById(yearResult).textContent, console.log("Set selected year to " + document.getElementById(yearResult).textContent));
+            processYearChange(yearResult)
+        }
+    }, [props.keyPressedBuilder])
+
     return (
         <div className="SimpleSearchBox">
             <div className="search-box-body">
                 <div className="search-box-inner-body">
-                    <h6>Choose your search parameters</h6>
-                    <button class="dropdown-button" id="year-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
-                        <span className="dropdown-button-display">{selectedYear}</span>
-                        <span className="arrow">
-                            <Svg className="arrow-svg" height="20" width="20">
-                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                    <h6 id="choose-parameters-label">Choose your search parameters</h6>
+                    <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
+                        <span className="dropdown-button-display  year-dd">{selectedYear}</span>
+                        <span className="arrow year-dd">
+                            <Svg className="arrow-svg year-dd" height="20" width="20">
+                                <Path className="arrow-path year-dd" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                                 </Path>
                             </Svg>
                         </span>
@@ -463,11 +456,11 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button" id="player-button" onClick={(e) => handleDDButtonClick(e, "player-dd")}>
-                        <span className="dropdown-button-display">{selectedPlayer.playerfirstname} {selectedPlayer.playerlastname}</span>
-                        <span className="arrow">
-                            <Svg className="arrow-svg" height="20" width="20">
-                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                    <button class="dropdown-button player-dd" id="player-button" onClick={(e) => handleDDButtonClick(e, "player-dd")}>
+                        <span className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayer.playerfirstname} {selectedPlayer.playerlastname}</span>
+                        <span className="arrow  player-dd" id="player-dd-arrow">
+                            <Svg className="arrow-svg  player-dd" id="player-dd-arrow-svg" height="20" width="20">
+                                <Path className="arrow-path  player-dd" id="player-dd-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                                 </Path>
                             </Svg>
                         </span>
@@ -510,7 +503,7 @@ const SimpleSearchBox = (props) => {
 
                 </div>
             </div>
-            <ShotPercentageView simpleShotData={shotPercentageData} />
+            <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} />
         </div>
     )
 }

@@ -8,13 +8,13 @@
     color: white;
     height: 40vh;
 }
-.SimpleSearchBox .search-box-body{
+ .search-box-body{
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.SimpleSearchBox .search-box-inner-body {
+.search-box-inner-body {
     text-align: center;
     align-items: center;
 }
@@ -26,6 +26,7 @@
     position: relative;
     width: 70%;
     background-color: white;
+    margin: 4px;
 }
 
 .search-box-body .dropdown-button{
@@ -40,6 +41,8 @@
 
 #run-simple-search-button{
     background-color: rgb(219, 219, 219);
+    font-size: 20px;
+width: auto;
 }
 #run-simple-search-button:hover{
     background-color: white;
@@ -99,9 +102,15 @@
     text-align: left;
     display: inline-block;
     width:20%;
+    padding: 4px;
     position: absolute;
 }
 .dropdown-button-display{
     display: inline-block;
+    padding: 4px;
     min-width: 80%;
+    font-size: 20px;
+}
+#choose-parameters-label{
+    font-family:'MonserratLight' ;
 }
