@@ -5,15 +5,8 @@ import { useEffect, useState, useRef } from "react";
 import Svg, { Path, Line, Rect, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 const SimpleSearchBox = (props) => {
-    const currentYear = '2020-21'
     //STATES
-    const [selectedYear, setSelectedYear] = useState(currentYear);
-    const [selectedPlayer, setSelectedPlayer] = useState({
-        id: 203932,
-        playerfirstname: "Aaron",
-        playerlastname: "Gordon"
-    });
-    const [selectedSeason, setSelectedSeason] = useState("Regular Season");
+
     const [activePlayers, setActivePlayers] = useState([])
     const [activeSeasons, setActiveSeasons] = useState([])
     const [yearDisplay, setYearDisplay] = useState([])
@@ -23,59 +16,18 @@ const SimpleSearchBox = (props) => {
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
     //STATE REFS
     const selectedYearRef = useRef({});
-    selectedYearRef.current = selectedYear;
+    selectedYearRef.current = props.selectedYear;
     const selectedPlayerRef = useRef({});
-    selectedPlayerRef.current = selectedPlayer;
+    selectedPlayerRef.current = props.selectedPlayer;
     const selectedSeasonRef = useRef({});
-    selectedSeasonRef.current = selectedSeason;
+    selectedSeasonRef.current = props.selectedSeason;
     const activePlayersRef = useRef({});
     activePlayersRef.current = activePlayers;
-    const initPlayersRef = useRef({})
-    const initPlayersReverseMapRef = useRef({})
+    const initPlayersReverseMapRef = useRef({});
+    initPlayersReverseMapRef.current = props.initPlayersReverseMap;
 
-    let initPlayers = "";
-    let initPlayersReverseMap = ""
-
-    async function getSearchData(url) {
-        console.log("Fetching " + url)
-        const response = await fetch(url, {
-            method: 'GET'
-        }).then(res => res.json())
-            .then(data => {
-                //console.log("URL RESPONSE FROM " + url + ": ")
-                //console.log(data)
-                return data
-            }).catch(error => console.log('error', error))
-        return response
-    }
-
-    function getInitPlayersData() {
-        let players = {}
-        let playersReverse = {}
-        console.log("getInitPlayersData()")
-        let response = getSearchData("https://customnbashotcharts.com:8443/shots_request?initallplayers=true")
-            .then(res => {
-                for (let i = 0; i < res.initallplayers.length; i++) {
-                    let nameArray = [3]
-                    nameArray[0] = res.initallplayers[i].id;
-                    nameArray[1] = res.initallplayers[i].firstname;
-                    nameArray[2] = res.initallplayers[i].lastname;
-                    players[(res.initallplayers[i].firstname + " " + res.initallplayers[i].lastname).trim()] = nameArray;
-                    playersReverse[res.initallplayers[i].id] = nameArray;
-                }
-                initPlayers = players
-                initPlayersReverseMap = playersReverse
-                //console.log("SETTING initPlayers/initPlayersReverseMap")
-                //console.log(initPlayers)
-                //console.log(initPlayersReverseMap)
-                initPlayersRef.current = initPlayers
-                initPlayersReverseMapRef.current = initPlayersReverseMap
-                return res
-            })
-        return response
-    }
     function getActivePlayersData(year) {
-        let response = getSearchData(`https://customnbashotcharts.com:8443/shots_request?activeplayers=${year}`)
+        let response = props.getSearchData(`https://customnbashotcharts.com:8443/shots_request?activeplayers=${year}`)
             .then(res => {
                 let activePlayersArray = []
                 //let activePlayersJson = {}
@@ -109,8 +61,7 @@ const SimpleSearchBox = (props) => {
     }
 
     async function getSeasonsData(year, playerId, playerFirstName, playerLastName) {
-        // let response = await getSearchData(`http://138.68.52.234:8080/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
-        let response = await getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+        let response = await props.getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 console.log("getSeasonsData()")
                 //console.log(res)
@@ -128,10 +79,10 @@ const SimpleSearchBox = (props) => {
                 //console.log(activeSeasonsRes)
                 if (!activeSeasonsRes.includes(selectedSeasonRef.current)) {
                     if (activeSeasonsRes.includes("Regular Season")) {
-                        setSelectedSeason("Regular Season")
+                        props.setSelectedSeason("Regular Season")
                         console.log("Includes Regular Season")
                     } else {
-                        setSelectedSeason(activeSeasonsRes[activeSeasonsRes.length - 1])
+                        props.setSelectedSeason(activeSeasonsRes[activeSeasonsRes.length - 1])
                         console.log("Does Not Include Regular Season")
                     }
                 }
@@ -183,20 +134,19 @@ const SimpleSearchBox = (props) => {
     async function handleYearButtonClick(event) {
         console.log('handleYearButtonClick()')
         if (event.target.classList.contains("year-display") && selectedYearRef.current !== event.target.textContent) {
-            //console.log("selectedYear: " + selectedYearRef.current + ", " + event.target.textContent)
-            setSelectedYear(event.target.textContent, console.log("Set selected year to " + event.target.textContent));
+            //console.log("selectedYear: " + props.selectedYear + ", " + event.target.textContent)
+            props.setSelectedYear(event.target.textContent, console.log("Set selected year to " + event.target.textContent));
             //console.log("event.target.textContent: " + event.target.textContent)
             let response = await getActivePlayersData(event.target.textContent)
             //console.log("response")
             //console.log(response)
-            //console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
-            //TRY MAP
-            let names = []
-            response.forEach(each => names.push(each.displayname))
-            //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
+            //console.log(props.selectedPlayer.playerfirstname + " " + props.selectedPlayer.playerlastname)
+            let names = response.map(each => each.displayname)
+            console.log(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)
+            console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
             if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
                 let firstPlayer = response[0]
-                setSelectedPlayer({
+                props.setSelectedPlayer({
                     id: firstPlayer.playerinfo.id,
                     playerfirstname: firstPlayer.playerinfo.playerfirstname,
                     playerlastname: firstPlayer.playerinfo.playerlastname
@@ -210,96 +160,32 @@ const SimpleSearchBox = (props) => {
     }
     async function handlePlayerButtonClick(event) {
         console.log('handlePlayerButtonClick()')
-        if (event.target.classList.contains("player-display") && selectedPlayer !== event.target.textContent) {
+        if (event.target.classList.contains("player-display") && selectedPlayerRef.current !== event.target.textContent) {
             //console.log(initPlayersReverseMapRef.current)
             //console.log(event.target.getAttribute('playerid'))
-            setSelectedPlayer({
+            //console.log(props.initPlayersReverseMap)
+            //console.log(initPlayersReverseMapRef.current)
+            props.setSelectedPlayer({
                 id: event.target.getAttribute('playerid'),
                 playerfirstname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][1],
                 playerlastname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][2]
             }, console.log("Set selected player to " + event.target.textContent));
-            getSeasonsData(selectedYearRef.current, initPlayersRef.current[event.target.textContent][0], initPlayersRef.current[event.target.textContent][1], initPlayersRef.current[event.target.textContent][2])
+            getSeasonsData(selectedYearRef.current, props.initPlayers[event.target.textContent][0], props.initPlayers[event.target.textContent][1], props.initPlayers[event.target.textContent][2])
         }
     }
     async function handleSeasonButtonClick(event) {
         console.log('handleSeasonButtonClick()')
-        console.log(`selectedSeason: ${selectedSeasonRef.current}`)
-        console.log(`event.target.textContent: ${event.target.textContent}`)
-        console.log(event.target.classList.contains("season-display"))
+        // console.log(`selectedSeason: ${selectedSeasonRef.current}`)
+        // console.log(`event.target.textContent: ${event.target.textContent}`)
+        //console.log(event.target.classList.contains("season-display"))
         if (event.target.classList.contains("season-display") && selectedSeasonRef.current !== event.target.textContent) {
             console.log(`Setting season to ${event.target.textContent}`)
-            setSelectedSeason(event.target.textContent)
+            props.setSelectedSeason(event.target.textContent)
         }
     }
-
-    function hideDD(event) {
-        //console.log(event.target)
-        if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button-display') && !event.target.matches('.arrow-path') && !event.target.matches('.arrow-svg') && !event.target.matches('.arrow')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (let i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
-                    props.removeEventListener()
-                }
-            }
-        }
-    }
-    window.onclick = hideDD;
-
-    function handleDDButtonClick(event, type) {
-        console.log("handleDDButtonClick()")
-        //console.log(event)
-        hideDD(event);
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        let shouldAddEventListener = false
-        for (let i = 0; i < dropdowns.length; i++) {
-            var dropdown = dropdowns[i];
-            if (dropdown.id !== type) {
-                if (dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                    //window.removeEventListener('keydown', keyPressedStateRef.current)
-                    //setKeyPressedBuilder("")
-                    //console.log("Removing event listener")
-                    props.removeEventListener()
-                }
-            } else {
-                if (dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                    /*
-                    window.removeEventListener('keydown', keyPressedStateRef.current)
-                    setKeyPressedBuilder("")
-                    console.log("Removing event listener")
-                    */
-                    props.removeEventListener()
-                } else {
-                    /*
-                    window.addEventListener('keydown', keyPressedStateRef.current)
-                    console.log("Adding event listener")
-                    */
-                    //props.addEventListener()
-                    shouldAddEventListener = true
-                    document.getElementById(type).classList.toggle("show")
-                }
-                //window.addEventListener('keydown', keyPressedStateRef.current)
-                // console.log("Adding event listener")
-            }
-        }
-        if (shouldAddEventListener) {
-            props.addEventListener()
-        }
-        //console.log(document.getElementById(type).classList)
-        //console.log(keyPressedStateRef.current)
-
-    };
 
     async function runSimpleSearch() {
         console.log("runSimpleSearch()")
-        //props.setIsLoading(true)
-        // console.log(initPlayersReverseMapRef.current)
-        // console.log(selectedPlayerRef.current)
-        // console.log(selectedPlayerRef.current.id)
-        //console.log(initPlayersReverseMapRef.current[selectedPlayerRef.current.id])
         let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log("Fetching " + url)
         const response = await fetch(url, {
@@ -326,11 +212,9 @@ const SimpleSearchBox = (props) => {
     }
 
     useEffect(() => {
-        getInitPlayersData().then(res => {
-            getActivePlayersData(currentYear)
-            getSeasonsData(currentYear, selectedPlayer.id, selectedPlayer.playerfirstname, selectedPlayer.playerlastname)
-        })
-        displayAllYears(currentYear)
+        getActivePlayersData(props.currentYear)
+        getSeasonsData(props.currentYear, selectedPlayerRef.current.id, selectedPlayerRef.current.playerfirstname, selectedPlayerRef.current.playerlastname)
+        displayAllYears(props.currentYear)
         window.addEventListener('keydown', function (event) {
             if (event.keyCode == 32) {
                 console.log("SPACEBAR")
@@ -348,7 +232,7 @@ const SimpleSearchBox = (props) => {
         //console.log(names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname))
         if (!names.includes(selectedPlayerRef.current.playerfirstname + " " + selectedPlayerRef.current.playerlastname)) {
             let firstPlayer = response[0]
-            setSelectedPlayer({
+            props.props.setSelectedPlayer({
                 id: firstPlayer.playerinfo.id,
                 playerfirstname: firstPlayer.playerinfo.playerfirstname,
                 playerlastname: firstPlayer.playerinfo.playerlastname
@@ -368,7 +252,7 @@ const SimpleSearchBox = (props) => {
     }, [activeSeasons])
 
     useEffect(() => {
-        console.log("props.keyPressedBuilder")
+        //console.log("props.keyPressedBuilder")
         //console.log(props.keyPressedBuilder.id)
         //console.log(typeof (props.keyPressedBuilder.id))
         let classes = ""
@@ -398,15 +282,15 @@ const SimpleSearchBox = (props) => {
             let result = latestArray[0]
             //document.getElementById(result).scrollIntoView({ behavior: 'auto', block: 'nearest' })
             document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
-            setSelectedPlayer({
+            props.setSelectedPlayer({
                 id: document.getElementById(result).getAttribute('playerid'),
-                playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
-                playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
-            }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
+                playerfirstname: props.initPlayersReverseMap[document.getElementById(result).getAttribute('playerid')][1],
+                playerlastname: props.initPlayersReverseMap[document.getElementById(result).getAttribute('playerid')][2]
+            }, getSeasonsData(selectedYearRef.current, props.initPlayers[document.getElementById(result).textContent][0], props.initPlayers[document.getElementById(result).textContent][1], props.initPlayers[document.getElementById(result).textContent][2])
             );
         }
         else if (classes.indexOf('year-dd') !== -1) {
-            let year = Number(currentYear.substring(0, 4));
+            let year = Number(props.currentYear.substring(0, 4));
             let subYearString, years = []
             while (year >= 1996) {
                 if ((year - 1899) % 100 < 10) {
@@ -433,18 +317,23 @@ const SimpleSearchBox = (props) => {
             }
             let yearResult = years[0]
             document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
-            setSelectedYear(document.getElementById(yearResult).textContent, console.log("Set selected year to " + document.getElementById(yearResult).textContent));
+            props.setSelectedYear(document.getElementById(yearResult).textContent);
             processYearChange(yearResult)
         }
     }, [props.keyPressedBuilder])
+
+    useEffect(() => {
+        console.log("SELECTED PLAYER")
+        console.log(props.selectedPlayer)
+    }, [props.selectedPlayer])
 
     return (
         <div className="SimpleSearchBox">
             <div className="search-box-body">
                 <div className="search-box-inner-body">
-                    <h6 id="choose-parameters-label">Choose your search parameters</h6>
-                    <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { handleDDButtonClick(e, "season-dd") }}>
-                        <span className="dropdown-button-display  year-dd">{selectedYear}</span>
+                    <h6 className="choose-parameters-label">Choose your search parameters</h6>
+                    <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { props.handleDDButtonClick(e, "season-dd") }}>
+                        <span className="dropdown-button-display  year-dd">{selectedYearRef.current}</span>
                         <span className="arrow year-dd">
                             <Svg className="arrow-svg year-dd" height="20" width="20">
                                 <Path className="arrow-path year-dd" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
@@ -456,8 +345,8 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button player-dd" id="player-button" onClick={(e) => handleDDButtonClick(e, "player-dd")}>
-                        <span className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayer.playerfirstname} {selectedPlayer.playerlastname}</span>
+                    <button class="dropdown-button player-dd" id="player-button" onClick={(e) => props.handleDDButtonClick(e, "player-dd")}>
+                        <span className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayerRef.current.playerfirstname} {selectedPlayerRef.current.playerlastname}</span>
                         <span className="arrow  player-dd" id="player-dd-arrow">
                             <Svg className="arrow-svg  player-dd" id="player-dd-arrow-svg" height="20" width="20">
                                 <Path className="arrow-path  player-dd" id="player-dd-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
@@ -469,8 +358,8 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button" id="season-type-button" onClick={(e) => handleDDButtonClick(e, "season-type-dd")}>
-                        <span className="dropdown-button-display">{selectedSeason}</span>
+                    <button class="dropdown-button" id="season-type-button" onClick={(e) => props.handleDDButtonClick(e, "season-type-dd")}>
+                        <span className="dropdown-button-display">{selectedSeasonRef.current}</span>
                         <span className="arrow">
                             <Svg className="arrow-svg" height="20" width="20">
                                 <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
@@ -482,7 +371,7 @@ const SimpleSearchBox = (props) => {
                         </div>
                     </button>
                     <br></br>
-                    <button class="dropdown-button" id="view-selector" onClick={e => handleDDButtonClick(e, "view-selection-dd")}>
+                    <button class="dropdown-button" id="view-selector" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
                         <span className="dropdown-button-display">{latestSimpleViewType}</span>
                         <span className="arrow">
                             <Svg className="arrow-svg" height="20" width="20">

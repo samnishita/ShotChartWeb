@@ -7,6 +7,8 @@ import SearchTypeButtons from './SearchTypeButtons';
 import React, { useEffect, useState, useRef } from 'react';
 
 const App = () => {
+  const currentYear = '2020-21'
+
   const [latestSimpleSearchData, setLatestSimpleSearchData] = useState()
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
   const [latestAdvancedSearchData, setLatestAdvancedSearchData] = useState()
@@ -20,7 +22,13 @@ const App = () => {
     handleKeyPressed(event)
   })
   const [keyPressedBuilder, setKeyPressedBuilder] = useState({ id: null, builder: "" })
-
+  const [simpleSelectedYear, setSimpleSelectedYear] = useState(currentYear);
+  const [simpleSelectedPlayer, setSimpleSelectedPlayer] = useState({
+    id: 203932,
+    playerfirstname: "Aaron",
+    playerlastname: "Gordon"
+  });
+  const [simpleSelectedSeason, setSimpleSelectedSeason] = useState("Regular Season");
   const latestSimpleViewTypeRef = useRef({});
   latestSimpleViewTypeRef.current = latestSimpleViewType;
   const isLoadingRef = useRef({});
@@ -31,6 +39,18 @@ const App = () => {
   keyPressedStateRef.current = keyPressedState;
   const keyPressedBuilderRef = useRef({});
   keyPressedBuilderRef.current = keyPressedBuilder;
+  const [initPlayers, setInitPlayers] = useState([])
+  const [initPlayersReverseMap, setInitPlayersReverseMap] = useState([])
+  const initPlayersRef = useRef({})
+  initPlayersRef.current = initPlayers
+  const initPlayersReverseMapRef = useRef({})
+  initPlayersReverseMapRef.current = initPlayersReverseMap
+  const simpleSelectedYearRef = useRef({});
+  simpleSelectedYearRef.current = simpleSelectedYear;
+  const simpleSelectedPlayerRef = useRef({});
+  simpleSelectedPlayerRef.current = simpleSelectedPlayer;
+  const simpleSelectedSeasonRef = useRef({});
+  simpleSelectedSeasonRef.current = simpleSelectedSeason;
   const [whichSearchBox, setWhichSearchBox] = useState(
     <SimpleSearchBox
       updateLatestSimpleSearchData={processSimpleSearchData}
@@ -42,21 +62,54 @@ const App = () => {
       setAllSearchData={setAllSearchData}
       isCurrentViewSimple={isCurrentViewSimple}
       keyPressedBuilder={keyPressedBuilderRef.current}
-      removeEventListener={() => {
-        window.removeEventListener('keydown', keyPressedStateRef.current)
-        setKeyPressedBuilder({ id: null, builder: "" })
-        console.log("Removing event listener")
-      }}
-      addEventListener={() => {
-        window.addEventListener('keydown', keyPressedStateRef.current)
-        console.log("Adding event listener")
-      }}
+      handleDDButtonClick={handleDDButtonClick}
+      currentYear={currentYear}
+      getSearchData={getSearchData}
+      initPlayers={initPlayersRef.current}
+      initPlayersReverseMap={initPlayersReverseMapRef.current}
+      selectedPlayer={simpleSelectedPlayerRef.current}
+      setSelectedPlayer={setSimpleSelectedPlayer}
+      selectedSeason={simpleSelectedSeasonRef.current}
+      setSelectedSeason={setSimpleSelectedSeason}
+      selectedYear={simpleSelectedYearRef.current}
+      setSelectedYear={setSimpleSelectedYear}
     />)
   const whichSearchBoxRef = useRef({});
   whichSearchBoxRef.current = whichSearchBox;
 
+  function getInitPlayersData() {
+    let players = {}
+    let playersReverse = {}
+    console.log("getInitPlayersData()")
+    let response = getSearchData("https://customnbashotcharts.com:8443/shots_request?initallplayers=true")
+      .then(res => {
+        for (let i = 0; i < res.initallplayers.length; i++) {
+          let nameArray = [res.initallplayers[i].id, res.initallplayers[i].firstname, res.initallplayers[i].lastname]
+          players[(res.initallplayers[i].firstname + " " + res.initallplayers[i].lastname).trim()] = nameArray;
+          playersReverse[res.initallplayers[i].id] = nameArray;
+        }
+        setInitPlayers(players)
+        setInitPlayersReverseMap(playersReverse)
+        //console.log(players)
+        //console.log(playersReverse)
+        return res
+      })
+    return response
+  }
+  async function getSearchData(url) {
+    console.log("Fetching " + url)
+    const response = await fetch(url, {
+      method: 'GET'
+    }).then(res => res.json())
+      .then(data => {
+        //console.log("URL RESPONSE FROM " + url + ": ")
+        //console.log(data)
+        return data
+      }).catch(error => console.log('error', error))
+    return response
+  }
   function handleKeyPressed(event) {
-    console.log("KEYDOWN")
+    //console.log("KEYDOWN")
     //console.log(`${event.keyCode}: ${String.fromCharCode(event.keyCode)}`)
     //console.log(event.target.className)
     //console.log(activePlayersRef.current)
@@ -72,7 +125,7 @@ const App = () => {
       string = keyPressedBuilderRef.current.builder + String.fromCharCode(event.keyCode)
     }
     if (string) {
-      console.log(string)
+      //console.log(string)
       setKeyPressedBuilder({
         id: event.target.className,
         builder: string
@@ -85,44 +138,114 @@ const App = () => {
   }
 
   function handleSimpleClick() {
-    if (whichSearchBox !== <SimpleSearchBox />) {
-      setWhichSearchBox(<SimpleSearchBox updateLatestSimpleSearchData={processSimpleSearchData}
-        updateLatestSimpleViewType={(inputViewType) => setLatestSimpleViewType(inputViewType, console.log("Updated view type with " + inputViewType))}
-        latestSimpleViewType={latestSimpleViewTypeRef.current} setTitle={setTitle} setIsLoading={setIsLoading} setAllSearchData={setAllSearchData} isCurrentViewSimple={isCurrentViewSimple} />)
-      setIsCurrentViewSimple(true)
-    }
+    setIsCurrentViewSimple(true)
   }
 
   function handleAdvancedClick() {
-    if (whichSearchBox !== <AdvancedSearchBox />) {
-      setWhichSearchBox(<AdvancedSearchBox />)
-      setIsCurrentViewSimple(false)
-    }
+    setIsCurrentViewSimple(false)
+  }
+  function removeEventListener() {
+    window.removeEventListener('keydown', keyPressedStateRef.current)
+    setKeyPressedBuilder({ id: null, builder: "" })
+    console.log("Removing event listener")
   }
 
+  function addEventListener() {
+    window.addEventListener('keydown', keyPressedStateRef.current)
+    console.log("Adding event listener")
+  }
+
+  function hideDD(event) {
+    console.log("hideDD()")
+    //console.log(event.target)
+    if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button-display') && !event.target.matches('.arrow-path') && !event.target.matches('.arrow-svg') && !event.target.matches('.arrow')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      for (let i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+          removeEventListener()
+        }
+      }
+    }
+  }
+  window.onclick = hideDD;
+
+  function handleDDButtonClick(event, type) {
+    console.log("handleDDButtonClick()")
+    hideDD(event);
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    let shouldAddEventListener = false
+    for (let i = 0; i < dropdowns.length; i++) {
+      var dropdown = dropdowns[i];
+      if (dropdown.id !== type) {
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+          removeEventListener()
+        }
+      } else {
+        console.log(dropdown)
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+          removeEventListener()
+        } else {
+          shouldAddEventListener = true
+          document.getElementById(type).classList.toggle("show")
+        }
+      }
+    }
+    if (shouldAddEventListener) {
+      addEventListener()
+    }
+  };
+  function determineWhichView() {
+    if (isCurrentViewSimple) {
+      setWhichSearchBox(<SimpleSearchBox
+        updateLatestSimpleSearchData={processSimpleSearchData}
+        updateLatestSimpleViewType={(inputViewType) => {
+          setLatestSimpleViewType(inputViewType, console.log("Updated view type with " + inputViewType))
+        }}
+        latestSimpleViewType={latestSimpleViewTypeRef.current}
+        setTitle={setTitle} setIsLoading={setIsLoading}
+        setAllSearchData={setAllSearchData}
+        isCurrentViewSimple={isCurrentViewSimple}
+        keyPressedBuilder={keyPressedBuilderRef.current}
+        handleDDButtonClick={handleDDButtonClick}
+        currentYear={currentYear}
+        getSearchData={getSearchData}
+        initPlayers={initPlayersRef.current}
+        initPlayersReverseMap={initPlayersReverseMapRef.current}
+        selectedPlayer={simpleSelectedPlayerRef.current}
+        setSelectedPlayer={setSimpleSelectedPlayer}
+        selectedSeason={simpleSelectedSeasonRef.current}
+        setSelectedSeason={setSimpleSelectedSeason}
+        selectedYear={simpleSelectedYearRef.current}
+        setSelectedYear={setSimpleSelectedYear}
+      />)
+    } else {
+      setWhichSearchBox(<AdvancedSearchBox
+        isCurrentViewSimple={isCurrentViewSimple}
+        keyPressedBuilder={keyPressedBuilderRef.current}
+        handleDDButtonClick={handleDDButtonClick}
+      />)
+    }
+  }
   useEffect(() => {
-    // console.log(whichSearchBox)
-    setWhichSearchBox(<SimpleSearchBox
-      updateLatestSimpleSearchData={processSimpleSearchData}
-      updateLatestSimpleViewType={(inputViewType) => {
-        setLatestSimpleViewType(inputViewType, console.log("Updated view type with " + inputViewType))
-      }}
-      latestSimpleViewType={latestSimpleViewTypeRef.current}
-      setTitle={setTitle} setIsLoading={setIsLoading}
-      setAllSearchData={setAllSearchData}
-      isCurrentViewSimple={isCurrentViewSimple}
-      keyPressedBuilder={keyPressedBuilderRef.current}
-      removeEventListener={() => {
-        window.removeEventListener('keydown', keyPressedStateRef.current)
-        setKeyPressedBuilder({ id: null, builder: "" })
-        console.log("Removing event listener")
-      }}
-      addEventListener={() => {
-        window.addEventListener('keydown', keyPressedStateRef.current)
-        console.log("Adding event listener")
-      }}
-    />)
+    getInitPlayersData().then(res => {
+      determineWhichView()
+    })
+
+  }, [])
+  useEffect(() => {
+    console.log(`useEffect for keyPressedBuilder`)
+    console.log(isCurrentViewSimple)
+    determineWhichView()
   }, [keyPressedBuilder])
+  useEffect(() => {
+    console.log("HERE")
+    determineWhichView()
+  }, [isCurrentViewSimple, simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer])
+
 
   return (
     <div className="App">
