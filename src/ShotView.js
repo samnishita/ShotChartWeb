@@ -6,6 +6,7 @@ import Svg, { Circle, Path, Line, Rect, Defs, LinearGradient, RadialGradient, St
 import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
+    console.log("RERENDER ShotView")
     const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
     const [allGridTiles, setAllGridTiles] = useState([])
     const [allHeatTiles, setAllHeatTiles] = useState([])
@@ -34,7 +35,6 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for props.latestAdvancedViewType")
-        console.log(props.latestAdvancedViewType)
     }, [props.latestAdvancedViewType])
 
     useEffect(() => {
@@ -44,54 +44,41 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log(`useEffect for localViewType`)
-        //console.log(localViewType)
         //Initial case
         if (!allShotsRef.current && whatToDisplay.length === 0) {
 
         }//Click button after running search
         else if (allShotsRef.current.shots && !props.isLoading) {
-            console.log("Setting isLoading to true from useEffect(localViewType)")
-            //setWhatToDisplay([])
             props.setIsLoading(true)
         } else if (allShotsRef.current.shots && allShotsRef.current.length !== 0 && props.isLoading) {
             setWhatToDisplay([])
         } else if (allShotsRef.current.length === 0 && props.isLoading) {
-            let load = makeLoadingAnimation()
-            setLoadingAnimation(load)
+            setLoadingAnimation(makeLoadingAnimation())
         }
     }, [localViewType])
 
     useEffect(() => {
         console.log("useEffect for props.allSearchData")
-        console.log(props.allSearchData)
         setAllShots(props.allSearchData)
         if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
-            //console.log(props.allSearchData.view)
             setAllGridTiles([])
         }
     }, [props.allSearchData])
 
     useEffect(() => {
         console.log("useEffect for props.isLoading")
-        //console.log(`isLoading: ${props.isLoading}`)
         if (props.isLoading) {
-            console.log("Setting whatToDisplay to [] from useEffect(isLoading)")
             setWhatToDisplay([])
         } else {
-            console.log("Making Loading Animation from useEffect(isLoading)")
-            let load = makeLoadingAnimation()
-            setLoadingAnimation(load)
+            setLoadingAnimation(makeLoadingAnimation())
         }
     }, [props.isLoading])
 
     useEffect(() => {
         console.log("useEffect for loadingAnimation")
-        //console.log(loadingAnimation)
         setTimeout(() => {
             console.log("TIMEOUT")
             if (allShotsRef.current && allShotsRef.current.length !== 0 && whatToDisplay.length === 0) {
-                //console.log(document.getElementById("loadingAnimation"))
-                console.log("Generating whatToDisplay from useEffect(loadingAnimation)")
                 generateWhatToDisplay()
             }
         }, 100)
@@ -99,35 +86,26 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
-        console.log(whatToDisplay)
-        console.log(allShotsRef.current)
         if (allShotsRef.current && allShotsRef.current.shots !== null && whatToDisplay.length !== 0) {
             if (typeof (whatToDisplay) === 'object') {
-                console.log("Setting isLoading to false from useEffect(whatToDisplay)")
                 props.setIsLoading(false)
             }
             //Switching view of current shots
         } else if (allShotsRef.current && whatToDisplay.length === 0) {
             if (props.isLoading) {
-                console.log("Making LoadingAnimation from useEffect(whatToDisplay)")
-                let load = makeLoadingAnimation()
-                setLoadingAnimation(load)
+                setLoadingAnimation(makeLoadingAnimation())
             } else {
                 console.log("Setting isLoading to true from useEffect(whatToDisplay)")
                 props.setIsLoading(true)
             }
         } else {
-            //console.log(localViewType)
-            //console.log(localViewTypeRef.current)
             chooseCourt(localViewType.type)
         }
     }, [whatToDisplay])
 
     useEffect(() => {
         console.log("useEffect for allGridTiles")
-        console.log(allGridTiles)
         if (allGridTiles.length !== 0) {
-            // console.log(resizeGrid())
             setWhatToDisplay(resizeGrid())
         } else {
             setAllHeatTiles([])
@@ -136,24 +114,16 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
-        //console.log(allHeatTiles)
         if (allHeatTiles.length !== 0) {
-            // console.log(resizeHeat())
             setWhatToDisplay(resizeHeat())
         } else {
             if (allShotsRef.current && allShotsRef.current.length !== 0) {
-                console.log(allShotsRef.current.shots)
                 setLocalViewType({ type: allShotsRef.current.view, isOriginal: true })
             } else if (allShotsRef.current && allShotsRef.current.length === 0 && !props.isCurrentViewSimple) {
-                console.log("Preset localViewType")
                 setLocalViewType({ type: props.latestAdvancedViewType, isOriginal: true })
             }
         }
     }, [allHeatTiles])
-
-    useEffect(() => {
-        console.log("RERENDER")
-    })
 
     function hideElement(elementId) {
         if (document.getElementById(elementId).classList.contains('show')) {
@@ -170,7 +140,6 @@ const ShotView = (props) => {
         switch (view) {
             case "Traditional":
                 if (typeof (allShotsRef.current) === 'undefined') {
-                    //if (typeof (allShotsRef.current) === 'undefined') {
                     showElement("transparent-court")
                     hideElement("trad-court")
                     hideElement("transparent-court-on-top")
@@ -210,7 +179,6 @@ const ShotView = (props) => {
 
     function generateWhatToDisplay() {
         let buffer = []
-        //console.log(allShotsRef.current)
         buffer.push(determineView(localViewTypeRef.current.type))
         let zoneLabels = generateZoneLabels(localViewTypeRef.current.type)
         if (zoneLabels) {
@@ -221,13 +189,10 @@ const ShotView = (props) => {
 
     function handleResize() {
         console.log("handleResize()")
-        //console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
         if (size[0] !== window.innerHeight || size[1] !== window.innerWidth) {
             console.log("Size Not Okay")
             console.log(`${window.innerHeight}!=${size[0]} OR ${window.innerWidth}!=${size[1]}`)
             setWindowSize([window.innerHeight, window.innerWidth])
-            // console.log("props.latestSimpleViewType: " + latestSimpleViewTypeRef.current)
-            // console.log("props.latestSimpleViewType: " + props.latestSimpleViewType)
             console.log(`Resizing with ${localViewTypeRef.current.type}`)
             generateWhatToDisplay()
         } else {
@@ -237,11 +202,10 @@ const ShotView = (props) => {
     }
 
     function resizeGrid() {
-        //console.log(allGridTilesRef.current.length)
+        console.log("resizeGrid()")
         if (allGridTiles.length > 0) {
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
-            //console.log(`height: ${height}, width: ${width}`)
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
             let squareSize = width / 50;
@@ -261,22 +225,16 @@ const ShotView = (props) => {
     }
     function displayTraditional() {
         console.log("displayTraditional()")
-        // console.log(allShots)
-        console.log(allShotsRef.current)
         let tradArray = []
-        // console.log(allShotsRef.current)
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let searchType = Object.keys(allShotsRef.current.shots)[0]
             let allShotsTemp = allShotsRef.current.shots[searchType]
-            //console.log(props.isCurrentViewSimple)
             const height = document.getElementById('trad-court').clientHeight
             const width = document.getElementById('trad-court').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
             const rad = 5 * height / 470;
             const strokeWidth = 2 * height / 470
-            // console.log("height: " + height)
-            // console.log("width: " + width)
             let counter = 0;
             allShotsTemp.forEach(each => {
                 if (each.y <= 410 && counter < 7500) {
@@ -298,17 +256,13 @@ const ShotView = (props) => {
                     {tradArray}
                 </Svg>
             </div>)
-            // console.log(tradArrayWrapper)
         }
-        // console.log("Returning Traditional")
-        //console.log(tradArray)
         return tradArray
     }
 
     function determineView(viewType) {
         console.log("Determining viewtype: " + viewType)
         chooseCourt(viewType)
-        let response;
         switch (viewType) {
             case "Traditional":
                 console.log("Displaying Traditional")
@@ -329,16 +283,11 @@ const ShotView = (props) => {
                 }
                 return resizeHeat()
         }
-        //console.log("Returning: ")
-        //console.log(response)
         return <div></div>
     }
 
     function displayGrid() {
-        //console.log("gridAverages before: ")
-        //console.log(gridAverages)
-        //console.log(typeof (gridAverages))
-        console.log(allShotsRef.current)
+        console.log("displayGrid()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
             let allTiles = {}
@@ -349,7 +298,6 @@ const ShotView = (props) => {
                 }
             }
             let factor = 0.007;
-            //console.log(allTiles)
             let shots = allShotsTemp.filter(param => param.y <= 400)
             let shotCounter = allShotsTemp.length
             Object.keys(allTiles).forEach(eachTile => {
@@ -372,13 +320,11 @@ const ShotView = (props) => {
             let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = 20, calcDistance = 0;
             let tileValues = {}
             let min = 1, minFactor = 0.00045;
-            // console.log("shotCounter: " + shotCounter)
             if (shotCounter * minFactor > 1) {
                 min = shotCounter * minFactor;
             } else {
                 factor = 4.1008 * Math.pow(shotCounter, -0.798);
             }
-            //console.log("factor: " + factor)
             let maxShotsPerMaxSquare = 0;
             maxShotsPerMaxSquare = factor * shotCounter;
             if (maxShotsPerMaxSquare == 0) {
@@ -399,22 +345,15 @@ const ShotView = (props) => {
                     })
                     tileValues[eachTile] = aSum / bSum;
                     let squareSide = 0
-                    //console.log("allTiles[eachTile].shotinfo[1]: " + allTiles[eachTile].shotinfo[1])
                     let eachTileShotCount = allTiles[eachTile].shotinfo[1]
-                    //console.log("eachTileShotCount: " + eachTileShotCount)
                     if (eachTileShotCount < maxShotsPerMaxSquare && eachTileShotCount > min) {
                         squareSide = eachTileShotCount / maxShotsPerMaxSquare
-                        //squareSide = eachTileShotCount / maxShotsPerMaxSquare * squareSize * 0.9
                     } else if (eachTileShotCount > maxShotsPerMaxSquare) {
-                        //squareSide = squareSize * 0.9
                         squareSide = 1
                     }
-                    //console.log("squareSide: " + squareSide)
                     temp = "(" + allTiles[eachTile].x + "," + allTiles[eachTile].y + ")";
                     avg = gridAveragesRef.current[temp]
-                    //console.log("avg: " + avg)
                     let tileFill = ""
-                    //console.log("tileValues[eachTile]: " + tileValues[eachTile])
                     if (tileValues[eachTile] > avg + 0.07) {
                         tileFill = "#fc2121"
                     } else if (tileValues[eachTile] > avg + 0.05 && tileValues[eachTile] <= avg + 0.07) {
@@ -439,7 +378,6 @@ const ShotView = (props) => {
                 }
             })
             setAllGridTiles(squareElements)
-            //console.log(squareElements)
         }
     }
 
@@ -459,18 +397,17 @@ const ShotView = (props) => {
     }
 
     async function getSearchData(url) {
-        console.log("Fetching " + url)
+        console.log(`getSearchData(${url})`)
         const response = await fetch(url, {
             method: 'GET'
         }).then(res => res.json())
             .then(data => {
-                //console.log("URL RESPONSE FROM " + url + ": ")
-                //console.log(data)
                 return data
             }).catch(error => console.log('error', error))
         return response
     }
     function generateZoneLabels(view) {
+        console.log(`generateZoneLabels(${view})`)
         if (allShotsRef.current && view === "Zone") {
             let allZones = mapShotsToZones()
             let zoneLabels = []
@@ -553,6 +490,7 @@ const ShotView = (props) => {
     }
 
     function mapShotsToZones() {
+        console.log("mapShotsToZones()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
@@ -691,18 +629,15 @@ const ShotView = (props) => {
     }
 
     function displayZone() {
+        console.log("displayZone()")
         if (allShotsRef.current) {
             let allZones = mapShotsToZones()
-            //console.log(allZones)
             let coloredZones = []
             let fill = ""
-            //console.log(zoneAverages)
             const height = document.getElementById('transparent-court-on-top').clientHeight
             const width = document.getElementById('transparent-court-on-top').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
-            // console.log(`height: ${height}`)
-            //console.log(`width: ${width}`)
             for (let i = 1; i < allZones.length; i++) {
                 if (allZones[i][1] === 0) {
                     fill = "rgba(178,178,178, 1)"
@@ -819,48 +754,33 @@ const ShotView = (props) => {
     }
     function displayHeat() {
         console.log("displayHeat()")
-        // console.log(allShotsRef.current)
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
-            //console.log(allShotsTemp)
             let allTiles = {}
             for (let x = -250; x <= 250; x++) {
                 for (let y = -55; y < 400; y++) {
                     allTiles[`tile_${x}_${y}`] = { x: x, y: y, shotinfo: [0.0, 0.0, 0.0] }
                 }
             }
-            //console.log("FILTER")
             let shots = allShotsTemp.filter(param => param.y < 400)
             let shotCounter = allShotsTemp.length
-            //console.log(shots)
-            ///console.log("SHOTS FOREACH")
             shots.forEach(eachShot => {
-                //console.log(eachShot)
-                // setTimeout(() => {
                 allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] = allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] + 1
                 if (eachShot.make === 1) {
                     allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[0] = allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[0] + 1
                 }
-                // }, 100)
             })
-
-            //console.log("ALLTILES FOREACH")
             Object.values(allTiles).forEach(each => {
                 if (each.shotinfo[1] !== 0) {
                     each.shotinfo[2] = each.shotinfo[0] / each.shotinfo[1]
-                    //console.log(each)
                 }
             })
             let aSum = 0, bSum = 0, p = 2, offset = 15, maxDistanceBetweenNodes = 30
             let tileValues = {}
-            //console.log("ALLTILES FOREACH 2")
             let allKeys = Object.keys(allTiles)
-            //console.log("GATHERED ALLKEYS")
-            //console.log(allKeys.length)
             let counter = 0;
             while (counter < allKeys.length) {
                 if (allTiles[allKeys[counter]].x % offset === 0 && (allTiles[allKeys[counter]].y) % offset === 0) {
-                    //console.log(`OUTER LOOP: ${allTiles[allKeys[counter]].x}, ${allTiles[allKeys[counter]].y}`)
                     aSum = 0;
                     bSum = 0;
                     let lowerBoundX = allTiles[allKeys[counter]].x - maxDistanceBetweenNodes >= -250 ? allTiles[allKeys[counter]].x - maxDistanceBetweenNodes : -250
@@ -869,10 +789,8 @@ const ShotView = (props) => {
                     let upperBoundY = allTiles[allKeys[counter]].y + maxDistanceBetweenNodes < 400 ? allTiles[allKeys[counter]].y + maxDistanceBetweenNodes : 399
                     for (let i = lowerBoundX; i <= upperBoundX; i++) {
                         for (let j = lowerBoundY; j <= upperBoundY; j++) {
-                            //console.log(allTiles[`tile_${i}_${j}`])
                             let calcDistance = getDistance(allTiles[allKeys[counter]], allTiles[`tile_${i}_${j}`])
                             if (calcDistance < maxDistanceBetweenNodes && calcDistance > 0) {
-                                //console.log(`INNER LOOP: ${allTiles[`tile_${i}_${j}`].x}, ${allTiles[`tile_${i}_${j}`].y}`)
                                 aSum = aSum + (allTiles[`tile_${i}_${j}`].shotinfo[1] * calcDistance / Math.pow(calcDistance, p));
                                 bSum = bSum + (1 / Math.pow(calcDistance, p));
                             }
@@ -880,42 +798,8 @@ const ShotView = (props) => {
                     }
                     tileValues[allKeys[counter]] = aSum / bSum;
                 }
-                // }, 100);
                 counter++;
             }
-            /*
-            allKeys.forEach(eachTile => {
-                setTimeout(() => {
-                    if (allTiles[eachTile].x % offset === 0 && (allTiles[eachTile].y) % offset === 0) {
-                        console.log(`OUTER LOOP: ${allTiles[eachTile].x}, ${allTiles[eachTile].y}`)
-                        aSum = 0;
-                        bSum = 0;
-                        let lowerBoundX = allTiles[eachTile].x - maxDistanceBetweenNodes >= -250 ? allTiles[eachTile].x - maxDistanceBetweenNodes : -250
-                        let upperBoundX = allTiles[eachTile].x + maxDistanceBetweenNodes < 250 ? allTiles[eachTile].x + maxDistanceBetweenNodes : 249
-                        let lowerBoundY = allTiles[eachTile].y - maxDistanceBetweenNodes >= -55 ? allTiles[eachTile].y - maxDistanceBetweenNodes : -55
-                        let upperBoundY = allTiles[eachTile].y + maxDistanceBetweenNodes < 400 ? allTiles[eachTile].y + maxDistanceBetweenNodes : 399
-                        for (let i = lowerBoundX; i <= upperBoundX; i++) {
-                            for (let j = lowerBoundY; j <= upperBoundY; j++) {
-                                //let tempTile = allTiles[`tile_${i}_${j}`]
-                                //console.log(allTiles[`tile_${i}_${j}`])
-                                let calcDistance = getDistance(allTiles[eachTile], allTiles[`tile_${i}_${j}`])
-                                if (calcDistance < maxDistanceBetweenNodes && calcDistance > 0) {
-                                    //console.log(`INNER LOOP: ${allTiles[`tile_${i}_${j}`].x}, ${allTiles[`tile_${i}_${j}`].y}`)
-                                    aSum = aSum + (allTiles[`tile_${i}_${j}`].shotinfo[1] * calcDistance / Math.pow(calcDistance, p));
-                                    bSum = bSum + (1 / Math.pow(calcDistance, p));
-                                }
-                            }
-                        }
-                        tileValues[eachTile] = aSum / bSum;
-                    }
-                }, 10);
-
-            })
-            */
-            //console.log("tileValues")
-            //console.log(tileValues)
-
-            //console.log("TILEVALUES FOREACH 1")
             let maxValue = 0.0
             Object.values(tileValues).forEach(eachValue => {
                 if (eachValue > maxValue) {
@@ -923,12 +807,10 @@ const ShotView = (props) => {
                 }
             })
             let heatTileInfo = []
-            // console.log("maxValue: " + maxValue)
             if (maxValue != 0) {
                 maxValue = maxValue * (500 * 1.0 / shotCounter);
                 let maxCutoff = 0.00004 * shotCounter / maxValue + 0.3065;
                 let diff = maxCutoff / 7;
-                //console.log("TILEVALUES FOREACH 2")
                 Object.keys(tileValues).forEach(eachTileKey => {
                     let color = "", circleArray = ""
                     let value = tileValues[eachTileKey]
@@ -968,16 +850,12 @@ const ShotView = (props) => {
                 } else {
                     setAllHeatTiles(heatTileInfo)
                 }
-                // console.log("END TILEVALUES")
-
             }
         }
     }
 
     function resizeHeat() {
         console.log("resizeHeat()")
-        //console.log(allHeatTiles.length)
-        // console.log(allHeatTilesRef.current.length)
         if (allHeatTiles.length > 0) {
             let circles1 = [], circles2 = [], circles3 = [], circles4 = [], circles5 = [], circles6 = [], circles7 = []
             let gradients = []
@@ -1058,7 +936,6 @@ const ShotView = (props) => {
 
     function makeLoadingAnimation() {
         console.log("makeLoadingAnimation()")
-        //console.log(isLoadingRef.current)
         //if (true) {
         if (props.isLoading) {
             let height = 470

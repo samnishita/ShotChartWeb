@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Svg, { Line } from 'react-native-svg';
 
 function SelectionViewer(props) {
+    console.log("RERENDER SelectionViewer")
     const allSearchParametersRef = useRef({});
     allSearchParametersRef.current = props.allSearchParameters;
     const mapIdToDisplayName = {
@@ -25,7 +26,6 @@ function SelectionViewer(props) {
         let displayParams = []
         if (allSearchParametersRef.current) {
             Object.keys(allSearchParametersRef.current).forEach(eachParam => {
-                //console.log(eachParam)
                 if (Array.isArray(allSearchParametersRef.current[eachParam])) {
                     allSearchParametersRef.current[eachParam].forEach(eachSelection => {
                         if (eachSelection !== "") {
@@ -40,12 +40,10 @@ function SelectionViewer(props) {
                 }
             })
         }
-        return displayParams.length === 0 ? "Some Text Will Go Here" : displayParams
+        return displayParams.length === 0 ? "No Filters Selected" : displayParams
     }
 
     function makeDeleteButton(param, value) {
-        //console.log(document.getElementById("current-selections"))
-        //console.log(document.getElementById("current-selections").clientHeight)
         let height = document.getElementById("current-selections") ? document.getElementById("current-selections").clientHeight : 19
         let center = height / 2, lineLength = height / 5
         return (

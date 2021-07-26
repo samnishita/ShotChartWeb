@@ -20,6 +20,7 @@ const ShotPercentageView = (props) => {
             setShotCalcs(processShotData(props.advancedShotData.advancedsearch))
         }
     }, [props.isCurrentViewSimple, props.simpleShotData, props.advancedShotData])
+
     function processShotData(inputShotData) {
         let twoPMakes = 0, twoPTotal = 0, threePMakes = 0, threePTotal = 0;
         let fgFrac = "--", fgPerc = "--", twoPFrac = "--", twoPPerc = "--", threePFrac = "--", threePPerc = "--"

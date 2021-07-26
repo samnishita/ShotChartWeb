@@ -5,11 +5,12 @@ import { useEffect, useState, useRef } from "react";
 import Svg, { Path } from 'react-native-svg';
 
 const AdvancedSearchBox = (props) => {
+    console.log("RERENDER AdvancedSearchBox")
     const [latestAdvancedViewType, setLatestAdvancedViewType] = useState(props.latestAdvancedViewType)
     const [shotPercentageData, setShotPercentageData] = useState({})
 
     useEffect(() => {
-        console.log(props.allSearchParameters)
+        console.log("useEffect for props.allSearchParameters")
     }, [props.allSearchParameters])
 
     const relevantTeams = {
@@ -89,13 +90,13 @@ const AdvancedSearchBox = (props) => {
     initPlayersReverseMapRef.current = props.initPlayersReverseMap;
     const initPlayersSortedRef = useRef({});
     initPlayersSortedRef.current = Object.values(initPlayersRef.current).map(value => `${value[1]} ${value[2]}`.trim().toUpperCase()).sort((a, b) => {
-        //console.log(a.props.id)
         if (a < b) { return -1; }
         if (a > b) { return 1; }
         return 0;
     })
 
     function createDropDown(className) {
+        console.log(`createDropDown(${className})`)
         switch (className) {
             case "year-advanced-dd-begin":
             case "year-advanced-dd-end":
@@ -103,7 +104,7 @@ const AdvancedSearchBox = (props) => {
             case "player-advanced-dd":
                 return createPlayerDropDown(className)
             case "season-advanced-dd":
-                return [createSeasonDD(className, "Preseason"), createSeasonDD(className, "Regular Season"), createSeasonDD(className, "Playoffs")]
+                return [createMultipleSelectionDD(className, "Preseason"), createMultipleSelectionDD(className, "Regular Season"), createMultipleSelectionDD(className, "Playoffs")]
             case "distance-begin":
             case "distance-end":
                 let distances = []
@@ -136,53 +137,41 @@ const AdvancedSearchBox = (props) => {
         return <p className={`dropdown-item ${className}`} onClick={event => checkIfExistsInArray(className, display)}>{display}</p>
     }
 
-    function createSeasonDD(className, display) {
-        return <p className='dropdown-item season-display' onClick={(event) => checkIfExistsInArray(className, display)}>{display}</p>
-    }
     function checkIfExistsInArray(key, value) {
-        //console.log(allSearchParametersRef.current[key].contains(value))
-        console.log(allSearchParametersRef.current[key].includes(value))
         if (!allSearchParametersRef.current[key].includes(value)) {
             props.setAllSearchParameters({ ...allSearchParametersRef.current, [key]: [...allSearchParametersRef.current[key], value] })
         }
     }
 
     function createYearDropDown(inputClassName) {
-        let year = Number(props.currentYear.substring(0, 4));
-        let subYearString;
-        let elements = []
-        while (year >= 1996) {
-            subYearString = (year - 1899) % 100 < 10 ? "0" + (year - 1899) % 100 : subYearString = "" + (year - 1899) % 100
-            elements.push(createSingleSelectionDD(inputClassName, `${year}-${subYearString}`))
-            year--;
+        console.log(`createYearDropDown(${inputClassName})`)
+        let year = Number(props.currentYear.substring(0, 4)), subYearString, elements = []
+        for (let eachYear = year; eachYear >= 1996; eachYear--) {
+            subYearString = (eachYear - 1899) % 100 < 10 ? subYearString = "0" + (eachYear - 1899) % 100 : subYearString = "" + (eachYear - 1899) % 100
+            elements.push(createSingleSelectionDD(inputClassName, `${eachYear}-${subYearString}`))
         }
-        console.log("createYearDropDown()")
-        //console.log(elements)
         return elements
     }
 
     function createPlayerDropDown(inputClassName) {
-        //console.log(initPlayersSortedRef.current)
+        console.log(`createPlayerDropDown(${inputClassName})`)
         let elements = []
         Object.values(initPlayersRef.current).forEach(value => {
-            //console.log(`${value[1]} ${value[2]}`.trim());
             elements.push(<p className='dropdown-item player-display'
                 id={`${value[1]} ${value[2]}`.trim().toUpperCase()
                 } playerid={value[0]}
                 onClick={() => checkIfExistsInArray(inputClassName, `${value[1]} ${value[2]}`.trim())}>{`${value[1]} ${value[2]}`.trim()}</p>)
         })
         elements.sort((a, b) => {
-            //console.log(a.props.id)
             if (a.props.id < b.props.id) { return -1; }
             if (a.props.id > b.props.id) { return 1; }
             return 0;
         })
-        //console.log(elements)
         return elements
     }
 
     function makeButton(name, descriptor) {
-        //console.log(`makeButton: ${descriptor}`)
+        console.log(`makeButton(${name}, ${descriptor}`)
         if (props.allSearchParameters[descriptor] && props.allSearchParameters[descriptor].length !== 0) {
             if (Array.isArray(props.allSearchParameters[descriptor])) {
                 name = props.allSearchParameters[descriptor][props.allSearchParameters[descriptor].length - 1]
@@ -209,10 +198,7 @@ const AdvancedSearchBox = (props) => {
     }
     async function runAdvancedSearch() {
         console.log("runAdvancedSearch()")
-        //console.log(props.initPlayersReverseMap)
-        //console.log(props.initPlayers)
         let url = `https://customnbashotcharts.com:8443/shots_request_advanced?`
-        //let url = `http://customnbashotcharts.com:8080/shots_request_advanced?`
         let urlBuilder = ""
         let isMoreThanOne = false
         Object.keys(allSearchParametersRef.current).forEach(eachKey => {
@@ -245,9 +231,7 @@ const AdvancedSearchBox = (props) => {
             url = url + urlBuilder
             console.log(url)
             props.setAllSearchData({ shots: null, view: latestAdvancedViewType })
-            console.log(latestAdvancedViewType)
             props.updateLatestAdvancedViewType(latestAdvancedViewType)
-            //console.log("SETTING ISLOADING TO TRUE")
             setTimeout(async () => {
                 await fetch(url, {
                     method: 'GET'
@@ -261,41 +245,30 @@ const AdvancedSearchBox = (props) => {
                         setShotPercentageData(data)
                     })
             }, 300)
-
         }
     }
 
     useEffect(() => {
-        //console.log("props.keyPressedBuilder")
-        //console.log(props.keyPressedBuilder.id)
-        //console.log(typeof (props.keyPressedBuilder.id))
         let classes = ""
         if (typeof (props.keyPressedBuilder.id) === 'string') {
             classes = props.keyPressedBuilder.id
         } else if (props.keyPressedBuilder.id !== null) {
             classes = props.keyPressedBuilder.id.baseVal
         }
-        //console.log(classes)
         if (classes.indexOf('player-advanced-dd') !== -1) {
             let latestArray = initPlayersSortedRef.current
-            console.log(latestArray)
             for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
                 let tempArray = []
-                //console.log(keyPressedBuilderRef.current.length)
-                //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
                 latestArray.forEach(eachPlayer => {
                     if (eachPlayer.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
-                        // console.log(`Pushing ${eachPlayer}`)
                         tempArray.push(eachPlayer)
                     }
                 })
                 if (tempArray.length !== 0) {
                     latestArray = tempArray
                 }
-                //console.log(latestArray)
             }
             let result = latestArray[0]
-            //document.getElementById(result).scrollIntoView({ behavior: 'auto', block: 'nearest' })
             document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
         } else if (classes.indexOf('year-advanced-dd') !== -1) {
             let year = Number(props.currentYear.substring(0, 4));
@@ -311,8 +284,6 @@ const AdvancedSearchBox = (props) => {
             }
             for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
                 let tempArray = []
-                //console.log(keyPressedBuilderRef.current.length)
-                //console.log((keyPressedBuilderRef.current.substring(0, i + 1)))
                 years.forEach(eachYear => {
                     if (eachYear.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
                         tempArray.push(eachYear)
@@ -321,13 +292,12 @@ const AdvancedSearchBox = (props) => {
                 if (tempArray.length !== 0) {
                     years = tempArray
                 }
-                //console.log(latestArray)
             }
             let yearResult = years[0]
             document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
-
         }
     }, [props.keyPressedBuilder])
+
     const selectionViewerRef = useRef({})
     selectionViewerRef.current = <SelectionViewer allSearchParameters={allSearchParametersRef.current} setAllSearchParameters={props.setAllSearchParameters} />
     return (
