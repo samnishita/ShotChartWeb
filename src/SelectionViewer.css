@@ -1,9 +1,23 @@
 .SelectionViewer{
     scroll-behavior: smooth;
     overflow-y:scroll;
-    height: 10%;
     border-style: solid;
     border: 10px 0px 10px 0px;
     border-image: linear-gradient(to right, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
+}
 
+.selection-div{
+    height: 20px;
+text-align: left;
+display: flex;
+padding-left: 10px;
+}
+
+.selection-span{
+font-size: 14px;
+padding-left: 10px;
+}
+
+#selections{
+    max-height: 10vh;
 }

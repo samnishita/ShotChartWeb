@@ -23,6 +23,8 @@ const SimpleSearchBox = (props) => {
     selectedSeasonRef.current = props.selectedSeason;
     const activePlayersRef = useRef({});
     activePlayersRef.current = activePlayers;
+    const initPlayersRef = useRef({});
+    initPlayersRef.current = props.initPlayers;
     const initPlayersReverseMapRef = useRef({});
     initPlayersReverseMapRef.current = props.initPlayersReverseMap;
 
@@ -112,16 +114,19 @@ const SimpleSearchBox = (props) => {
 
     function displayActivePlayers() {
         console.log("displayActivePlayers()")
-        let playerElements = []
+        //let playerElements = []
         //console.log(activePlayers)
         //console.log(activePlayers[0])
+        /*
         activePlayers.forEach(value => {
             //console.log(value)
             // console.log(value.displayname)
             //console.log(value.playerinfo.id)
             playerElements.push(<p className='dropdown-item player-display' id={value.displayname.toUpperCase()} playerid={value.playerinfo.id} onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</p>)
         });
-        setActivePlayersDisplay(playerElements)//, console.log(activePlayersDisplay)
+        */
+        //setActivePlayersDisplay(playerElements)//, console.log(activePlayersDisplay)
+        setActivePlayersDisplay(activePlayers.map(value => <p className='dropdown-item player-display' id={value.displayname.toUpperCase()} playerid={value.playerinfo.id} onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</p>))//, console.log(activePlayersDisplay)
     }
 
     function displayActiveSeasons() {
@@ -163,14 +168,13 @@ const SimpleSearchBox = (props) => {
         if (event.target.classList.contains("player-display") && selectedPlayerRef.current !== event.target.textContent) {
             //console.log(initPlayersReverseMapRef.current)
             //console.log(event.target.getAttribute('playerid'))
-            //console.log(props.initPlayersReverseMap)
             //console.log(initPlayersReverseMapRef.current)
             props.setSelectedPlayer({
                 id: event.target.getAttribute('playerid'),
                 playerfirstname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][1],
                 playerlastname: initPlayersReverseMapRef.current[event.target.getAttribute('playerid')][2]
             }, console.log("Set selected player to " + event.target.textContent));
-            getSeasonsData(selectedYearRef.current, props.initPlayers[event.target.textContent][0], props.initPlayers[event.target.textContent][1], props.initPlayers[event.target.textContent][2])
+            getSeasonsData(selectedYearRef.current, initPlayersRef.current[event.target.textContent][0], initPlayersRef.current[event.target.textContent][1], initPlayersRef.current[event.target.textContent][2])
         }
     }
     async function handleSeasonButtonClick(event) {
@@ -284,9 +288,9 @@ const SimpleSearchBox = (props) => {
             document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
             props.setSelectedPlayer({
                 id: document.getElementById(result).getAttribute('playerid'),
-                playerfirstname: props.initPlayersReverseMap[document.getElementById(result).getAttribute('playerid')][1],
-                playerlastname: props.initPlayersReverseMap[document.getElementById(result).getAttribute('playerid')][2]
-            }, getSeasonsData(selectedYearRef.current, props.initPlayers[document.getElementById(result).textContent][0], props.initPlayers[document.getElementById(result).textContent][1], props.initPlayers[document.getElementById(result).textContent][2])
+                playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
+                playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+            }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
             );
         }
         else if (classes.indexOf('year-dd') !== -1) {

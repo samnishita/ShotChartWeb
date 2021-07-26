@@ -33,37 +33,47 @@ const ShotView = (props) => {
     localViewTypeRef.current = localViewType
 
     useEffect(() => {
+        console.log("useEffect for props.latestAdvancedViewType")
+        console.log(props.latestAdvancedViewType)
+    }, [props.latestAdvancedViewType])
+
+    useEffect(() => {
         console.log("useEffect (adding eventlistener)")
         window.addEventListener('resize', handleResize)
     }, [])
 
     useEffect(() => {
         console.log(`useEffect for localViewType`)
-        console.log(localViewType)
+        //console.log(localViewType)
         //Initial case
         if (!allShotsRef.current && whatToDisplay.length === 0) {
 
         }//Click button after running search
-        else if (allShotsRef.current.shots) {
+        else if (allShotsRef.current.shots && !props.isLoading) {
             console.log("Setting isLoading to true from useEffect(localViewType)")
             //setWhatToDisplay([])
             props.setIsLoading(true)
+        } else if (allShotsRef.current.shots && allShotsRef.current.length !== 0 && props.isLoading) {
+            setWhatToDisplay([])
+        } else if (allShotsRef.current.length === 0 && props.isLoading) {
+            let load = makeLoadingAnimation()
+            setLoadingAnimation(load)
         }
     }, [localViewType])
 
     useEffect(() => {
         console.log("useEffect for props.allSearchData")
         console.log(props.allSearchData)
-        if (Object.keys(props.allSearchData).length !== 0) {
-            setAllShots(props.allSearchData)
-            console.log(props.allSearchData.view)
+        setAllShots(props.allSearchData)
+        if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
+            //console.log(props.allSearchData.view)
             setAllGridTiles([])
         }
     }, [props.allSearchData])
 
     useEffect(() => {
         console.log("useEffect for props.isLoading")
-        console.log(`isLoading: ${props.isLoading}`)
+        //console.log(`isLoading: ${props.isLoading}`)
         if (props.isLoading) {
             console.log("Setting whatToDisplay to [] from useEffect(isLoading)")
             setWhatToDisplay([])
@@ -76,11 +86,11 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for loadingAnimation")
-        console.log(loadingAnimation)
+        //console.log(loadingAnimation)
         setTimeout(() => {
             console.log("TIMEOUT")
-            if (allShotsRef.current && whatToDisplay.length === 0) {
-                console.log(document.getElementById("loadingAnimation"))
+            if (allShotsRef.current && allShotsRef.current.length !== 0 && whatToDisplay.length === 0) {
+                //console.log(document.getElementById("loadingAnimation"))
                 console.log("Generating whatToDisplay from useEffect(loadingAnimation)")
                 generateWhatToDisplay()
             }
@@ -90,7 +100,8 @@ const ShotView = (props) => {
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
         console.log(whatToDisplay)
-        if (allShotsRef.current && whatToDisplay.length !== 0) {
+        console.log(allShotsRef.current)
+        if (allShotsRef.current && allShotsRef.current.shots !== null && whatToDisplay.length !== 0) {
             if (typeof (whatToDisplay) === 'object') {
                 console.log("Setting isLoading to false from useEffect(whatToDisplay)")
                 props.setIsLoading(false)
@@ -106,8 +117,8 @@ const ShotView = (props) => {
                 props.setIsLoading(true)
             }
         } else {
-            console.log(localViewType)
-            console.log(localViewTypeRef.current)
+            //console.log(localViewType)
+            //console.log(localViewTypeRef.current)
             chooseCourt(localViewType.type)
         }
     }, [whatToDisplay])
@@ -125,14 +136,17 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
-        console.log(allHeatTiles)
+        //console.log(allHeatTiles)
         if (allHeatTiles.length !== 0) {
             // console.log(resizeHeat())
             setWhatToDisplay(resizeHeat())
         } else {
-            if (allShotsRef.current) {
+            if (allShotsRef.current && allShotsRef.current.length !== 0) {
                 console.log(allShotsRef.current.shots)
                 setLocalViewType({ type: allShotsRef.current.view, isOriginal: true })
+            } else if (allShotsRef.current && allShotsRef.current.length === 0 && !props.isCurrentViewSimple) {
+                console.log("Preset localViewType")
+                setLocalViewType({ type: props.latestAdvancedViewType, isOriginal: true })
             }
         }
     }, [allHeatTiles])
@@ -196,7 +210,7 @@ const ShotView = (props) => {
 
     function generateWhatToDisplay() {
         let buffer = []
-        console.log(allShotsRef.current)
+        //console.log(allShotsRef.current)
         buffer.push(determineView(localViewTypeRef.current.type))
         let zoneLabels = generateZoneLabels(localViewTypeRef.current.type)
         if (zoneLabels) {
@@ -248,10 +262,13 @@ const ShotView = (props) => {
     function displayTraditional() {
         console.log("displayTraditional()")
         // console.log(allShots)
-        //console.log(allShotsRef.current)
+        console.log(allShotsRef.current)
         let tradArray = []
         // console.log(allShotsRef.current)
-        if (allShotsRef.current) {
+        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
+            let searchType = Object.keys(allShotsRef.current.shots)[0]
+            let allShotsTemp = allShotsRef.current.shots[searchType]
+            //console.log(props.isCurrentViewSimple)
             const height = document.getElementById('trad-court').clientHeight
             const width = document.getElementById('trad-court').clientWidth
             const heightAltered = height * 1.1
@@ -260,14 +277,16 @@ const ShotView = (props) => {
             const strokeWidth = 2 * height / 470
             // console.log("height: " + height)
             // console.log("width: " + width)
-            allShotsRef.current.shots.simplesearch.forEach(each => {
-                if (each.y <= 410) {
+            let counter = 0;
+            allShotsTemp.forEach(each => {
+                if (each.y <= 410 && counter < 7500) {
                     if (each.make === 1) {
                         tradArray.push(<Circle cx={widthAltered / 2 + each.x * width / 500} cy={heightAltered / 2 + each.y * height / 470 - 185 * height / 470} r={rad} fill="none" stroke="limegreen" strokeWidth={strokeWidth} />)
                     } else {
                         tradArray.push(<Line x1={widthAltered / 2 - rad + each.x * width / 500} y1={heightAltered / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={widthAltered / 2 + rad + each.x * width / 500} y2={heightAltered / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
                         tradArray.push(<Line x1={widthAltered / 2 + rad + each.x * width / 500} y1={heightAltered / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={widthAltered / 2 - rad + each.x * width / 500} y2={heightAltered / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
                     }
+                    counter++;
                 }
             })
             let styles = {
@@ -319,8 +338,9 @@ const ShotView = (props) => {
         //console.log("gridAverages before: ")
         //console.log(gridAverages)
         //console.log(typeof (gridAverages))
-        //console.log(allShotsRef.current)
-        if (allShotsRef.current) {
+        console.log(allShotsRef.current)
+        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
+            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
             let allTiles = {}
             let squareSizeOrig = 10
             for (let j = -55; j < 400; j = j + squareSizeOrig) {
@@ -330,8 +350,8 @@ const ShotView = (props) => {
             }
             let factor = 0.007;
             //console.log(allTiles)
-            let shots = allShotsRef.current.shots.simplesearch.filter(param => param.y <= 400)
-            let shotCounter = allShotsRef.current.shots.simplesearch.length
+            let shots = allShotsTemp.filter(param => param.y <= 400)
+            let shotCounter = allShotsTemp.length
             Object.keys(allTiles).forEach(eachTile => {
                 let upperBoundX = allTiles[eachTile].x + 5 + squareSizeOrig * 1.5
                 let lowerBoundX = allTiles[eachTile].x + 5 - squareSizeOrig * 1.5
@@ -533,7 +553,7 @@ const ShotView = (props) => {
     }
 
     function mapShotsToZones() {
-        if (allShotsRef.current) {
+        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
                 allZones.push([0, 0, 0])
@@ -542,7 +562,8 @@ const ShotView = (props) => {
                 allZones[i][1] = allZones[i][1] + 1
                 if (make) { allZones[i][0] = allZones[i][0] + 1 }
             }
-            allShotsRef.current.shots.simplesearch.forEach(eachShot => {
+            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
+            allShotsTemp.forEach(eachShot => {
                 switch (eachShot.shotzonebasic) {
                     case "Backcourt":
                         break;
@@ -798,19 +819,23 @@ const ShotView = (props) => {
     }
     function displayHeat() {
         console.log("displayHeat()")
-        console.log(allShotsRef.current)
-        if (allShotsRef.current) {
+        // console.log(allShotsRef.current)
+        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
+            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
+            //console.log(allShotsTemp)
             let allTiles = {}
-            for (let x = -250; x < 250; x++) {
+            for (let x = -250; x <= 250; x++) {
                 for (let y = -55; y < 400; y++) {
                     allTiles[`tile_${x}_${y}`] = { x: x, y: y, shotinfo: [0.0, 0.0, 0.0] }
                 }
             }
             //console.log("FILTER")
-            let shots = allShotsRef.current.shots.simplesearch.filter(param => param.y <= 400)
-            let shotCounter = allShotsRef.current.shots.simplesearch.length
+            let shots = allShotsTemp.filter(param => param.y < 400)
+            let shotCounter = allShotsTemp.length
+            //console.log(shots)
             ///console.log("SHOTS FOREACH")
             shots.forEach(eachShot => {
+                //console.log(eachShot)
                 // setTimeout(() => {
                 allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] = allTiles[`tile_${eachShot.x}_${eachShot.y}`].shotinfo[1] + 1
                 if (eachShot.make === 1) {
@@ -1116,9 +1141,11 @@ const ShotView = (props) => {
                             <Path d={`m${centerX} ${centerY - innerR2} l0 -${thickness2} a${outerR2},${outerR2} 0 0,1 0,${2 * (innerR2 + thickness2)} l0 ${-thickness2}  a${innerR2},${innerR2} 0 0,0 0,${-2 * innerR2}`} fill="lightblue" stroke="none" strokeWidth="1"></Path>
                         </Svg>
              */
+            console.log(localViewType.type)
+            let view = allShotsRef.current.shots === null ? allShotsRef.current.view : localViewType.type
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
-                    <p>Loading {localViewType.type}</p>
+                    <p>Loading {view}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
                         <Svg width={width / 3} height={height / 3} style={{ animation: `spin 1s linear infinite`, opacity: "1", position: "absolute" }} >
                             <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="white" stroke="none" strokeWidth="1"></Path>

@@ -10,7 +10,7 @@
 .court-image{
     transform: rotate(180deg);
     object-fit: cover;
-    max-width :60%;
+    max-width :50%;
     height: 100%;
     display: none;
 }.show {display: block;}
@@ -65,7 +65,7 @@ button{
     position: relative;
     transform: rotate(180deg);
     object-fit: cover;
-    max-width :60%;
+    max-width :50%;
     height: 100%;
     z-index: 1;
 }

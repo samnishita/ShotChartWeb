@@ -10,7 +10,7 @@
     text-align: center;
     font-family: 'MonserratLight';
     color: white;
-    height: 40vh;
+    height: 50vh;
 }
 
 .AdvancedSearchBox .search-box-body{
@@ -38,12 +38,10 @@ p{
     margin: 10px 0px 10px 0px;
     font-size: 2vh;
 }
-.search-box-inner-body .dropdown-button{
-    font-size: 15px;
-}
+
 h6{
     font-family: 'MontserratSemiBold';
-    font-size: 3vh;
+    font-size: 2vh;
     margin: 0px 0px 8px 0px;
 }
 .static-button{
@@ -71,4 +69,9 @@ h6{
     border-radius: 9px 8px 8px 9px;
     border-style: solid;
     border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
+}
+.AdvancedSearchBox.dropdown-item{
+    padding: 0.5vh;
+    margin:0px;
+    font-size: 12px;
 }

@@ -11,7 +11,6 @@ const App = () => {
 
   const [latestSimpleSearchData, setLatestSimpleSearchData] = useState()
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
-  const [latestAdvancedSearchData, setLatestAdvancedSearchData] = useState()
   const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Traditional")
   const [allSearchData, setAllSearchData] = useState({})
   const [title, setTitle] = useState("")
@@ -76,6 +75,23 @@ const App = () => {
     />)
   const whichSearchBoxRef = useRef({});
   whichSearchBoxRef.current = whichSearchBox;
+  const [shotTypes, setShotTypes] = useState([])
+  const [allAdvancedSearchParameters, setAllAdvancedSearchParameters] = useState({
+    "year-advanced-dd-begin": "",
+    "year-advanced-dd-end": "",
+    "player-advanced-dd": [],
+    "season-advanced-dd": [],
+    "distance-begin": "",
+    "distance-end": "",
+    "success": "",
+    "shot-value": "",
+    "shot-types": [],
+    "shooting-teams": [],
+    "home-teams": [],
+    "away-teams": [],
+    "court-areas": [],
+    "court-sides": []
+  })
 
   function getInitPlayersData() {
     let players = {}
@@ -108,12 +124,20 @@ const App = () => {
       }).catch(error => console.log('error', error))
     return response
   }
+
+  function getShotTypesData() {
+    getSearchData("https://customnbashotcharts.com:8443/shots_request?shottypes=true")
+      .then(res => {
+        setShotTypes(res.shottypes.map(value => value.playtype))
+      })
+  }
+
   function handleKeyPressed(event) {
     //console.log("KEYDOWN")
     //console.log(`${event.keyCode}: ${String.fromCharCode(event.keyCode)}`)
     //console.log(event.target.className)
     //console.log(activePlayersRef.current)
-    let string
+    let string = null
     if (event.keyCode === 8 && keyPressedBuilderRef.current.builder.length > 0) {
       string = keyPressedBuilderRef.current.builder.substring(0, keyPressedBuilderRef.current.builder.length - 1)
       console.log(string)
@@ -124,7 +148,7 @@ const App = () => {
     } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
       string = keyPressedBuilderRef.current.builder + String.fromCharCode(event.keyCode)
     }
-    if (string) {
+    if (string !== null) {
       //console.log(string)
       setKeyPressedBuilder({
         id: event.target.className,
@@ -224,9 +248,21 @@ const App = () => {
       />)
     } else {
       setWhichSearchBox(<AdvancedSearchBox
+        currentYear={currentYear}
         isCurrentViewSimple={isCurrentViewSimple}
         keyPressedBuilder={keyPressedBuilderRef.current}
         handleDDButtonClick={handleDDButtonClick}
+        initPlayers={initPlayersRef.current}
+        initPlayersReverseMap={initPlayersReverseMapRef.current}
+        shotTypes={shotTypes}
+        allSearchParameters={allAdvancedSearchParameters}
+        setAllSearchParameters={setAllAdvancedSearchParameters}
+        latestAdvancedViewType={latestAdvancedViewType}
+        setLatestAdvancedViewType={setLatestAdvancedViewType}
+        setTitle={setTitle} setIsLoading={setIsLoading}
+        updateLatestAdvancedViewType={setLatestAdvancedViewType}
+        setAllSearchData={setAllSearchData}
+
       />)
     }
   }
@@ -234,7 +270,7 @@ const App = () => {
     getInitPlayersData().then(res => {
       determineWhichView()
     })
-
+    getShotTypesData()
   }, [])
   useEffect(() => {
     console.log(`useEffect for keyPressedBuilder`)
@@ -242,10 +278,32 @@ const App = () => {
     determineWhichView()
   }, [keyPressedBuilder])
   useEffect(() => {
-    console.log("HERE")
     determineWhichView()
   }, [isCurrentViewSimple, simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer])
 
+  useEffect(() => {
+    console.log(allAdvancedSearchParameters)
+    determineWhichView()
+  }, [allAdvancedSearchParameters])
+
+  useEffect(() => {
+    console.log("useEffect for latestAdvancedViewType")
+    console.log(latestAdvancedViewType)
+  }, [latestAdvancedViewType])
+
+  useEffect(() => {
+    console.log("useEffect for allSearchData")
+    console.log(allSearchData)
+    if (allSearchData.shots === null) {
+      setIsLoading(true)
+      console.log("Setting isLoading to true")
+    }
+  }, [allSearchData])
+
+  useEffect(() => {
+    console.log("useEffect for isLoading: ")
+    console.log(isLoading)
+  }, [isLoading])
 
   return (
     <div className="App">
@@ -256,7 +314,8 @@ const App = () => {
           {whichSearchBoxRef.current}
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item">
-          <ShotView title={title} isLoading={isLoadingRef.current} setIsLoading={setIsLoading} allSearchData={allSearchData} />
+          <ShotView title={title} isLoading={isLoadingRef.current} setIsLoading={setIsLoading}
+            allSearchData={allSearchData} isCurrentViewSimple={isCurrentViewSimple} latestAdvancedViewType={latestAdvancedViewType} />
         </div>
       </div>
     </div >

@@ -7,9 +7,11 @@
     font-family: 'MonserratLight';
     color: white;
     height: 40vh;
+    width: 100%;
 }
  .search-box-body{
     height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,6 +19,7 @@
 .search-box-inner-body {
     text-align: center;
     align-items: center;
+    width: 100%;
 }
 
 .search-box-body button{
@@ -31,7 +34,7 @@
 
 .search-box-body .dropdown-button{
     position: relative;
-    width: 70%;
+    width: 75%;
     background-color: rgb(219, 219, 219);
 }
 
@@ -59,37 +62,38 @@ width: auto;
     left:0;
     width:100%;
 }
+
 .show {display: block;}
 
-.SimpleSearchBox .dropdown-content.scrollable {
+.dropdown-content.scrollable {
     height: 20vh;
     overflow-y:scroll;
 }
 
-.SimpleSearchBox .dropdown-item{
+ .dropdown-item{
     padding: 0.5vh;
     margin:0px;
 }
 
-.SimpleSearchBox .dropdown-item:hover{
+.dropdown-item:hover{
     background-color: #ddd;
 }
 
-.SimpleSearchBox .scrollable::-webkit-scrollbar-track:vertical {
+.scrollable::-webkit-scrollbar-track:vertical {
     color: transparent;
 }
 
-.SimpleSearchBox .scrollable::-webkit-scrollbar-track:horizontal {
+.scrollable::-webkit-scrollbar-track:horizontal {
     color: transparent;
 }
 
-.SimpleSearchBox .scrollable::-webkit-scrollbar {
+.scrollable::-webkit-scrollbar {
     -webkit-appearance: none;
     background-color: transparent;
     width: 16px;
 }
 
-.SimpleSearchBox .scrollable::-webkit-scrollbar-thumb {
+ .scrollable::-webkit-scrollbar-thumb {
     background-clip: padding-box;
     background-color: #C1C1C1;
     border-color: transparent;
@@ -111,6 +115,6 @@ width: auto;
     min-width: 80%;
     font-size: 20px;
 }
-#choose-parameters-label{
+.choose-parameters-label{
     font-family:'MonserratLight' ;
 }
