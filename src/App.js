@@ -119,6 +119,8 @@ const App = () => {
     } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
       string = keyPressedBuilderRef.current.builder + String.fromCharCode(event.keyCode)
     }
+    console.log(event.target)
+    //Safari does not recognize correct event target
     if (string !== null) {
       setKeyPressedBuilder({
         id: event.target.className,
@@ -223,6 +225,7 @@ const App = () => {
 
   useEffect(() => {
     console.log(`useEffect for App keyPressedBuilder`)
+    console.log(keyPressedBuilder)
     determineWhichView()
   }, [keyPressedBuilder])
 

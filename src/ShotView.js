@@ -16,6 +16,7 @@ const ShotView = (props) => {
     const [allShots, setAllShots] = useState()
     const [localViewType, setLocalViewType] = useState({ type: "Traditional", isOriginal: false })
     const [loadingAnimation, setLoadingAnimation] = useState("")
+    const [legend, setLegend] = useState([])
     const whatToDisplayRef = useRef([])
     whatToDisplayRef.current = whatToDisplay
     const allShotsRef = useRef({})
@@ -83,6 +84,72 @@ const ShotView = (props) => {
             }
         }, 100)
     }, [loadingAnimation])
+
+    function generateLegend() {
+        console.log(localViewType)
+        if (localViewType.type === "Traditional") {
+            return <div></div>
+        } else {
+            let dimensions = getDimensions()
+            let height = dimensions.height
+            let width = dimensions.width
+            let legendWidth = getDimensions().height / 470 * 175
+            let legendHeight = getDimensions().height / 470 * 65
+            let legendStyle = {
+                width: legendWidth,
+                height: legendHeight,
+                transform: `translate(${width / -2 + legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
+            }
+            let topLabelStyle = { fontSize: height / 470 * 12 }
+            let wrapperStyle = { fontSize: height / 470 * 10 }
+            switch (localViewType.type) {
+                case "Grid":
+                    let sizeLegendStyle = {
+                        width: legendWidth * 0.7,
+                        height: legendHeight,
+                        transform: `translate(${width / 2 - legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
+                    }
+                    return [(< div id="color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
+                        </div>
+                        <div id="color-legend-gradient"></div>
+                    </div >), (
+                        < div id="size-legend" style={sizeLegendStyle} >
+                            <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
+                            <div width="100%" style={wrapperStyle}>
+                                <div className="legend-left-label legend-bottom-label" >Low</div><div className="legend-right-label legend-bottom-label" >High</div>
+                            </div>
+                            <div id="size-legend-gradient">
+                                <Svg className="svg-size-legend" height={width / 50 * 1.1} width="100%">
+                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 * 0.4} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 * 0.3} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 * 0.2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 * 0.1} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="82%" width={width / 50} height={width / 50} fill="white" />)
+                                </Svg>
+                            </div>
+                        </div >)]
+                case "Zone":
+                    return (< div id="color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
+                        </div>
+                        <div id="color-legend-gradient"></div>
+                    </div >)
+                case "Heat":
+                    return (< div id="heat-color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Low Freq.</div><div className="legend-right-label legend-bottom-label" >High Freq.</div>
+                        </div>
+                        <div id="heat-legend-gradient"></div>
+                    </div>)
+            }
+        }
+    }
 
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
@@ -175,6 +242,7 @@ const ShotView = (props) => {
                 console.log("Showing transparent-court-on-top")
                 break;
         }
+        setLegend(generateLegend())
     }
 
     function generateWhatToDisplay() {
@@ -936,26 +1004,36 @@ const ShotView = (props) => {
         }
     }
 
+    function getDimensions() {
+        let height = 470
+        let width = 500
+        let court
+        if (document.getElementById("transparent-court") && document.getElementById("transparent-court").clientHeight > 0) {
+            court = document.getElementById("transparent-court")
+        }
+        if (!court && document.getElementById("transparent-court-on-top") && document.getElementById("transparent-court-on-top").clientHeight > 0) {
+            court = document.getElementById("transparent-court-on-top")
+        }
+        if (!court && document.getElementById("trad-court") && document.getElementById("trad-court").clientHeight > 0) {
+            court = document.getElementById("trad-court")
+        }
+        if (court) {
+            height = court.clientHeight
+            width = court.clientWidth
+        }
+        return {
+            height: height,
+            width: width
+        }
+    }
+
     function makeLoadingAnimation() {
         console.log("makeLoadingAnimation()")
         //if (true) {
         if (props.isLoading) {
-            let height = 470
-            let width = 500
-            let court
-            if (document.getElementById("transparent-court") && document.getElementById("transparent-court").clientHeight > 0) {
-                court = document.getElementById("transparent-court")
-            }
-            if (!court && document.getElementById("transparent-court-on-top") && document.getElementById("transparent-court-on-top").clientHeight > 0) {
-                court = document.getElementById("transparent-court-on-top")
-            }
-            if (!court && document.getElementById("trad-court") && document.getElementById("trad-court").clientHeight > 0) {
-                court = document.getElementById("trad-court")
-            }
-            if (court) {
-                height = court.clientHeight
-                width = court.clientWidth
-            }
+            let dimensions = getDimensions()
+            let height = dimensions.height
+            let width = dimensions.width
             /*
             let rEach = height / 70
             let rLarge = height / 12
@@ -981,9 +1059,9 @@ const ShotView = (props) => {
                 console.log(style)
                 circles.push(<Circle style={style} cx={calcCoord(centerX, rLarge, i, false)} cy={calcCoord(centerY, rLarge, i, true)} r={rEach} ></Circle>)
             }
-
+    
              <Svg margin="auto" width={width / svgDivisor} height={height / svgDivisor} style={{ animation: `spin 4s linear infinite`, opacity: "1" }} >
-
+    
                     </Svg>
             */
             /**
@@ -1057,6 +1135,7 @@ const ShotView = (props) => {
                 <img src={tradCourt} className="court-image" id="trad-court" ></img>
                 <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
                 {whatToDisplayRef.current}
+                {legend}
                 {loadingAnimation}
             </div>
             <br></br>

@@ -196,11 +196,14 @@ const SimpleSearchBox = (props) => {
     useEffect(() => {
         console.log("useEffect for SimpleSearchBox keyPressedBuilder")
         let classes = ""
+        console.log(props.keyPressedBuilder)
         if (typeof (props.keyPressedBuilder.id) === 'string') {
             classes = props.keyPressedBuilder.id
         } else if (props.keyPressedBuilder.id !== null) {
             classes = props.keyPressedBuilder.id.baseVal
         }
+        console.log(classes)
+        console.log(classes.indexOf('player-dd'))
         if (classes.indexOf('player-dd') !== -1) {
             let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
             for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
@@ -210,6 +213,7 @@ const SimpleSearchBox = (props) => {
                 }
             }
             let result = latestArray[0]
+            console.log(result)
             document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
             props.setSelectedPlayer({
                 id: document.getElementById(result).getAttribute('playerid'),
