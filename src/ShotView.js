@@ -93,8 +93,9 @@ const ShotView = (props) => {
             let dimensions = getDimensions()
             let height = dimensions.height
             let width = dimensions.width
-            let legendWidth = getDimensions().height / 470 * 175
-            let legendHeight = getDimensions().height / 470 * 65
+            let legendWidth = height / 470 * 175
+            console.log(legendWidth)
+            let legendHeight = height / 470 * 65
             let legendStyle = {
                 width: legendWidth,
                 height: legendHeight,
@@ -122,12 +123,12 @@ const ShotView = (props) => {
                                 <div className="legend-left-label legend-bottom-label" >Low</div><div className="legend-right-label legend-bottom-label" >High</div>
                             </div>
                             <div id="size-legend-gradient">
-                                <Svg className="svg-size-legend" height={width / 50 * 1.1} width="100%">
-                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 * 0.4} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 * 0.3} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 * 0.2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 * 0.1} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="82%" width={width / 50} height={width / 50} fill="white" />)
+                                <Svg className="svg-size-legend" height="100%" width="100%">
+                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 - (width / 50 * 0.2) / 2} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 - (width / 50 * 0.4) / 2} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 - (width / 50 * 0.6) / 2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 - (width / 50 * 0.8) / 2} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="82%" y={width / 50 - (width / 50) / 2} width={width / 50} height={width / 50} fill="white" />)
                                 </Svg>
                             </div>
                         </div >)]

@@ -130,9 +130,8 @@ button{
     margin: 0 auto;
 }
 
-.svg-size-legend{
-    position: absolute;
-    margin-top: 3%;
+#svg-size-legend{
+    position: relative;
 }
 
 #color-legend-gradient{
@@ -145,6 +144,11 @@ button{
     border: 1px;
     border-style: solid;
     border-color: black;
+}
+#size-legend-gradient{
+    width: 90%;
+    height: 40%;
+    margin: 0 auto;
 }
 #heat-legend-gradient{
     width: 90%;
