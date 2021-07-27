@@ -32,6 +32,10 @@
     border-style: solid;
     border: 10px 0px 10px 0px;
     border-image: linear-gradient(to right, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
+    border-image: -webkit-linear-gradient(90deg, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
+    border-image: -moz-linear-gradient(90deg, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
+    border-image: -o-linear-gradient(90deg, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
+    border-image: -ms-linear-gradient(90deg, rgba(255,255,255,0)  10%, rgba(255,255,255,0.5)  50% ,  rgba(255,255,255,0) 90%) 100% 0 100% 0/2px 0 2px 0;
 }
 
 p{

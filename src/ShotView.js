@@ -640,7 +640,8 @@ const ShotView = (props) => {
             const widthAltered = width * 1.1
             for (let i = 1; i < allZones.length; i++) {
                 if (allZones[i][1] === 0) {
-                    fill = "rgba(178,178,178, 1)"
+                    //fill = "rgba(178,178,178, 1)"
+                    fill = "gray"
                 } else {
                     let diff = allZones[i][2] - zoneAveragesRef.current[i]
                     if (diff > 0.06) {
@@ -651,6 +652,7 @@ const ShotView = (props) => {
                         fill = "rgba(255,156,156, 1)"
                     } else if (diff < 0.02 && diff >= -0.02) {
                         fill = "rgba(178,178,178, 1)"
+                        //fill = "gray"
                     } else if (diff < -0.02 && diff >= -0.04) {
                         fill = "rgba(145,198,244, 1)"
                     } else if (diff < -0.04 && diff >= -0.06) {
