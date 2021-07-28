@@ -25,12 +25,10 @@
   border: 1px solid rgba(0, 0, 0, 0.8);
   display: inline-grid;
   align-items: center;
-align-content: center;
-text-align: center;
-height: auto;
+  align-content: center;
+  text-align: center;
+  height: auto;
+  border-left: 1px solid rgba(0, 0, 0, 0.8);
 }
-.basegrid-grid-item{
-  border: 1px solid rgba(0, 0, 0, 0.8);
 
-}
 
