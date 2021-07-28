@@ -1142,10 +1142,10 @@ const ShotView = (props) => {
                 {loadingAnimation}
             </div>
             <br></br>
-            <button onClick={() => handleViewTypeButtonClick("Traditional")} >Traditional</button>
-            <button onClick={() => handleViewTypeButtonClick("Grid")} >Grid</button>
-            <button onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
-            <button onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Traditional")} >Traditional</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Grid")} >Grid</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
         </div>
     )
 }

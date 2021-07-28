@@ -161,3 +161,11 @@ button{
     border-style: solid;
     border-color: black;
 }
+
+.view-switch-button{
+    margin-left: 5px;
+    margin-right: 5px;
+    width:100px;
+}
+
+
