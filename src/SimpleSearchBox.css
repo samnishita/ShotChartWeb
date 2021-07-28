@@ -70,6 +70,7 @@ width: auto;
 .dropdown-content.scrollable {
     height: 20vh;
     overflow-y:scroll;
+    overflow-wrap: break-word;
 }
 
 

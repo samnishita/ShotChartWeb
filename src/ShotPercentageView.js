@@ -2,16 +2,8 @@ import './ShotPercentageView.css'
 import { useState, useEffect } from "react";
 
 const ShotPercentageView = (props) => {
-    //console.log(props.simpleShotData.simplesearch)
     const [shotCalcs, setShotCalcs] = useState({ fgFrac: "--", fgPerc: "--", twoPFrac: "--", twoPPerc: "--", threePFrac: "--", threePPerc: "--" })
-    //let fgFrac = "--", fgPerc = "--", twoPFrac = "--", twoPPerc = "--", threePFrac = "--", threePPerc = "--"
-    /*
-      if (props.isCurrentViewSimple && props.simpleShotData.simplesearch) {
-          setShotCalcs(processShotData(props.simpleShotData.simplesearch))
-      } else if (!props.isCurrentViewSimple) {
-  
-      }
-      */
+
     useEffect(() => {
         console.log("useEffect for ShotPercentageView")
         if (props.isCurrentViewSimple && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
@@ -52,18 +44,56 @@ const ShotPercentageView = (props) => {
         return { fgFrac: fgFrac, fgPerc: fgPerc, twoPFrac: twoPFrac, twoPPerc: twoPPerc, threePFrac: threePFrac, threePPerc: threePPerc }
     }
 
+    function generateShotPercentageView() {
+        let fontSizeTitle = props.isCurrentViewSimple ? "50px" : "35px"
+        let fontSizeSubtitle = props.isCurrentViewSimple ? "20px" : "20px"
+        let elements = []
+        for (let i = 0; i < 3; i++) {
+            let eachElementArray
+            switch (i) {
+                case 0:
+                    eachElementArray = ["FG", shotCalcs.fgFrac, shotCalcs.fgPerc]
+                    break;
+                case 1:
+                    eachElementArray = ["2P", shotCalcs.twoPFrac, shotCalcs.twoPPerc]
+                    break;
+                case 2:
+                    eachElementArray = ["3P", shotCalcs.threePFrac, shotCalcs.threePPerc]
+                    break
+            }
+            elements.push(<div className="perc-div">
+                <p className="percentage-title" style={{ fontSize: fontSizeTitle }}>{eachElementArray[0]}</p>
+                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{eachElementArray[1]}</p>
+                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{eachElementArray[2]}</p>
+            </div>)
+        }
+        return (<div className="ShotPercentageView">{elements}</div>
+        )
+        /*
+            return (
+                <div className="ShotPercentageView">
+                    <div className="perc-div">
+                        <p className="percentage-grid-item-title">FG</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.fgFrac}</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.fgPerc}</p>
+                    </div>
+                    <div className="perc-div">
+                        <p className="percentage-grid-item-title">2P</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.twoPFrac}</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.twoPPerc}</p>
+                    </div>
+                    <div className="perc-div">
+                        <p className="percentage-grid-item-title">3P</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.threePFrac}</p>
+                        <p className="percentage-grid-item-content">{shotCalcs.threePPerc}</p>
+    
+                    </div>
+                </div>)
+                */
+    }
+
     return (
-        <div className="ShotPercentageView">
-            <p className="percentage-grid-item-title">FG</p>
-            <p className="percentage-grid-item-title">2P</p>
-            <p className="percentage-grid-item-title">3P</p>
-            <p className="percentage-grid-item-content">{shotCalcs.fgFrac}</p>
-            <p className="percentage-grid-item-content">{shotCalcs.twoPFrac}</p>
-            <p className="percentage-grid-item-content">{shotCalcs.threePFrac}</p>
-            <p className="percentage-grid-item-content">{shotCalcs.fgPerc}</p>
-            <p className="percentage-grid-item-content">{shotCalcs.twoPPerc}</p>
-            <p className="percentage-grid-item-content">{shotCalcs.threePPerc}</p>
-        </div>
+        generateShotPercentageView()
     )
 }
 
