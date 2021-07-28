@@ -35,6 +35,8 @@
 
   #date-accuracy{
       text-align: right;
+      margin-right: 10px;
+      margin-left: 10px;
   }
 
   #accuracy-title {

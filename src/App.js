@@ -225,7 +225,6 @@ const App = () => {
 
   useEffect(() => {
     console.log(`useEffect for App keyPressedBuilder`)
-    console.log(keyPressedBuilder)
     determineWhichView()
   }, [keyPressedBuilder])
 

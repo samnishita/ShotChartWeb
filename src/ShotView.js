@@ -86,15 +86,13 @@ const ShotView = (props) => {
     }, [loadingAnimation])
 
     function generateLegend() {
-        console.log(localViewType)
-        if (localViewType.type === "Traditional") {
+        if (localViewTypeRef.current.type === "Traditional") {
             return <div></div>
         } else {
             let dimensions = getDimensions()
             let height = dimensions.height
             let width = dimensions.width
             let legendWidth = height / 470 * 175
-            console.log(legendWidth)
             let legendHeight = height / 470 * 65
             let legendStyle = {
                 width: legendWidth,
@@ -103,7 +101,7 @@ const ShotView = (props) => {
             }
             let topLabelStyle = { fontSize: height / 470 * 12 }
             let wrapperStyle = { fontSize: height / 470 * 10 }
-            switch (localViewType.type) {
+            switch (localViewTypeRef.current.type) {
                 case "Grid":
                     let sizeLegendStyle = {
                         width: legendWidth * 0.7,
@@ -487,16 +485,16 @@ const ShotView = (props) => {
             let fontSizeFrac = scaleNumber(18)
             let fontSizePerc = scaleNumber(16)
             let fontWidth = scaleNumber(10 * fontSizeFrac)
-            let labelFracStyle = {
-                fontSize: fontSizeFrac,
-                margin: "0px",
-            }
-            let labelPercStyle = {
-                fontSize: fontSizePerc,
-                margin: "0px"
-            }
             for (let i = 1; i < allZones.length; i++) {
-                let divStyles = { position: "absolute", width: fontWidth, backgroundColor: "transparent", zIndex: 1 }
+                let divStyles = { position: "absolute", width: "auto", backgroundColor: "transparent", zIndex: 1 }
+                let labelFracStyle = {
+                    fontSize: fontSizeFrac,
+                    margin: "0px",
+                }
+                let labelPercStyle = {
+                    fontSize: fontSizePerc,
+                    margin: "0px"
+                }
                 switch (i) {
                     case 1:
                         divStyles.transform = `translate(0px,${-scaleNumber(215)}px)`
@@ -529,7 +527,9 @@ const ShotView = (props) => {
                         divStyles.transform = `translate(${scaleNumber(185)}px,${-scaleNumber(115)}px)`
                         break;
                     case 11:
-                        divStyles.transform = `translate(${scaleNumber(-210)}px,${-scaleNumber(200)}px)`
+                        divStyles.transform = `translate(${scaleNumber(-205)}px,${-scaleNumber(200)}px)`
+                        labelFracStyle.textAlign = "left"
+                        labelPercStyle.textAlign = "left"
                         break;
                     case 12:
                         divStyles.transform = `translate(${-scaleNumber(165)}px,${scaleNumber(70)}px)`
@@ -541,7 +541,9 @@ const ShotView = (props) => {
                         divStyles.transform = `translate(${scaleNumber(165)}px,${scaleNumber(70)}px)`
                         break;
                     case 15:
-                        divStyles.transform = `translate(${scaleNumber(210)}px,${-scaleNumber(200)}px)`
+                        divStyles.transform = `translate(${scaleNumber(205)}px,${-scaleNumber(200)}px)`
+                        labelFracStyle.textAlign = "right"
+                        labelPercStyle.textAlign = "right"
                         break;
                 }
                 let percent = "0%"

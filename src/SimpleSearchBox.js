@@ -92,15 +92,15 @@ const SimpleSearchBox = (props) => {
 
     function displayActivePlayers() {
         console.log("displayActivePlayers()")
-        setActivePlayersDisplay(activePlayers.map(value =>
-            <p className='dropdown-item player-display' id={value.displayname.toUpperCase()} playerid={value.playerinfo.id}
-                onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</p>))
+        setActivePlayersDisplay(<ul>{activePlayers.map(value =>
+            <li className='dropdown-item player-display' id={value.displayname.toUpperCase()} playerid={value.playerinfo.id}
+                onClick={(event) => handlePlayerButtonClick(event)}>{value.displayname}</li>)}</ul>)
     }
 
     function displayActiveSeasons() {
         console.log("displayActiveSeasons()")
-        let activeSeasonsElements = Object.values(activeSeasons).map(value => (<p className='dropdown-item season-display' onClick={(event) => handleSeasonButtonClick(event)}>{value}</p>));
-        setActiveSeasonsDisplay(activeSeasonsElements)
+        let activeSeasonsElements = Object.values(activeSeasons).map(value => (<li className='dropdown-item season-display' onClick={(event) => handleSeasonButtonClick(event)}>{value}</li>));
+        setActiveSeasonsDisplay(<ul>{activeSeasonsElements}</ul>)
     }
 
     async function handleYearButtonClick(event) {
@@ -242,50 +242,51 @@ const SimpleSearchBox = (props) => {
         // console.log(props.selectedPlayer)
     }, [props.selectedPlayer])
 
-    return (
-        <div className="SimpleSearchBox">
-            <div className="search-box-body">
-                <div className="search-box-inner-body">
-                    <h6 className="choose-parameters-label">Choose your search parameters</h6>
-                    <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { props.handleDDButtonClick(e, "season-dd") }}>
-                        <span className="dropdown-button-display  year-dd">{selectedYearRef.current}</span>
-                        <span className="arrow year-dd">
-                            <Svg className="arrow-svg year-dd" height="20" width="20">
-                                <Path className="arrow-path year-dd" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                                </Path>
-                            </Svg>
-                        </span>
-                        <div className="dropdown-content scrollable" id="season-dd">
+    function createButton(id, selection, displayState, scrollable) {
+        let height = 20
+        return (<button class={`dropdown-button ${id}-dd`} id={`${id}-button`} onClick={(e) => { props.handleDDButtonClick(e, `${id}-dd`) }}>
+            <p className={`dropdown-button-display ${id}-dd`}>{selection}</p >
+            <Svg className={`arrow-svg ${id}-dd`} height={height} width={height}>
+                <Path className={`arrow-path ${id}-dd`} d={`m0,${height / 2} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
+                </Path>
+            </Svg>
+            <div className={`dropdown-content ${scrollable}`} id={`${id}-dd`}>
+                {displayState}
+            </div>
+        </button>)
+    }
+
+    /**
+     * <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { props.handleDDButtonClick(e, "year-dd") }}>
+                        <p className="dropdown-button-display  year-dd">{selectedYearRef.current}</p >
+                        <Svg className="arrow-svg year-dd" height="20" width="20">
+                            <Path className="arrow-path year-dd" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                            </Path>
+                        </Svg>
+                        <div className="dropdown-content scrollable" id="year-dd">
                             {yearDisplay}
                         </div>
                     </button>
-                    <br></br>
                     <button class="dropdown-button player-dd" id="player-button" onClick={(e) => props.handleDDButtonClick(e, "player-dd")}>
-                        <span className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayerRef.current.playerfirstname} {selectedPlayerRef.current.playerlastname}</span>
-                        <span className="arrow  player-dd" id="player-dd-arrow">
-                            <Svg className="arrow-svg  player-dd" id="player-dd-arrow-svg" height="20" width="20">
-                                <Path className="arrow-path  player-dd" id="player-dd-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                                </Path>
-                            </Svg>
-                        </span>
+                        <p className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayerRef.current.playerfirstname} {selectedPlayerRef.current.playerlastname}</p>
+                        <Svg className="arrow-svg  player-dd" id="player-dd-arrow-svg" height="20" width="20">
+                            <Path className="arrow-path  player-dd" id="player-dd-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                            </Path>
+                        </Svg>
                         <div className="dropdown-content scrollable" id="player-dd">
                             {activePlayersDisplay}
                         </div>
                     </button>
-                    <br></br>
-                    <button class="dropdown-button" id="season-type-button" onClick={(e) => props.handleDDButtonClick(e, "season-type-dd")}>
-                        <span className="dropdown-button-display">{selectedSeasonRef.current}</span>
-                        <span className="arrow">
-                            <Svg className="arrow-svg" height="20" width="20">
-                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                                </Path>
-                            </Svg>
-                        </span>
+                     <button class="dropdown-button" id="season-type-button" onClick={(e) => props.handleDDButtonClick(e, "season-type-dd")}>
+                        <p className="dropdown-button-display">{selectedSeasonRef.current}</p>
+                        <Svg className="arrow-svg" height="20" width="20">
+                            <Path className="arrow-path" d='m0,8 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                            </Path>
+                        </Svg>
                         <div className="dropdown-content" id="season-type-dd">
                             {activeSeasonsDisplay}
                         </div>
                     </button>
-                    <br></br>
                     <button class="dropdown-button" id="view-selector" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
                         <span className="dropdown-button-display">{latestSimpleViewType}</span>
                         <span className="arrow">
@@ -301,6 +302,24 @@ const SimpleSearchBox = (props) => {
                             <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>
                         </div>
                     </button>
+     */
+    return (
+        <div className="SimpleSearchBox">
+            <div className="search-box-body">
+                <div className="search-box-inner-body">
+                    <h6 className="choose-parameters-label">Choose your search parameters</h6>
+                    {createButton("year", selectedYearRef.current, yearDisplay, "scrollable")}
+                    <br></br>
+                    {createButton("player", `${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}`, activePlayersDisplay, "scrollable")}
+                    <br></br>
+                    {createButton("season-type", selectedSeasonRef.current, activeSeasonsDisplay, "")}
+                    <br></br>
+                    {createButton("view-selection", latestSimpleViewType, [<p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Traditional</p>,
+                    <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Grid</p>,
+                    <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Zone</p>,
+                    <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>,
+                    ], "")}
+                    <br></br>
                     <button id="run-simple-search-button" onClick={e => runSimpleSearch()}>
                         Run It
                     </button>
