@@ -256,7 +256,7 @@ const App = () => {
   }, [isLoading])
 
   return (
-    <div className="App">
+    <div className="App" style={isMobile ? { minWidth: "500px" } : {}}>
       <Header />
       <div className="BaseGrid" style={isMobile ? { display: "block" } : {}}>
         <div height="100%">
