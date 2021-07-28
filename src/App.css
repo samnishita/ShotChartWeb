@@ -22,7 +22,6 @@
 }
 
 .basegrid-grid-item {
-  border: 1px solid rgba(0, 0, 0, 0.8);
   display: inline-grid;
   align-items: center;
   align-content: center;
