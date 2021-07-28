@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# Custom NBA Shot Chart Generator (Web Version)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Go to the app -> <a href="https://samnishita.github.io/ShotChartWeb/">Custom NBA Shot Charts (Web Version)</a>
 
-## Available Scripts
+### Shot Data is Up-To-Date Through the End of the 2020-21 Playoffs
 
-In the project directory, you can run:
+Same data, four ways to view it.<br><br>
+Heavily inspired by <a href="https://twitter.com/kirkgoldsberry?s=20">Kirk Goldsberry</a> and his work.
+<div>
+<img src="https://github.com/samnishita/Dynamic-NBA-Shot-Charts/blob/master/src/main/resources/images/SimpleTraditionalExample.png" height="350" width="350">
+<img src="https://github.com/samnishita/Dynamic-NBA-Shot-Charts/blob/master/src/main/resources/images/SimpleGridExample.png" height="350" width="350">
+<!div>
+<div>
+<img src="https://github.com/samnishita/Dynamic-NBA-Shot-Charts/blob/master/src/main/resources/images/SimpleZoneExample.png" height="350" width="350">
+<img src="https://github.com/samnishita/Dynamic-NBA-Shot-Charts/blob/master/src/main/resources/images/SimpleHeatExample.png" height="350" width="350">
+<!div>
 
-### `npm start`
+### Features
+* Over 2,200 past and current NBA players to choose from
+* Access to more than 5.3 million shots taken from the 1996-97 season to the 2020-21 season
+* Search for shots taken in any Regular Season as well as Preseason and/or Playoffs, when applicable
+* Four types of data visualizations: Traditional, Grid, Zone, and Heat
+* Advanced Search: filter shots based seasons, players, season types, shot distances, shot success, shot values, shot types, teams 
+(home and/or away), and locations on the court
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Details
+All shot data is sourced from stats.nba.com via a web scraping algorithm I designed.
+<br><h4>*Traditional View*</h4>
+Each individual shot is plotted. Makes and misses are indicated by green circles and red X's, respectively. 
+Hovering over any shot with the cursor will display the details of that shot.
+<br>Limited to 7,500 shots on screen at once.
+<br><h4>*Grid View*</h4>
+Shots are grouped into uniformly spaced regions across the court. For each region, the color indicates how the FG% of shots in that region
+compares to the all-time NBA FG% of shots in that same region, and the size of each square shows the volume of shots taken from that area. 
+Higher volume (larger squares) combined with high FG% (more red) indicate very efficient scoring. Uses inverse distance weighting interpolations to produce the map.
+<br>Limited to 50,000 shots per search.
+<br><h4>*Zone View*</h4>
+Shots are grouped shots into various regions of the court. For each region, the total number of made field goals are displayed with the total field goal attempts in each specific region, along with 
+that region's calculated FG%. The color of the region shows how its FG% compares to the all-time NBA FG% of that region.
+<br>Limited to 50,000 shots per search.
+<br><h4>*Heat View*</h4>
+Displays the most common shot locations, with more blue indicating high frequency shot locations. Uses inverse distance weighting interpolations to produce the map.
+<br>Limited to 50,000 shots per search.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
