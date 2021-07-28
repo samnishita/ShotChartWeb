@@ -10,7 +10,7 @@
 .court-image{
     transform: rotate(180deg);
     object-fit: cover;
-    max-width :50%;
+    max-width :55%;
     height: auto;
     display: none;
 }.show {display: block;}
@@ -65,16 +65,16 @@ button{
     position: relative;
     transform: rotate(180deg);
     object-fit: cover;
-    max-width :50%;
+    max-width :55%;
     height: auto;
     z-index: 1;
 }
 
 #view-title{
-    padding: 10px 0px 10px 0px;
-    font-size: 2vh;
+    padding: 10px 0px 0px 0px;
+    font-size: 20px;
     text-align: center;
-    height: 2.5vh ;
+    height: 40px ;
 }
 
 #gray-background{

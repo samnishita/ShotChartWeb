@@ -46,7 +46,7 @@ const ShotPercentageView = (props) => {
 
     function generateShotPercentageView() {
         let fontSizeTitle = props.isCurrentViewSimple ? "50px" : "35px"
-        let fontSizeSubtitle = props.isCurrentViewSimple ? "20px" : "20px"
+        let fontSizeSubtitle = props.isCurrentViewSimple ? "20px" : "15px"
         let elements = []
         for (let i = 0; i < 3; i++) {
             let eachElementArray
@@ -69,27 +69,6 @@ const ShotPercentageView = (props) => {
         }
         return (<div className="ShotPercentageView">{elements}</div>
         )
-        /*
-            return (
-                <div className="ShotPercentageView">
-                    <div className="perc-div">
-                        <p className="percentage-grid-item-title">FG</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.fgFrac}</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.fgPerc}</p>
-                    </div>
-                    <div className="perc-div">
-                        <p className="percentage-grid-item-title">2P</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.twoPFrac}</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.twoPPerc}</p>
-                    </div>
-                    <div className="perc-div">
-                        <p className="percentage-grid-item-title">3P</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.threePFrac}</p>
-                        <p className="percentage-grid-item-content">{shotCalcs.threePPerc}</p>
-    
-                    </div>
-                </div>)
-                */
     }
 
     return (

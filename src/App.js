@@ -257,11 +257,11 @@ const App = () => {
     <div className="App">
       <Header />
       <div className="BaseGrid">
-        <div >
+        <div height="100%">
           <SearchTypeButtons simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick} />
           {whichSearchBox}
         </div>
-        <div className="basegrid-grid-item" id="shotview-grid-item">
+        <div className="basegrid-grid-item" id="shotview-grid-item" height="auto">
           <ShotView title={title} isLoading={isLoading} setIsLoading={setIsLoading}
             allSearchData={allSearchData} isCurrentViewSimple={isCurrentViewSimple} latestAdvancedViewType={latestAdvancedViewType} />
         </div>

@@ -183,14 +183,16 @@ const AdvancedSearchBox = (props) => {
         if (descriptor === "season-advanced-dd" || descriptor === "success" || descriptor === "shot-value") {
             scrollable = ""
         }
-        return <button className={`dropdown-button ${descriptor}`} id={`${descriptor}-button`} onClick={(e) => { props.handleDDButtonClick(e, descriptor) }}>
-            <span className={`dropdown-button-display ${descriptor}`}>{name}</span>
-            <span className={`arrow ${descriptor}`}>
+        let rangeButtonClass = descriptor.includes("-begin") || descriptor.includes("-end") ? "range-button" : ""
+        let rangeButtonDisplayClass = descriptor.includes("-begin") || descriptor.includes("-end") ? "range-button-display" : ""
+        return <button className={`${rangeButtonClass} dropdown-button ${descriptor}`} id={`${descriptor}-button`} onClick={(e) => { props.handleDDButtonClick(e, descriptor) }}>
+            <p className={`${rangeButtonDisplayClass} dropdown-button-display ${descriptor}`}>{name}</p>
+            <p className={`arrow ${descriptor}`}>
                 <Svg className={`arrow-svg ${descriptor}`} height="20" width="20">
-                    <Path className={`arrow-path ${descriptor}`} d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                    <Path className={`arrow-path ${descriptor}`} d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                     </Path>
                 </Svg>
-            </span>
+            </p>
             <div className={`dropdown-content ${scrollable}`} id={descriptor}>
                 {createDropDown(descriptor)}
             </div>
@@ -306,34 +308,46 @@ const AdvancedSearchBox = (props) => {
                 <div className='search-box-inner-body'>
                     <h6 className="choose-parameters-label">Choose your search filters</h6>
                     <div id='selection-scrollable'>
-                        <p>Seasons: {makeButton("Begin", "year-advanced-dd-begin")} - {makeButton("End", "year-advanced-dd-end")}</p>
-                        <p>Players: {makeButton("Choose Players", "player-advanced-dd")}</p>
-                        <p>Season Types: {makeButton("Choose Season Types", "season-advanced-dd")}</p>
-                        <p>Shot Distance (ft.): {makeButton("Begin", "distance-begin")} - {makeButton("End", "distance-end")}</p>
-                        <p>Shot Success: {makeButton("Choose Makes or Misses", "success")}</p>
-                        <p>Shot Value: {makeButton("Choose 2PT or 3PT", "shot-value")}</p>
-                        <p>Shot Types: {makeButton("Choose Shot Types", "shot-types")}</p>
-                        <p>Shooting Teams: {makeButton("Choose Teams", "shooting-teams")}</p>
-                        <p>Home Teams: {makeButton("Choose Home Teams", "home-teams")}</p>
-                        <p>Away Teams: {makeButton("Choose Away Teams", "away-teams")}</p>
-                        <p>Court Areas: {makeButton("Choose Court Areas", "court-areas")}</p>
-                        <p>Sides of Court: {makeButton("Choose Sides of Court", "court-sides")}</p>
+                        <p className="param-title">Seasons: </p>
+                        <p className="param-content">{makeButton("Begin", "year-advanced-dd-begin")} - {makeButton("End", "year-advanced-dd-end")}</p>
+                        <p className="param-title">Players: </p>
+                        <p className="param-content">{makeButton("Choose Players", "player-advanced-dd")}</p>
+                        <p className="param-title">Season Types: </p>
+                        <p className="param-content">{makeButton("Choose Season Types", "season-advanced-dd")}</p>
+                        <p className="param-title">Shot Distance (ft.): </p>
+                        <p className="param-content">{makeButton("Begin", "distance-begin")} - {makeButton("End", "distance-end")}</p>
+                        <p className="param-title">Shot Success: </p>
+                        <p className="param-content">{makeButton("Choose Makes or Misses", "success")}</p>
+                        <p className="param-title">Shot Value:</p>
+                        <p className="param-content">{makeButton("Choose 2PT or 3PT", "shot-value")}</p>
+                        <p className="param-title">Shot Types:</p>
+                        <p className="param-content">{makeButton("Choose Shot Types", "shot-types")}</p>
+                        <p className="param-title">Shooting Teams:</p>
+                        <p className="param-content">{makeButton("Choose Teams", "shooting-teams")}</p>
+                        <p className="param-title">Home Teams: </p>
+                        <p className="param-content">{makeButton("Choose Home Teams", "home-teams")}</p>
+                        <p className="param-title">Away Teams: </p>
+                        <p className="param-content">{makeButton("Choose Away Teams", "away-teams")}</p>
+                        <p className="param-title">Court Areas: </p>
+                        <p className="param-content">{makeButton("Choose Court Areas", "court-areas")}</p>
+                        <p className="param-title">Sides of Court: </p>
+                        <p className="param-content"> {makeButton("Choose Sides of Court", "court-sides")}</p>
                     </div>
-                    <button className="dropdown-button static-button" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
-                        <span className="dropdown-button-display">{latestAdvancedViewType}</span>
-                        <span className="arrow">
+                    <button className="dropdown-button static-button " id="adv-view-button" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
+                        <p className="dropdown-button-display">{latestAdvancedViewType}</p>
+                        <p className="arrow">
                             <Svg className="arrow-svg" height="20" width="20">
                                 <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                                 </Path>
                             </Svg>
-                        </span>
+                        </p>
                         <div className="dropdown-content" id="view-selection-dd">
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Traditional</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Grid</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Zone</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Heat</p>
                         </div></button>
-
+                    <br></br>
                     <button className="static-button" id="run-advanced-search-button" onClick={() => runAdvancedSearch()}>Run It</button>
                     <br></br>
                     <p id="current-selections">Current Selections: </p>

@@ -213,8 +213,8 @@ const SimpleSearchBox = (props) => {
                 }
             }
             let result = latestArray[0]
-            console.log(result)
-            document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
+
+            document.getElementById(result).parentNode.parentNode.scrollTop = document.getElementById(result).offsetTop;
             props.setSelectedPlayer({
                 id: document.getElementById(result).getAttribute('playerid'),
                 playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
