@@ -214,6 +214,7 @@ const App = () => {
         setTitle={setTitle} setIsLoading={setIsLoading}
         updateLatestAdvancedViewType={setLatestAdvancedViewType}
         setAllSearchData={setAllSearchData}
+      //style={isMobile ? { display: "block" } : { display: "block" }}
       />)
     }
   }

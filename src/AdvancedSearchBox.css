@@ -10,7 +10,7 @@
     text-align: center;
     font-family: 'MonserratLight';
     color: white;
-    height: 50vh;
+    min-height: 50vh;
 }
 
 .AdvancedSearchBox .search-box-body{
