@@ -5,9 +5,11 @@ import ShotView from './ShotView'
 import AdvancedSearchBox from './AdvancedSearchBox';
 import SearchTypeButtons from './SearchTypeButtons';
 import React, { useEffect, useState, useRef } from 'react';
+import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 
 const App = () => {
   console.log("RERENDER APP")
+  console.log("isMobile: " + isMobile)
   const currentYear = '2020-21'
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
   const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Traditional")
@@ -256,7 +258,7 @@ const App = () => {
   return (
     <div className="App">
       <Header />
-      <div className="BaseGrid">
+      <div className="BaseGrid" style={isMobile ? { display: "block" } : {}}>
         <div height="100%">
           <SearchTypeButtons simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick} />
           {whichSearchBox}
