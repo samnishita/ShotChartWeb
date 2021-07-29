@@ -89,10 +89,13 @@ const ShotView = (props) => {
                     hideElement("gray-background")
                     console.log("Showing transparent-court")
                 } else {
-                    showElement("trad-court")
-                    hideElement("transparent-court")
+                    //showElement("trad-court")
+                    //hideElement("transparent-court")
+                    hideElement("trad-court")
+                    showElement("transparent-court")
                     hideElement("transparent-court-on-top")
-                    hideElement("gray-background")
+                    //hideElement("gray-background")
+                    showElement("gray-background")
                     console.log("Showing trad-court")
                 }
                 break;
@@ -105,7 +108,8 @@ const ShotView = (props) => {
                 break;
             case "Heat":
                 showElement("transparent-court")
-                hideElement("gray-background")
+                //hideElement("gray-background")
+                showElement("gray-background")
                 hideElement("trad-court")
                 hideElement("transparent-court-on-top")
                 console.log("Showing transparent-court")
@@ -177,8 +181,10 @@ const ShotView = (props) => {
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let searchType = Object.keys(allShotsRef.current.shots)[0]
             let allShotsTemp = allShotsRef.current.shots[searchType]
-            const height = document.getElementById('trad-court').clientHeight
-            const width = document.getElementById('trad-court').clientWidth
+            //const height = document.getElementById('trad-court').clientHeight
+            //const width = document.getElementById('trad-court').clientWidth
+            const height = document.getElementById('transparent-court').clientHeight
+            const width = document.getElementById('transparent-court').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
             const rad = 5 * height / 470;
@@ -207,7 +213,7 @@ const ShotView = (props) => {
         }
         return tradArray
     }
-    const squareSizeOrig = 15
+    const squareSizeOrig = 12
 
     function displayGrid() {
         console.log("displayGrid()")
@@ -240,7 +246,7 @@ const ShotView = (props) => {
                     allTiles[eachTile].shotinfo[2] = allTiles[eachTile].shotinfo[0] / allTiles[eachTile].shotinfo[1]
                 }
             })
-            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = squareSizeOrig, calcDistance = 0;
+            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = squareSizeOrig * 2, calcDistance = 0;
             let tileValues = {}
             let min = 1, minFactor = 0.00045;
             if (shotCounter * minFactor > 1) {
@@ -256,7 +262,7 @@ const ShotView = (props) => {
             let temp, avg;
             let squareElements = []
             Object.keys(allTiles).forEach(eachTile => {
-                if (Math.round(allTiles[eachTile].x / squareSizeOrig) * squareSizeOrig % (offset / 2) === 0 && (allTiles[eachTile].y) % (offset / 2) === 0) {
+                if (Math.round(allTiles[eachTile].x / squareSizeOrig) * squareSizeOrig % (squareSizeOrig) === 0 && (allTiles[eachTile].y + 55) % (squareSizeOrig) === 0) {
                     aSum = 0;
                     bSum = 0;
                     Object.keys(allTiles).forEach(eachTile2 => {
@@ -274,7 +280,8 @@ const ShotView = (props) => {
                     } else if (eachTileShotCount > maxShotsPerMaxSquare) {
                         squareSide = 1
                     }
-                    temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (allTiles[eachTile].y % 2 === 0 ? allTiles[eachTile].y + 5 : allTiles[eachTile].y) + ")";
+                    //temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (allTiles[eachTile].y % 2 === 0 ? allTiles[eachTile].y + 5 : allTiles[eachTile].y) + ")";
+                    temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (Math.round(allTiles[eachTile].y / 10) * 10 + 5) + ")";
                     avg = gridAveragesRef.current[temp]
                     let tileFill = ""
                     if (tileValues[eachTile] > avg + 0.07) {
@@ -319,7 +326,9 @@ const ShotView = (props) => {
                     let s = squareSide / 2 * 1.05
                     let h = s / Math.cos(30 * Math.PI / 180)
                     let tan = Math.tan(30 * Math.PI / 180)
-                    let moveX = (eachTile.y + 5) % 10 === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
+                    //let moveX = (eachTile.y + 5) % 10 === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
+                    console.log(eachTile.y)
+                    let moveX = (eachTile.y + 55) % (squareSizeOrig * 2) === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
                     let moveY = heightAltered / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
                     allNewTiles.push(<Path d={`m${moveX} ${moveY} 
                     l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
@@ -698,7 +707,7 @@ const ShotView = (props) => {
                     each.shotinfo[2] = each.shotinfo[0] / each.shotinfo[1]
                 }
             })
-            let aSum = 0, bSum = 0, p = 2, offset = 15, maxDistanceBetweenNodes = 30
+            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = 30
             let tileValues = {}
             let allKeys = Object.keys(allTiles)
             let counter = 0;
@@ -815,7 +824,7 @@ const ShotView = (props) => {
                         break;
                 }
                 let eachGradient = <RadialGradient id={`grad_${eachHeatTile.x}_${eachHeatTile.y}`} cx={cx} cy={cy} r={radius} fx={cx} fy={cy} gradientUnits="userSpaceOnUse">
-                    <Stop offset="0" stopColor={eachHeatTile.color} stopOpacity="0.8" />
+                    <Stop offset="0" stopColor={eachHeatTile.color} stopOpacity="0.4" />
                     <Stop offset="1" stopColor={eachHeatTile.color} stopOpacity="0" />
                 </RadialGradient>
                 gradients.push(eachGradient)
