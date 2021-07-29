@@ -888,7 +888,7 @@ const ShotView = (props) => {
                         <div width="100%" style={wrapperStyle}>
                             <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
                         </div>
-                        <div id="color-legend-gradient">
+                        <div >
                             <Svg width={14 * s} height={4 * s}>
                                 {hexArray}
                             </Svg>
