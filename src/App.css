@@ -2,11 +2,8 @@
   display: grid;
   grid-auto-columns: auto ;
   text-align: center;
-  height:  100vh;
   min-height: 100vh;
   min-width: 850px;
-  overflow-x: scroll;
-  overflow-y: scroll;
   background-image: linear-gradient(135deg, #434343 25% , 65%, #cdcccc);
   background-attachment: fixed;
   background-size: cover;

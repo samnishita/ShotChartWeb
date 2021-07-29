@@ -33,6 +33,8 @@ const ShotView = (props) => {
     loadingAnimationRef.current = loadingAnimation
     const localViewTypeRef = useRef({})
     localViewTypeRef.current = localViewType
+    const sizeRef = useRef({})
+    sizeRef.current = size
 
     async function getHexAverages() {
         console.log("getHexAverages()")
@@ -40,7 +42,6 @@ const ShotView = (props) => {
             .then(res => {
                 let averageJson = {}
                 res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                console.log(averageJson)
                 return averageJson
             })
         return response
@@ -136,16 +137,12 @@ const ShotView = (props) => {
     }
 
     function handleResize() {
-        console.log("handleResize()")
-        if (size[0] !== window.innerHeight || size[1] !== window.innerWidth) {
+        if (sizeRef.current[0] !== window.innerHeight || sizeRef.current[1] !== window.innerWidth) {
+            console.log("handleResize()")
             console.log("Size Not Okay")
-            console.log(`${window.innerHeight}!=${size[0]} OR ${window.innerWidth}!=${size[1]}`)
+            console.log(`${window.innerHeight}!=${sizeRef.current[0]} OR ${window.innerWidth}!=${sizeRef.current[1]}`)
             setWindowSize([window.innerHeight, window.innerWidth])
-            console.log(`Resizing with ${localViewTypeRef.current.type}`)
             generateWhatToDisplay()
-        } else {
-            console.log("Size Okay")
-            console.log(`${window.innerHeight}=${size[0]} AND ${window.innerWidth}=${size[1]}`)
         }
     }
 
@@ -326,13 +323,11 @@ const ShotView = (props) => {
                     let s = squareSide / 2 * 1.05
                     let h = s / Math.cos(30 * Math.PI / 180)
                     let tan = Math.tan(30 * Math.PI / 180)
-                    //let moveX = (eachTile.y + 5) % 10 === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
-                    console.log(eachTile.y)
                     let moveX = (eachTile.y + 55) % (squareSizeOrig * 2) === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
                     let moveY = heightAltered / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
                     allNewTiles.push(<Path d={`m${moveX} ${moveY} 
-                    l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
-                    l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
+                        l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
+                        l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
                         fill={eachTile.tileFill} opacity="0.7" />)
                 }
             })
@@ -1121,7 +1116,10 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect (adding eventlistener)")
-        window.addEventListener('resize', handleResize)
+        //window.addEventListener('resize', handleResize)
+        setInterval(() => {
+            handleResize()
+        }, 250)
     }, [])
 
     useEffect(() => {

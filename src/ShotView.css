@@ -23,8 +23,8 @@
     width:100%;
     overflow: auto;
     scroll-behavior: smooth;
-    overflow-y:scroll;
 }
+
 
 button{
     font-family: 'MonserratLight';
