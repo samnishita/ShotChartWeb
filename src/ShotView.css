@@ -135,15 +135,18 @@ button{
 }
 
 #color-legend-gradient{
+   
     width: 90%;
     height: 20%;
+     /*
     background-image: linear-gradient(to right,#2f75ee  0% ,#56b0ff  18% ,#aed9ff  36% ,#d0cfcf  50% ,#ff9c9c  69% ,#ff6363  83% ,#fc2121 95%);
     background-size: cover;
     background-repeat: no-repeat;
-    margin: 0 auto;
     border: 1px;
     border-style: solid;
-    border-color: black;
+    border-color: black;*/
+    margin: 0 auto;
+    
 }
 #size-legend-gradient{
     width: 90%;

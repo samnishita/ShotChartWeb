@@ -333,8 +333,6 @@ const ShotView = (props) => {
         }
     }
 
-
-
     function mapShotsToZones() {
         console.log("mapShotsToZones()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
@@ -861,12 +859,40 @@ const ShotView = (props) => {
                         height: legendHeight,
                         transform: `translate(${width / 2 - legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
                     }
+                    let s = width / (500 / squareSizeOrig) / 2 * 1.05
+                    let h = s / Math.cos(30 * Math.PI / 180)
+                    let tan = Math.tan(30 * Math.PI / 180)
+                    let hexArray = [], hexArrayPlain = []
+                    let fillMap = {
+                        1: "#7babff",
+                        2: "#8bc9ff",
+                        3: "#aed9ff",
+                        4: "white",
+                        5: "#ff9c9c",
+                        6: "#ff6363",
+                        7: "#fc2121"
+                    }
+                    let sModSum = 0;
+                    for (let i = 0; i < 7; i++) {
+                        hexArray.push(<Path d={`m${(2 * s * i + s)} ${s / 2} l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
+                            l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`} fill={fillMap[i + 1]} opacity="0.7" />)
+                        let sMod = s * (0.3 + (i * 0.1))
+                        let distance = s * 0.85
+                        sModSum += sMod + distance + sMod / 2
+                        let modifiedHeight = sMod / Math.cos(30 * Math.PI / 180)
+                        hexArrayPlain.push(<Path d={`m${sModSum} ${s / 2 + (s - sMod)} l${sMod} ${sMod * tan} l0 ${modifiedHeight} l${-sMod} ${sMod * tan}
+                            l${-sMod} ${-sMod * tan} l0 ${-modifiedHeight} l${sMod} ${-sMod * tan} l${sMod} ${sMod * tan}`} fill="white" opacity="0.7" />)
+                    }
                     return [(< div id="color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
                         <div width="100%" style={wrapperStyle}>
                             <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
                         </div>
-                        <div id="color-legend-gradient"></div>
+                        <div id="color-legend-gradient">
+                            <Svg width={14 * s} height={4 * s}>
+                                {hexArray}
+                            </Svg>
+                        </div>
                     </div >), (
                         < div id="size-legend" style={sizeLegendStyle} >
                             <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
@@ -874,12 +900,8 @@ const ShotView = (props) => {
                                 <div className="legend-left-label legend-bottom-label" >Low</div><div className="legend-right-label legend-bottom-label" >High</div>
                             </div>
                             <div id="size-legend-gradient">
-                                <Svg className="svg-size-legend" height="100%" width="100%">
-                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 - (width / 50 * 0.2) / 2} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 - (width / 50 * 0.4) / 2} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 - (width / 50 * 0.6) / 2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 - (width / 50 * 0.8) / 2} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="82%" y={width / 50 - (width / 50) / 2} width={width / 50} height={width / 50} fill="white" />)
+                                <Svg className="svg-size-legend" width={14 * s} height={4 * s}>
+                                    {hexArrayPlain}
                                 </Svg>
                             </div>
                         </div >)]
