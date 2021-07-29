@@ -34,162 +34,39 @@ const ShotView = (props) => {
     const localViewTypeRef = useRef({})
     localViewTypeRef.current = localViewType
 
-    useEffect(() => {
-        console.log("useEffect for props.latestAdvancedViewType")
-    }, [props.latestAdvancedViewType])
-
-    useEffect(() => {
-        console.log("useEffect (adding eventlistener)")
-        window.addEventListener('resize', handleResize)
-    }, [])
-
-    useEffect(() => {
-        console.log(`useEffect for localViewType`)
-        //Initial case
-        if (!allShotsRef.current && whatToDisplay.length === 0) {
-
-        }//Click button after running search
-        else if (allShotsRef.current.shots && !props.isLoading) {
-            props.setIsLoading(true)
-        } else if (allShotsRef.current.shots && allShotsRef.current.length !== 0 && props.isLoading) {
-            setWhatToDisplay([])
-        } else if (allShotsRef.current.length === 0 && props.isLoading) {
-            setLoadingAnimation(makeLoadingAnimation())
-        }
-    }, [localViewType])
-
-    useEffect(() => {
-        console.log("useEffect for props.allSearchData")
-        setAllShots(props.allSearchData)
-        if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
-            setAllGridTiles([])
-        }
-    }, [props.allSearchData])
-
-    useEffect(() => {
-        console.log("useEffect for props.isLoading")
-        if (props.isLoading) {
-            setWhatToDisplay([])
-        } else {
-            setLoadingAnimation(makeLoadingAnimation())
-        }
-    }, [props.isLoading])
-
-    useEffect(() => {
-        console.log("useEffect for loadingAnimation")
-        setTimeout(() => {
-            console.log("TIMEOUT")
-            if (allShotsRef.current && allShotsRef.current.length !== 0 && whatToDisplay.length === 0) {
-                generateWhatToDisplay()
-            }
-        }, 100)
-    }, [loadingAnimation])
-
-    function generateLegend() {
-        if (localViewTypeRef.current.type === "Traditional") {
-            return <div></div>
-        } else {
-            let dimensions = getDimensions()
-            let height = dimensions.height
-            let width = dimensions.width
-            let legendWidth = height / 470 * 175
-            let legendHeight = height / 470 * 65
-            let legendStyle = {
-                width: legendWidth,
-                height: legendHeight,
-                transform: `translate(${width / -2 + legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
-            }
-            let topLabelStyle = { fontSize: height / 470 * 12 }
-            let wrapperStyle = { fontSize: height / 470 * 10 }
-            switch (localViewTypeRef.current.type) {
-                case "Grid":
-                    let sizeLegendStyle = {
-                        width: legendWidth * 0.7,
-                        height: legendHeight,
-                        transform: `translate(${width / 2 - legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
-                    }
-                    return [(< div id="color-legend" style={legendStyle} >
-                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
-                        <div width="100%" style={wrapperStyle}>
-                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
-                        </div>
-                        <div id="color-legend-gradient"></div>
-                    </div >), (
-                        < div id="size-legend" style={sizeLegendStyle} >
-                            <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
-                            <div width="100%" style={wrapperStyle}>
-                                <div className="legend-left-label legend-bottom-label" >Low</div><div className="legend-right-label legend-bottom-label" >High</div>
-                            </div>
-                            <div id="size-legend-gradient">
-                                <Svg className="svg-size-legend" height="100%" width="100%">
-                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 - (width / 50 * 0.2) / 2} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 - (width / 50 * 0.4) / 2} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 - (width / 50 * 0.6) / 2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 - (width / 50 * 0.8) / 2} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
-                                    <Rect style={{ position: "absolute" }} x="82%" y={width / 50 - (width / 50) / 2} width={width / 50} height={width / 50} fill="white" />)
-                                </Svg>
-                            </div>
-                        </div >)]
-                case "Zone":
-                    return (< div id="color-legend" style={legendStyle} >
-                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
-                        <div width="100%" style={wrapperStyle}>
-                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
-                        </div>
-                        <div id="color-legend-gradient"></div>
-                    </div >)
-                case "Heat":
-                    return (< div id="heat-color-legend" style={legendStyle} >
-                        <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
-                        <div width="100%" style={wrapperStyle}>
-                            <div className="legend-left-label legend-bottom-label" >Low Freq.</div><div className="legend-right-label legend-bottom-label" >High Freq.</div>
-                        </div>
-                        <div id="heat-legend-gradient"></div>
-                    </div>)
-            }
-        }
+    async function getGridAverages() {
+        console.log("getGridAverages()")
+        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
+            .then(res => {
+                let averageJson = {}
+                res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
+                console.log(averageJson)
+                return averageJson
+            })
+        return response
     }
 
-    useEffect(() => {
-        console.log("useEffect for whatToDisplay")
-        if (allShotsRef.current && allShotsRef.current.shots !== null && whatToDisplay.length !== 0) {
-            if (typeof (whatToDisplay) === 'object') {
-                props.setIsLoading(false)
-            }
-            //Switching view of current shots
-        } else if (allShotsRef.current && whatToDisplay.length === 0) {
-            if (props.isLoading) {
-                setLoadingAnimation(makeLoadingAnimation())
-            } else {
-                console.log("Setting isLoading to true from useEffect(whatToDisplay)")
-                props.setIsLoading(true)
-            }
-        } else {
-            chooseCourt(localViewType.type)
-        }
-    }, [whatToDisplay])
+    async function getZoneAverages() {
+        console.log("getZoneAverages()")
+        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
+            .then(res => {
+                let averageJson = {}
+                res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
+                return averageJson
+            })
+        return response
+    }
 
-    useEffect(() => {
-        console.log("useEffect for allGridTiles")
-        if (allGridTiles.length !== 0) {
-            setWhatToDisplay(resizeGrid())
-        } else {
-            setAllHeatTiles([])
-        }
-    }, [allGridTiles])
-
-    useEffect(() => {
-        console.log("useEffect for allHeatTiles")
-        if (allHeatTiles.length !== 0) {
-            setWhatToDisplay(resizeHeat())
-        } else {
-            if (allShotsRef.current && allShotsRef.current.length !== 0) {
-                setLocalViewType({ type: allShotsRef.current.view, isOriginal: true })
-            } else if (allShotsRef.current && allShotsRef.current.length === 0 && !props.isCurrentViewSimple) {
-                setLocalViewType({ type: props.latestAdvancedViewType, isOriginal: true })
-            }
-        }
-    }, [allHeatTiles])
+    async function getSearchData(url) {
+        console.log(`getSearchData(${url})`)
+        const response = await fetch(url, {
+            method: 'GET'
+        }).then(res => res.json())
+            .then(data => {
+                return data
+            }).catch(error => console.log('error', error))
+        return response
+    }
 
     function hideElement(elementId) {
         if (document.getElementById(elementId).classList.contains('show')) {
@@ -268,28 +145,32 @@ const ShotView = (props) => {
         }
     }
 
-    function resizeGrid() {
-        console.log("resizeGrid()")
-        if (allGridTiles.length > 0) {
-            const height = document.getElementById('transparent-court').clientHeight
-            const width = document.getElementById('transparent-court').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
-            let squareSize = width / 50;
-            let allNewTiles = []
-            allGridTiles.forEach(eachTile => {
-                let squareSide = eachTile.squareSide * squareSize * 0.9
-                if (squareSide !== 0) {
-                    allNewTiles.push(<Rect x={widthAltered / 2 + (eachTile.x + (squareSize - squareSide) / 2) * height / 470}
-                        y={heightAltered / 2 + (eachTile.y - 175 + (squareSize - squareSide) / 2) * height / 470 - 5}
-                        width={squareSide} height={squareSide} fill={eachTile.tileFill} opacity="0.8" />)
+    function determineView(viewType) {
+        console.log("Determining viewtype: " + viewType)
+        chooseCourt(viewType)
+        switch (viewType) {
+            case "Traditional":
+                console.log("Displaying Traditional")
+                return displayTraditional()
+            case "Grid":
+                if (allGridTiles.length === 0) {
+                    console.log("Displaying Grid")
+                    displayGrid()
                 }
-            })
-            return (<Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
-                {allNewTiles}
-            </Svg>)
+                return resizeGrid()
+            case "Zone":
+                console.log("Displaying Zone")
+                return displayZone()
+            case "Heat":
+                if (allHeatTiles.length === 0) {
+                    console.log("Displaying Heat")
+                    displayHeat()
+                }
+                return resizeHeat()
         }
+        return <div></div>
     }
+
     function displayTraditional() {
         console.log("displayTraditional()")
         let tradArray = []
@@ -326,45 +207,20 @@ const ShotView = (props) => {
         }
         return tradArray
     }
-
-    function determineView(viewType) {
-        console.log("Determining viewtype: " + viewType)
-        chooseCourt(viewType)
-        switch (viewType) {
-            case "Traditional":
-                console.log("Displaying Traditional")
-                return displayTraditional()
-            case "Grid":
-                if (allGridTiles.length === 0) {
-                    console.log("Displaying Grid")
-                    displayGrid()
-                }
-                return resizeGrid()
-            case "Zone":
-                console.log("Displaying Zone")
-                return displayZone()
-            case "Heat":
-                if (allHeatTiles.length === 0) {
-                    console.log("Displaying Heat")
-                    displayHeat()
-                }
-                return resizeHeat()
-        }
-        return <div></div>
-    }
+    const squareSizeOrig = 15
 
     function displayGrid() {
         console.log("displayGrid()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
             let allTiles = {}
-            let squareSizeOrig = 10
             for (let j = -55; j < 400; j = j + squareSizeOrig) {
-                for (let i = -250; i < 250; i = i + squareSizeOrig) {
-                    allTiles[`tile_${i}_${j}`] = { x: i, y: j, shotinfo: [0.0, 0.0, 0.0] }
+                for (let i = -250; i < 250; i = i + squareSizeOrig * 1.1547005) {
+                    allTiles[`tile_${Math.round(i / squareSizeOrig) * squareSizeOrig}_${j}`] = { x: i, y: j, shotinfo: [0.0, 0.0, 0.0] }
                 }
             }
-            let factor = 0.007;
+            //let factor = 0.007;
+            let factor = 0.015;
             let shots = allShotsTemp.filter(param => param.y <= 400)
             let shotCounter = allShotsTemp.length
             Object.keys(allTiles).forEach(eachTile => {
@@ -384,7 +240,7 @@ const ShotView = (props) => {
                     allTiles[eachTile].shotinfo[2] = allTiles[eachTile].shotinfo[0] / allTiles[eachTile].shotinfo[1]
                 }
             })
-            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = 20, calcDistance = 0;
+            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = squareSizeOrig, calcDistance = 0;
             let tileValues = {}
             let min = 1, minFactor = 0.00045;
             if (shotCounter * minFactor > 1) {
@@ -400,12 +256,12 @@ const ShotView = (props) => {
             let temp, avg;
             let squareElements = []
             Object.keys(allTiles).forEach(eachTile => {
-                if (allTiles[eachTile].x % offset === 0 && (allTiles[eachTile].y - 5) % offset === 0) {
+                if (Math.round(allTiles[eachTile].x / squareSizeOrig) * squareSizeOrig % (offset / 2) === 0 && (allTiles[eachTile].y) % (offset / 2) === 0) {
                     aSum = 0;
                     bSum = 0;
                     Object.keys(allTiles).forEach(eachTile2 => {
                         calcDistance = getDistance(allTiles[eachTile], allTiles[eachTile2])
-                        if (eachTile !== eachTile2 && calcDistance < maxDistanceBetweenNodes) {
+                        if (eachTile !== eachTile2 && calcDistance <= maxDistanceBetweenNodes) {
                             aSum = aSum + (allTiles[eachTile2].shotinfo[2] / Math.pow(calcDistance, p));
                             bSum = bSum + (1 / Math.pow(getDistance(allTiles[eachTile], allTiles[eachTile2]), p));
                         }
@@ -418,7 +274,7 @@ const ShotView = (props) => {
                     } else if (eachTileShotCount > maxShotsPerMaxSquare) {
                         squareSide = 1
                     }
-                    temp = "(" + allTiles[eachTile].x + "," + allTiles[eachTile].y + ")";
+                    temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (allTiles[eachTile].y % 2 === 0 ? allTiles[eachTile].y + 5 : allTiles[eachTile].y) + ")";
                     avg = gridAveragesRef.current[temp]
                     let tileFill = ""
                     if (tileValues[eachTile] > avg + 0.07) {
@@ -448,117 +304,36 @@ const ShotView = (props) => {
         }
     }
 
-    function getDistance(tile1, tile2) {
-        return Math.sqrt(Math.pow(tile1.x - tile2.x, 2) + Math.pow(tile1.y - tile2.y, 2));
-    }
-
-    async function getGridAverages() {
-        console.log("getGridAverages()")
-        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
-            .then(res => {
-                let averageJson = {}
-                res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                return averageJson
-            })
-        return response
-    }
-
-    async function getSearchData(url) {
-        console.log(`getSearchData(${url})`)
-        const response = await fetch(url, {
-            method: 'GET'
-        }).then(res => res.json())
-            .then(data => {
-                return data
-            }).catch(error => console.log('error', error))
-        return response
-    }
-    function generateZoneLabels(view) {
-        console.log(`generateZoneLabels(${view})`)
-        if (allShotsRef.current && view === "Zone") {
-            let allZones = mapShotsToZones()
-            let zoneLabels = []
-            const height = document.getElementById('transparent-court-on-top').clientHeight
-            const width = document.getElementById('transparent-court-on-top').clientWidth
+    function resizeGrid() {
+        console.log("resizeGrid()")
+        if (allGridTilesRef.current.length > 0) {
+            const height = document.getElementById('transparent-court').clientHeight
+            const width = document.getElementById('transparent-court').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
-            let fontSizeFrac = scaleNumber(18)
-            let fontSizePerc = scaleNumber(16)
-            let fontWidth = scaleNumber(10 * fontSizeFrac)
-            for (let i = 1; i < allZones.length; i++) {
-                let divStyles = { position: "absolute", width: "auto", backgroundColor: "transparent", zIndex: 1 }
-                let labelFracStyle = {
-                    fontSize: fontSizeFrac,
-                    margin: "0px",
+            let squareSize = width / (500 / squareSizeOrig);
+            let allNewTiles = []
+            allGridTilesRef.current.forEach(eachTile => {
+                let squareSide = eachTile.squareSide * squareSize
+                if (squareSide !== 0) {
+                    let s = squareSide / 2 * 1.05
+                    let h = s / Math.cos(30 * Math.PI / 180)
+                    let tan = Math.tan(30 * Math.PI / 180)
+                    let moveX = (eachTile.y + 5) % 10 === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
+                    let moveY = heightAltered / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
+                    allNewTiles.push(<Path d={`m${moveX} ${moveY} 
+                    l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
+                    l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
+                        fill={eachTile.tileFill} opacity="0.7" />)
                 }
-                let labelPercStyle = {
-                    fontSize: fontSizePerc,
-                    margin: "0px"
-                }
-                switch (i) {
-                    case 1:
-                        divStyles.transform = `translate(0px,${-scaleNumber(215)}px)`
-                        break;
-                    case 2:
-                        divStyles.transform = `translate(0px,${-scaleNumber(120)}px)`
-                        break;
-                    case 3:
-                        divStyles.transform = `translate(${-scaleNumber(115)}px,${-scaleNumber(155)}px)`
-                        break;
-                    case 4:
-                        divStyles.transform = `translate(0px,${-scaleNumber(57)}px)`
-                        break;
-                    case 5:
-                        divStyles.transform = `translate(${scaleNumber(115)}px,${scaleNumber(-155)}px)`
-                        break;
-                    case 6:
-                        divStyles.transform = `translate(${-scaleNumber(185)}px,${-scaleNumber(115)}px)`
-                        break;
-                    case 7:
-                        divStyles.transform = `translate(${-scaleNumber(120)}px,${-scaleNumber(20)}px)`
-                        break;
-                    case 8:
-                        divStyles.transform = `translate(0px,${scaleNumber(20)}px)`
-                        break;
-                    case 9:
-                        divStyles.transform = `translate(${scaleNumber(120)}px,${-scaleNumber(20)}px)`
-                        break;
-                    case 10:
-                        divStyles.transform = `translate(${scaleNumber(185)}px,${-scaleNumber(115)}px)`
-                        break;
-                    case 11:
-                        divStyles.transform = `translate(${scaleNumber(-205)}px,${-scaleNumber(200)}px)`
-                        labelFracStyle.textAlign = "left"
-                        labelPercStyle.textAlign = "left"
-                        break;
-                    case 12:
-                        divStyles.transform = `translate(${-scaleNumber(165)}px,${scaleNumber(70)}px)`
-                        break;
-                    case 13:
-                        divStyles.transform = `translate(0px,${scaleNumber(100)}px)`
-                        break;
-                    case 14:
-                        divStyles.transform = `translate(${scaleNumber(165)}px,${scaleNumber(70)}px)`
-                        break;
-                    case 15:
-                        divStyles.transform = `translate(${scaleNumber(205)}px,${-scaleNumber(200)}px)`
-                        labelFracStyle.textAlign = "right"
-                        labelPercStyle.textAlign = "right"
-                        break;
-                }
-                let percent = "0%"
-                if (allZones[i][1] !== 0) {
-                    percent = (allZones[i][0] * 100 / allZones[i][1]) % 1 === 0 ? `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(0)}%` : `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(1)}%`
-                }
-                zoneLabels.push(<div height={heightAltered} width={widthAltered} style={divStyles}>
-                    <p className="labelFrac" style={labelFracStyle}>{`${allZones[i][0]}/${allZones[i][1]}`}</p>
-                    <p className="labelPerc" style={labelPercStyle}>{percent}</p>
-                </div>)
-            }
-            return zoneLabels
+            })
+            return (<Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
+                {allNewTiles}
+            </Svg>)
         }
-        return
     }
+
+
 
     function mapShotsToZones() {
         console.log("mapShotsToZones()")
@@ -815,16 +590,93 @@ const ShotView = (props) => {
         }
     }
 
-    async function getZoneAverages() {
-        console.log("getZoneAverages()")
-        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
-            .then(res => {
-                let averageJson = {}
-                res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                return averageJson
-            })
-        return response
+    function generateZoneLabels(view) {
+        console.log(`generateZoneLabels(${view})`)
+        if (allShotsRef.current && view === "Zone") {
+            let allZones = mapShotsToZones()
+            let zoneLabels = []
+            const height = document.getElementById('transparent-court-on-top').clientHeight
+            const width = document.getElementById('transparent-court-on-top').clientWidth
+            const heightAltered = height * 1.1
+            const widthAltered = width * 1.1
+            let fontSizeFrac = scaleNumber(18)
+            let fontSizePerc = scaleNumber(16)
+            let fontWidth = scaleNumber(10 * fontSizeFrac)
+            for (let i = 1; i < allZones.length; i++) {
+                let divStyles = { position: "absolute", width: "auto", backgroundColor: "transparent", zIndex: 1 }
+                let labelFracStyle = {
+                    fontSize: fontSizeFrac,
+                    margin: "0px",
+                }
+                let labelPercStyle = {
+                    fontSize: fontSizePerc,
+                    margin: "0px"
+                }
+                switch (i) {
+                    case 1:
+                        divStyles.transform = `translate(0px,${-scaleNumber(215)}px)`
+                        break;
+                    case 2:
+                        divStyles.transform = `translate(0px,${-scaleNumber(120)}px)`
+                        break;
+                    case 3:
+                        divStyles.transform = `translate(${-scaleNumber(115)}px,${-scaleNumber(155)}px)`
+                        break;
+                    case 4:
+                        divStyles.transform = `translate(0px,${-scaleNumber(57)}px)`
+                        break;
+                    case 5:
+                        divStyles.transform = `translate(${scaleNumber(115)}px,${scaleNumber(-155)}px)`
+                        break;
+                    case 6:
+                        divStyles.transform = `translate(${-scaleNumber(185)}px,${-scaleNumber(115)}px)`
+                        break;
+                    case 7:
+                        divStyles.transform = `translate(${-scaleNumber(120)}px,${-scaleNumber(20)}px)`
+                        break;
+                    case 8:
+                        divStyles.transform = `translate(0px,${scaleNumber(20)}px)`
+                        break;
+                    case 9:
+                        divStyles.transform = `translate(${scaleNumber(120)}px,${-scaleNumber(20)}px)`
+                        break;
+                    case 10:
+                        divStyles.transform = `translate(${scaleNumber(185)}px,${-scaleNumber(115)}px)`
+                        break;
+                    case 11:
+                        divStyles.transform = `translate(${scaleNumber(-205)}px,${-scaleNumber(200)}px)`
+                        labelFracStyle.textAlign = "left"
+                        labelPercStyle.textAlign = "left"
+                        break;
+                    case 12:
+                        divStyles.transform = `translate(${-scaleNumber(165)}px,${scaleNumber(70)}px)`
+                        break;
+                    case 13:
+                        divStyles.transform = `translate(0px,${scaleNumber(100)}px)`
+                        break;
+                    case 14:
+                        divStyles.transform = `translate(${scaleNumber(165)}px,${scaleNumber(70)}px)`
+                        break;
+                    case 15:
+                        divStyles.transform = `translate(${scaleNumber(205)}px,${-scaleNumber(200)}px)`
+                        labelFracStyle.textAlign = "right"
+                        labelPercStyle.textAlign = "right"
+                        break;
+                }
+                let percent = "0%"
+                if (allZones[i][1] !== 0) {
+                    percent = (allZones[i][0] * 100 / allZones[i][1]) % 1 === 0 ? `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(0)}%` : `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(1)}%`
+                }
+                zoneLabels.push(<div height={heightAltered} width={widthAltered} style={divStyles}>
+                    <p className="labelFrac" style={labelFracStyle}>{`${allZones[i][0]}/${allZones[i][1]}`}</p>
+                    <p className="labelPerc" style={labelPercStyle}>{percent}</p>
+                </div>)
+            }
+            return zoneLabels
+        }
+        return
     }
+
     function displayHeat() {
         console.log("displayHeat()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
@@ -986,6 +838,71 @@ const ShotView = (props) => {
         return <div></div>
     }
 
+    function generateLegend() {
+        if (localViewTypeRef.current.type === "Traditional") {
+            return <div></div>
+        } else {
+            let dimensions = getDimensions()
+            let height = dimensions.height
+            let width = dimensions.width
+            let legendWidth = height / 470 * 175
+            let legendHeight = height / 470 * 65
+            let legendStyle = {
+                width: legendWidth,
+                height: legendHeight,
+                transform: `translate(${width / -2 + legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
+            }
+            let topLabelStyle = { fontSize: height / 470 * 12 }
+            let wrapperStyle = { fontSize: height / 470 * 10 }
+            switch (localViewTypeRef.current.type) {
+                case "Grid":
+                    let sizeLegendStyle = {
+                        width: legendWidth * 0.7,
+                        height: legendHeight,
+                        transform: `translate(${width / 2 - legendWidth * 0.55}px,${height / 2 - legendHeight * 0.65}px)`
+                    }
+                    return [(< div id="color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
+                        </div>
+                        <div id="color-legend-gradient"></div>
+                    </div >), (
+                        < div id="size-legend" style={sizeLegendStyle} >
+                            <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
+                            <div width="100%" style={wrapperStyle}>
+                                <div className="legend-left-label legend-bottom-label" >Low</div><div className="legend-right-label legend-bottom-label" >High</div>
+                            </div>
+                            <div id="size-legend-gradient">
+                                <Svg className="svg-size-legend" height="100%" width="100%">
+                                    <Rect style={{ position: "absolute" }} x="10%" y={width / 50 - (width / 50 * 0.2) / 2} width={width / 50 * 0.2} height={width / 50 * 0.2} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="28%" y={width / 50 - (width / 50 * 0.4) / 2} width={width / 50 * 0.4} height={width / 50 * 0.4} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="46%" y={width / 50 - (width / 50 * 0.6) / 2} width={width / 50 * 0.6} height={width / 50 * 0.6} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="64%" y={width / 50 - (width / 50 * 0.8) / 2} width={width / 50 * 0.8} height={width / 50 * 0.8} fill="white" />)
+                                    <Rect style={{ position: "absolute" }} x="82%" y={width / 50 - (width / 50) / 2} width={width / 50} height={width / 50} fill="white" />)
+                                </Svg>
+                            </div>
+                        </div >)]
+                case "Zone":
+                    return (< div id="color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Below Avg.</div><div className="legend-right-label legend-bottom-label" >Above Avg.</div>
+                        </div>
+                        <div id="color-legend-gradient"></div>
+                    </div >)
+                case "Heat":
+                    return (< div id="heat-color-legend" style={legendStyle} >
+                        <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
+                        <div width="100%" style={wrapperStyle}>
+                            <div className="legend-left-label legend-bottom-label" >Low Freq.</div><div className="legend-right-label legend-bottom-label" >High Freq.</div>
+                        </div>
+                        <div id="heat-legend-gradient"></div>
+                    </div>)
+            }
+        }
+    }
+
     function scaleNumber(number) {
         if (document.getElementById('transparent-court').clientHeight === 0) {
             return number * document.getElementById('transparent-court-on-top').clientHeight / 470
@@ -993,11 +910,6 @@ const ShotView = (props) => {
         return number * document.getElementById('transparent-court').clientHeight / 470
     }
 
-    useEffect(() => {
-        getGridAverages().then(res => setGridAverages(res))
-        getZoneAverages().then(res => setZoneAverages(res))
-        setLocalViewType(makeLoadingAnimation())
-    }, [])
 
     function determineHeight() {
         if (document.getElementById("transparent-court") === null) {
@@ -1062,9 +974,9 @@ const ShotView = (props) => {
                 console.log(style)
                 circles.push(<Circle style={style} cx={calcCoord(centerX, rLarge, i, false)} cy={calcCoord(centerY, rLarge, i, true)} r={rEach} ></Circle>)
             }
-    
+     
              <Svg margin="auto" width={width / svgDivisor} height={height / svgDivisor} style={{ animation: `spin 4s linear infinite`, opacity: "1" }} >
-    
+     
                     </Svg>
             */
             /**
@@ -1125,6 +1037,109 @@ const ShotView = (props) => {
             setLocalViewType({ type: viewType, isOriginal: false })
         }
     }
+
+    function getDistance(tile1, tile2) {
+        return Math.sqrt(Math.pow(tile1.x - tile2.x, 2) + Math.pow(tile1.y - tile2.y, 2));
+    }
+
+    useEffect(() => {
+        console.log(`useEffect for localViewType`)
+        //Initial case
+        if (!allShotsRef.current && whatToDisplay.length === 0) {
+
+        }//Click button after running search
+        else if (allShotsRef.current.shots && !props.isLoading) {
+            props.setIsLoading(true)
+        } else if (allShotsRef.current.shots && allShotsRef.current.length !== 0 && props.isLoading) {
+            setWhatToDisplay([])
+        } else if (allShotsRef.current.length === 0 && props.isLoading) {
+            setLoadingAnimation(makeLoadingAnimation())
+        }
+    }, [localViewType])
+
+    useEffect(() => {
+        console.log("useEffect for props.allSearchData")
+        setAllShots(props.allSearchData)
+        if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
+            setAllGridTiles([])
+        }
+    }, [props.allSearchData])
+
+    useEffect(() => {
+        console.log("useEffect for props.isLoading")
+        if (props.isLoading) {
+            setWhatToDisplay([])
+        } else {
+            setLoadingAnimation(makeLoadingAnimation())
+        }
+    }, [props.isLoading])
+
+    useEffect(() => {
+        console.log("useEffect for loadingAnimation")
+        setTimeout(() => {
+            console.log("TIMEOUT")
+            if (allShotsRef.current && allShotsRef.current.length !== 0 && whatToDisplay.length === 0) {
+                generateWhatToDisplay()
+            }
+        }, 100)
+    }, [loadingAnimation])
+
+    useEffect(() => {
+        console.log("useEffect for props.latestAdvancedViewType")
+    }, [props.latestAdvancedViewType])
+
+    useEffect(() => {
+        console.log("useEffect (adding eventlistener)")
+        window.addEventListener('resize', handleResize)
+    }, [])
+
+    useEffect(() => {
+        console.log("useEffect for whatToDisplay")
+        if (allShotsRef.current && allShotsRef.current.shots !== null && whatToDisplay.length !== 0) {
+            if (typeof (whatToDisplay) === 'object') {
+                props.setIsLoading(false)
+            }
+            //Switching view of current shots
+        } else if (allShotsRef.current && whatToDisplay.length === 0) {
+            if (props.isLoading) {
+                setLoadingAnimation(makeLoadingAnimation())
+            } else {
+                console.log("Setting isLoading to true from useEffect(whatToDisplay)")
+                props.setIsLoading(true)
+            }
+        } else {
+            chooseCourt(localViewType.type)
+        }
+    }, [whatToDisplay])
+
+    useEffect(() => {
+        console.log("useEffect for allGridTiles")
+        if (allGridTiles.length !== 0) {
+            setWhatToDisplay(resizeGrid())
+        } else {
+            setAllHeatTiles([])
+        }
+    }, [allGridTiles])
+
+    useEffect(() => {
+        console.log("useEffect for allHeatTiles")
+        if (allHeatTiles.length !== 0) {
+            setWhatToDisplay(resizeHeat())
+        } else {
+            if (allShotsRef.current && allShotsRef.current.length !== 0) {
+                setLocalViewType({ type: allShotsRef.current.view, isOriginal: true })
+            } else if (allShotsRef.current && allShotsRef.current.length === 0 && !props.isCurrentViewSimple) {
+                setLocalViewType({ type: props.latestAdvancedViewType, isOriginal: true })
+            }
+        }
+    }, [allHeatTiles])
+
+    useEffect(() => {
+        getGridAverages().then(res => setGridAverages(res))
+        getZoneAverages().then(res => setZoneAverages(res))
+        setLocalViewType(makeLoadingAnimation())
+    }, [])
+
     return (
         <div className='ShotView'>
             <p id="view-title">{props.title}</p>

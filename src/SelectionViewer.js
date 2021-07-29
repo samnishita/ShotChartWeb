@@ -12,7 +12,7 @@ function SelectionViewer(props) {
         "player-advanced-dd": "Player: ",
         "season-advanced-dd": "Season Type: ",
         "distance-begin": "Minimum Distance: ",
-        "distance-end": "Maxinymum Distance: ",
+        "distance-end": "Maximum Distance: ",
         "success": "Shot Success: ",
         "shot-value": "Shot Value: ",
         "shot-types": "Shot Type: ",
