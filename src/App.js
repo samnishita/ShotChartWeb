@@ -11,8 +11,8 @@ const App = () => {
   console.log("RERENDER APP")
   console.log("isMobile: " + isMobile)
   const currentYear = '2020-21'
-  const [latestSimpleViewType, setLatestSimpleViewType] = useState("Traditional")
-  const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Traditional")
+  const [latestSimpleViewType, setLatestSimpleViewType] = useState("Classic")
+  const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Classic")
   const [allSearchData, setAllSearchData] = useState({})
   const [title, setTitle] = useState("")
   const [isLoading, setIsLoading] = useState(false)

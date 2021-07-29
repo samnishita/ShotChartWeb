@@ -311,8 +311,8 @@ const SimpleSearchBox = (props) => {
                     <br></br>
                     {createButton("season-type", selectedSeasonRef.current, activeSeasonsDisplay, "")}
                     <br></br>
-                    {createButton("view-selection", latestSimpleViewType, [<p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Traditional</p>,
-                    <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Grid</p>,
+                    {createButton("view-selection", latestSimpleViewType, [<p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Classic</p>,
+                    <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Hex</p>,
                     <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Zone</p>,
                     <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>,
                     ], "")}

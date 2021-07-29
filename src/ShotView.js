@@ -8,23 +8,23 @@ import { useEffect, useState, useRef } from "react";
 const ShotView = (props) => {
     console.log("RERENDER ShotView")
     const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
-    const [allGridTiles, setAllGridTiles] = useState([])
+    const [allHexTiles, setAllHexTiles] = useState([])
     const [allHeatTiles, setAllHeatTiles] = useState([])
-    const [gridAverages, setGridAverages] = useState([])
+    const [hexAverages, setHexAverages] = useState([])
     const [zoneAverages, setZoneAverages] = useState([])
     const [whatToDisplay, setWhatToDisplay] = useState([])
     const [allShots, setAllShots] = useState()
-    const [localViewType, setLocalViewType] = useState({ type: "Traditional", isOriginal: false })
+    const [localViewType, setLocalViewType] = useState({ type: "Classic", isOriginal: false })
     const [loadingAnimation, setLoadingAnimation] = useState("")
     const [legend, setLegend] = useState([])
     const whatToDisplayRef = useRef([])
     whatToDisplayRef.current = whatToDisplay
     const allShotsRef = useRef({})
     allShotsRef.current = allShots
-    const allGridTilesRef = useRef({})
-    allGridTilesRef.current = allGridTiles
-    const gridAveragesRef = useRef({})
-    gridAveragesRef.current = gridAverages
+    const allHexTilesRef = useRef({})
+    allHexTilesRef.current = allHexTiles
+    const hexAveragesRef = useRef({})
+    hexAveragesRef.current = hexAverages
     const allHeatTilesRef = useRef({})
     allHeatTilesRef.current = allHeatTiles
     const zoneAveragesRef = useRef({})
@@ -34,8 +34,8 @@ const ShotView = (props) => {
     const localViewTypeRef = useRef({})
     localViewTypeRef.current = localViewType
 
-    async function getGridAverages() {
-        console.log("getGridAverages()")
+    async function getHexAverages() {
+        console.log("getHexAverages()")
         let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
             .then(res => {
                 let averageJson = {}
@@ -81,7 +81,7 @@ const ShotView = (props) => {
 
     function chooseCourt(view) {
         switch (view) {
-            case "Traditional":
+            case "Classic":
                 if (typeof (allShotsRef.current) === 'undefined') {
                     showElement("transparent-court")
                     hideElement("trad-court")
@@ -99,7 +99,7 @@ const ShotView = (props) => {
                     console.log("Showing trad-court")
                 }
                 break;
-            case "Grid":
+            case "Hex":
                 showElement("transparent-court")
                 showElement("gray-background")
                 hideElement("trad-court")
@@ -153,15 +153,15 @@ const ShotView = (props) => {
         console.log("Determining viewtype: " + viewType)
         chooseCourt(viewType)
         switch (viewType) {
-            case "Traditional":
-                console.log("Displaying Traditional")
-                return displayTraditional()
-            case "Grid":
-                if (allGridTiles.length === 0) {
-                    console.log("Displaying Grid")
-                    displayGrid()
+            case "Classic":
+                console.log("Displaying Classic")
+                return displayClassic()
+            case "Hex":
+                if (allHexTiles.length === 0) {
+                    console.log("Displaying Hex")
+                    displayHex()
                 }
-                return resizeGrid()
+                return resizeHex()
             case "Zone":
                 console.log("Displaying Zone")
                 return displayZone()
@@ -175,8 +175,8 @@ const ShotView = (props) => {
         return <div></div>
     }
 
-    function displayTraditional() {
-        console.log("displayTraditional()")
+    function displayClassic() {
+        console.log("displayClassic()")
         let tradArray = []
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let searchType = Object.keys(allShotsRef.current.shots)[0]
@@ -215,8 +215,8 @@ const ShotView = (props) => {
     }
     const squareSizeOrig = 12
 
-    function displayGrid() {
-        console.log("displayGrid()")
+    function displayHex() {
+        console.log("displayHex()")
         if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
             let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
             let allTiles = {}
@@ -282,7 +282,7 @@ const ShotView = (props) => {
                     }
                     //temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (allTiles[eachTile].y % 2 === 0 ? allTiles[eachTile].y + 5 : allTiles[eachTile].y) + ")";
                     temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (Math.round(allTiles[eachTile].y / 10) * 10 + 5) + ")";
-                    avg = gridAveragesRef.current[temp]
+                    avg = hexAveragesRef.current[temp]
                     let tileFill = ""
                     if (tileValues[eachTile] > avg + 0.07) {
                         tileFill = "#fc2121"
@@ -307,20 +307,20 @@ const ShotView = (props) => {
                     })
                 }
             })
-            setAllGridTiles(squareElements)
+            setAllHexTiles(squareElements)
         }
     }
 
-    function resizeGrid() {
-        console.log("resizeGrid()")
-        if (allGridTilesRef.current.length > 0) {
+    function resizeHex() {
+        console.log("resizeHex()")
+        if (allHexTilesRef.current.length > 0) {
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
             const heightAltered = height * 1.1
             const widthAltered = width * 1.1
             let squareSize = width / (500 / squareSizeOrig);
             let allNewTiles = []
-            allGridTilesRef.current.forEach(eachTile => {
+            allHexTilesRef.current.forEach(eachTile => {
                 let squareSide = eachTile.squareSide * squareSize
                 if (squareSide !== 0) {
                     let s = squareSide / 2 * 1.05
@@ -336,7 +336,7 @@ const ShotView = (props) => {
                         fill={eachTile.tileFill} opacity="0.7" />)
                 }
             })
-            return (<Svg className="imageview-child grid-tile" height={heightAltered} width={widthAltered}>
+            return (<Svg className="imageview-child Hex-tile" height={heightAltered} width={widthAltered}>
                 {allNewTiles}
             </Svg>)
         }
@@ -846,7 +846,7 @@ const ShotView = (props) => {
     }
 
     function generateLegend() {
-        if (localViewTypeRef.current.type === "Traditional") {
+        if (localViewTypeRef.current.type === "Classic") {
             return <div></div>
         } else {
             let dimensions = getDimensions()
@@ -862,7 +862,7 @@ const ShotView = (props) => {
             let topLabelStyle = { fontSize: height / 470 * 12 }
             let wrapperStyle = { fontSize: height / 470 * 10 }
             switch (localViewTypeRef.current.type) {
-                case "Grid":
+                case "Hex":
                     let sizeLegendStyle = {
                         width: legendWidth * 0.7,
                         height: legendHeight,
@@ -1092,7 +1092,7 @@ const ShotView = (props) => {
         console.log("useEffect for props.allSearchData")
         setAllShots(props.allSearchData)
         if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
-            setAllGridTiles([])
+            setAllHexTiles([])
         }
     }, [props.allSearchData])
 
@@ -1144,13 +1144,13 @@ const ShotView = (props) => {
     }, [whatToDisplay])
 
     useEffect(() => {
-        console.log("useEffect for allGridTiles")
-        if (allGridTiles.length !== 0) {
-            setWhatToDisplay(resizeGrid())
+        console.log("useEffect for allHexTiles")
+        if (allHexTiles.length !== 0) {
+            setWhatToDisplay(resizeHex())
         } else {
             setAllHeatTiles([])
         }
-    }, [allGridTiles])
+    }, [allHexTiles])
 
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
@@ -1166,7 +1166,7 @@ const ShotView = (props) => {
     }, [allHeatTiles])
 
     useEffect(() => {
-        getGridAverages().then(res => setGridAverages(res))
+        getHexAverages().then(res => setHexAverages(res))
         getZoneAverages().then(res => setZoneAverages(res))
         setLocalViewType(makeLoadingAnimation())
     }, [])
@@ -1188,8 +1188,8 @@ const ShotView = (props) => {
                 {loadingAnimation}
             </div>
             <br></br>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Traditional")} >Traditional</button>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Grid")} >Grid</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
+            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
             <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
             <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
         </div>

@@ -342,8 +342,8 @@ const AdvancedSearchBox = (props) => {
                             </Svg>
                         </p>
                         <div className="dropdown-content" id="view-selection-dd">
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Traditional</p>
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Grid</p>
+                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Classic</p>
+                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Hex</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Zone</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Heat</p>
                         </div></button>
