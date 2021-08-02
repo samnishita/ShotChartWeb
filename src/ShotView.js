@@ -7,66 +7,62 @@ import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
     console.log("RERENDER ShotView")
-    const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
-    const [allHexTiles, setAllHexTiles] = useState([])
-    const [allHeatTiles, setAllHeatTiles] = useState([])
-    const [hexAverages, setHexAverages] = useState([])
-    const [zoneAverages, setZoneAverages] = useState([])
-    const [whatToDisplay, setWhatToDisplay] = useState([])
-    const [allShots, setAllShots] = useState()
-    const [localViewType, setLocalViewType] = useState({ type: "Classic", isOriginal: false })
-    const [loadingAnimation, setLoadingAnimation] = useState("")
-    const [legend, setLegend] = useState([])
+    const [combinedState, setCombinedState] = useState({
+        allHexTiles: [],
+        allHeatTiles: [],
+        hexAverages: [],
+        zoneAverages: [],
+        whatToDisplay: [],
+        allShots: [],
+        localViewType: { type: "Classic", isOriginal: false },
+        loadingAnimation: "",
+        legend: [],
+    })
     const whatToDisplayRef = useRef([])
-    whatToDisplayRef.current = whatToDisplay
+    whatToDisplayRef.current = combinedState.whatToDisplay
     const allShotsRef = useRef({})
-    allShotsRef.current = allShots
+    allShotsRef.current = combinedState.allShots
     const allHexTilesRef = useRef({})
-    allHexTilesRef.current = allHexTiles
+    allHexTilesRef.current = combinedState.allHexTiles
     const hexAveragesRef = useRef({})
-    hexAveragesRef.current = hexAverages
+    hexAveragesRef.current = combinedState.hexAverages
     const allHeatTilesRef = useRef({})
-    allHeatTilesRef.current = allHeatTiles
+    allHeatTilesRef.current = combinedState.allHeatTiles
     const zoneAveragesRef = useRef({})
-    zoneAveragesRef.current = zoneAverages
+    zoneAveragesRef.current = combinedState.zoneAverages
     const loadingAnimationRef = useRef({})
-    loadingAnimationRef.current = loadingAnimation
+    loadingAnimationRef.current = combinedState.loadingAnimation
     const localViewTypeRef = useRef({})
-    localViewTypeRef.current = localViewType
-    const sizeRef = useRef({})
-    sizeRef.current = size
+    localViewTypeRef.current = combinedState.localViewType
 
     async function getHexAverages() {
         console.log("getHexAverages()")
-        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
+        return await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
             .then(res => {
                 let averageJson = {}
                 res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
                 return averageJson
             })
-        return response
     }
 
     async function getZoneAverages() {
         console.log("getZoneAverages()")
-        let response = await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
+        return await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
             .then(res => {
                 let averageJson = {}
                 res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
                 return averageJson
             })
-        return response
     }
 
     async function getSearchData(url) {
         console.log(`getSearchData(${url})`)
-        const response = await fetch(url, {
+        return await fetch(url, {
             method: 'GET'
         }).then(res => res.json())
             .then(data => {
                 return data
             }).catch(error => console.log('error', error))
-        return response
     }
 
     function hideElement(elementId) {
@@ -74,6 +70,7 @@ const ShotView = (props) => {
             document.getElementById(elementId).classList.toggle('show')
         }
     }
+
     function showElement(elementId) {
         if (!document.getElementById(elementId).classList.contains('show')) {
             document.getElementById(elementId).classList.toggle('show')
@@ -81,129 +78,86 @@ const ShotView = (props) => {
     }
 
     function chooseCourt(view) {
-        switch (view) {
-            case "Classic":
-                if (typeof (allShotsRef.current) === 'undefined') {
-                    showElement("transparent-court")
-                    hideElement("trad-court")
-                    hideElement("transparent-court-on-top")
-                    hideElement("gray-background")
-                    console.log("Showing transparent-court")
-                } else {
-                    //showElement("trad-court")
-                    //hideElement("transparent-court")
-                    hideElement("trad-court")
-                    showElement("transparent-court")
-                    hideElement("transparent-court-on-top")
-                    //hideElement("gray-background")
-                    showElement("gray-background")
-                    console.log("Showing trad-court")
-                }
-                break;
-            case "Hex":
-                showElement("transparent-court")
-                showElement("gray-background")
-                hideElement("trad-court")
-                hideElement("transparent-court-on-top")
-                console.log("Showing transparent-court & gray-background")
-                break;
-            case "Heat":
-                showElement("transparent-court")
-                //hideElement("gray-background")
-                showElement("gray-background")
-                hideElement("trad-court")
-                hideElement("transparent-court-on-top")
-                console.log("Showing transparent-court")
-                break;
-            case "Zone":
-                showElement("transparent-court-on-top")
-                hideElement("trad-court")
-                hideElement("gray-background")
-                hideElement("transparent-court")
-                console.log("Showing transparent-court-on-top")
-                break;
+        console.log(`chooseCourt(${view})`)
+        if (view === "Zone") {
+            showElement("transparent-court-on-top")
+            hideElement("gray-background")
+            hideElement("transparent-court")
+            console.log("Showing transparent-court-on-top")
+        } else {
+            showElement("transparent-court")
+            showElement("gray-background")
+            hideElement("transparent-court-on-top")
+            console.log("Showing transparent-court & gray-background")
         }
-        setLegend(generateLegend())
     }
 
-    function generateWhatToDisplay() {
+    function generateWhatToDisplay(viewType, shots) {
+        console.log("generateWhatToDisplay()")
+        console.log(viewType)
         let buffer = []
-        buffer.push(determineView(localViewTypeRef.current.type))
-        let zoneLabels = generateZoneLabels(localViewTypeRef.current.type)
+        buffer.push(determineView(viewType, shots))
+        let zoneLabels = generateZoneLabels(viewType, shots)
         if (zoneLabels) {
             buffer.push(zoneLabels)
         }
-        setWhatToDisplay(buffer)
+        return buffer
     }
 
-    function handleResize() {
-        if (sizeRef.current[0] !== window.innerHeight || sizeRef.current[1] !== window.innerWidth) {
-            console.log("handleResize()")
-            console.log("Size Not Okay")
-            console.log(`${window.innerHeight}!=${sizeRef.current[0]} OR ${window.innerWidth}!=${sizeRef.current[1]}`)
-            setWindowSize([window.innerHeight, window.innerWidth])
-            generateWhatToDisplay()
-        }
-    }
-
-    function determineView(viewType) {
+    function determineView(viewType, shots) {
         console.log("Determining viewtype: " + viewType)
         chooseCourt(viewType)
         switch (viewType) {
             case "Classic":
                 console.log("Displaying Classic")
-                return displayClassic()
+                return displayClassic(shots)
             case "Hex":
-                if (allHexTiles.length === 0) {
+                if (combinedState.allHexTiles.length === 0) {
                     console.log("Displaying Hex")
-                    displayHex()
+                    displayHex(shots)
                 }
                 return resizeHex()
             case "Zone":
                 console.log("Displaying Zone")
-                return displayZone()
+                return displayZone(shots)
             case "Heat":
-                if (allHeatTiles.length === 0) {
+                if (combinedState.allHeatTiles.length === 0) {
                     console.log("Displaying Heat")
-                    displayHeat()
+                    displayHeat(shots)
                 }
                 return resizeHeat()
         }
         return <div></div>
     }
 
-    function displayClassic() {
+    function displayClassic(inputShots) {
         console.log("displayClassic()")
         let tradArray = []
-        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
-            let searchType = Object.keys(allShotsRef.current.shots)[0]
-            let allShotsTemp = allShotsRef.current.shots[searchType]
-            //const height = document.getElementById('trad-court').clientHeight
-            //const width = document.getElementById('trad-court').clientWidth
+        if (inputShots && inputShots.length !== 0) {
+            let searchType = Object.keys(inputShots)[0]
+            let allShotsTemp = inputShots[searchType]
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
             const rad = 5 * height / 470;
             const strokeWidth = 2 * height / 470
             let counter = 0;
             allShotsTemp.forEach(each => {
                 if (each.y <= 410 && counter < 7500) {
                     if (each.make === 1) {
-                        tradArray.push(<Circle cx={widthAltered / 2 + each.x * width / 500} cy={heightAltered / 2 + each.y * height / 470 - 185 * height / 470} r={rad} fill="none" stroke="limegreen" strokeWidth={strokeWidth} />)
+                        tradArray.push(<Circle cx={width / 2 + each.x * width / 500} cy={height / 2 + each.y * height / 470 - 185 * height / 470} r={rad} fill="none" stroke="limegreen" strokeWidth={strokeWidth} />)
                     } else {
-                        tradArray.push(<Line x1={widthAltered / 2 - rad + each.x * width / 500} y1={heightAltered / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={widthAltered / 2 + rad + each.x * width / 500} y2={heightAltered / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
-                        tradArray.push(<Line x1={widthAltered / 2 + rad + each.x * width / 500} y1={heightAltered / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={widthAltered / 2 - rad + each.x * width / 500} y2={heightAltered / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
+                        tradArray.push(<Line x1={width / 2 - rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 + rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
+                        tradArray.push(<Line x1={width / 2 + rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 - rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
                     }
                     counter++;
                 }
             })
             let styles = {
                 position: "absolute",
-                transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
+                transform: `translate(${-(width / 2)}px, ${-height / 2}px)`,
             }
             return (<div id="inner-imageview-div" style={styles}>
-                <Svg className="imageview-child" height={heightAltered} width={widthAltered} >
+                <Svg className="imageview-child" height={height} width={width} >
                     {tradArray}
                 </Svg>
             </div>)
@@ -212,10 +166,10 @@ const ShotView = (props) => {
     }
     const squareSizeOrig = 12
 
-    function displayHex() {
+    function displayHex(inputShots) {
         console.log("displayHex()")
-        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
-            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
+        if (inputShots && inputShots.length !== 0) {
+            let allShotsTemp = inputShots.simplesearch ? inputShots.simplesearch : inputShots.advancedsearch
             let allTiles = {}
             for (let j = -55; j < 400; j = j + squareSizeOrig) {
                 for (let i = -250; i < 250; i = i + squareSizeOrig * 1.1547005) {
@@ -243,21 +197,16 @@ const ShotView = (props) => {
                     allTiles[eachTile].shotinfo[2] = allTiles[eachTile].shotinfo[0] / allTiles[eachTile].shotinfo[1]
                 }
             })
-            let aSum = 0, bSum = 0, p = 2, offset = 10, maxDistanceBetweenNodes = squareSizeOrig * 2, calcDistance = 0;
+            let aSum = 0, bSum = 0, p = 2, maxDistanceBetweenNodes = squareSizeOrig * 2, calcDistance = 0;
             let tileValues = {}
             let min = 1, minFactor = 0.00045;
-            if (shotCounter * minFactor > 1) {
-                min = shotCounter * minFactor;
-            } else {
-                factor = 4.1008 * Math.pow(shotCounter, -0.798);
-            }
+            shotCounter * minFactor > 1 ? min = shotCounter * minFactor : factor = 4.1008 * Math.pow(shotCounter, -0.798);
             let maxShotsPerMaxSquare = 0;
             maxShotsPerMaxSquare = factor * shotCounter;
             if (maxShotsPerMaxSquare == 0) {
                 maxShotsPerMaxSquare = 1;
             }
-            let temp, avg;
-            let squareElements = []
+            let temp, avg, squareElements = []
             Object.keys(allTiles).forEach(eachTile => {
                 if (Math.round(allTiles[eachTile].x / squareSizeOrig) * squareSizeOrig % (squareSizeOrig) === 0 && (allTiles[eachTile].y + 55) % (squareSizeOrig) === 0) {
                     aSum = 0;
@@ -277,7 +226,6 @@ const ShotView = (props) => {
                     } else if (eachTileShotCount > maxShotsPerMaxSquare) {
                         squareSide = 1
                     }
-                    //temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (allTiles[eachTile].y % 2 === 0 ? allTiles[eachTile].y + 5 : allTiles[eachTile].y) + ")";
                     temp = "(" + (Math.round(allTiles[eachTile].x / 10) * 10) + "," + (Math.round(allTiles[eachTile].y / 10) * 10 + 5) + ")";
                     avg = hexAveragesRef.current[temp]
                     let tileFill = ""
@@ -304,7 +252,7 @@ const ShotView = (props) => {
                     })
                 }
             })
-            setAllHexTiles(squareElements)
+            setCombinedState({ ...combinedState, allHexTiles: squareElements.forEach(each => combinedState.allHexTiles.push(each)) })
         }
     }
 
@@ -313,8 +261,6 @@ const ShotView = (props) => {
         if (allHexTilesRef.current.length > 0) {
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
             let squareSize = width / (500 / squareSizeOrig);
             let allNewTiles = []
             allHexTilesRef.current.forEach(eachTile => {
@@ -323,23 +269,23 @@ const ShotView = (props) => {
                     let s = squareSide / 2 * 1.05
                     let h = s / Math.cos(30 * Math.PI / 180)
                     let tan = Math.tan(30 * Math.PI / 180)
-                    let moveX = (eachTile.y + 55) % (squareSizeOrig * 2) === 0 ? widthAltered / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : widthAltered / 2 + (eachTile.x) * height / 470
-                    let moveY = heightAltered / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
+                    let moveX = (eachTile.y + 55) % (squareSizeOrig * 2) === 0 ? width / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : width / 2 + (eachTile.x) * height / 470
+                    let moveY = height / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
                     allNewTiles.push(<Path d={`m${moveX} ${moveY} 
                         l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
                         l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
                         fill={eachTile.tileFill} opacity="0.7" />)
                 }
             })
-            return (<Svg className="imageview-child Hex-tile" height={heightAltered} width={widthAltered}>
+            return (<Svg className="imageview-child Hex-tile" height={height} width={width}>
                 {allNewTiles}
             </Svg>)
         }
     }
 
-    function mapShotsToZones() {
+    function mapShotsToZones(inputShots) {
         console.log("mapShotsToZones()")
-        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
+        if (inputShots) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
                 allZones.push([0, 0, 0])
@@ -348,7 +294,7 @@ const ShotView = (props) => {
                 allZones[i][1] = allZones[i][1] + 1
                 if (make) { allZones[i][0] = allZones[i][0] + 1 }
             }
-            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
+            let allShotsTemp = inputShots.simplesearch ? inputShots.simplesearch : inputShots.advancedsearch
             allShotsTemp.forEach(eachShot => {
                 switch (eachShot.shotzonebasic) {
                     case "Backcourt":
@@ -476,19 +422,16 @@ const ShotView = (props) => {
         return <div></div>
     }
 
-    function displayZone() {
+    function displayZone(inputShots) {
         console.log("displayZone()")
-        if (allShotsRef.current) {
-            let allZones = mapShotsToZones()
+        if (inputShots) {
+            let allZones = mapShotsToZones(inputShots)
             let coloredZones = []
             let fill = ""
             const height = document.getElementById('transparent-court-on-top').clientHeight
             const width = document.getElementById('transparent-court-on-top').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
             for (let i = 1; i < allZones.length; i++) {
                 if (allZones[i][1] === 0) {
-                    //fill = "rgba(178,178,178, 1)"
                     fill = "gray"
                 } else {
                     let diff = allZones[i][2] - zoneAveragesRef.current[i]
@@ -500,7 +443,6 @@ const ShotView = (props) => {
                         fill = "rgba(255,156,156, 1)"
                     } else if (diff < 0.02 && diff >= -0.02) {
                         fill = "rgba(178,178,178, 1)"
-                        //fill = "gray"
                     } else if (diff < -0.02 && diff >= -0.04) {
                         fill = "rgba(145,198,244, 1)"
                     } else if (diff < -0.04 && diff >= -0.06) {
@@ -511,8 +453,8 @@ const ShotView = (props) => {
                 }
                 let d = ""
                 let zoneId = `zone${i}`
-                let centerX = widthAltered / 2
-                let centerY = heightAltered / 2
+                let centerX = width / 2
+                let centerY = height / 2
                 let strokeWidth = scaleNumber(4)
                 let stroke = "rgba(0,0,0,1)"
                 switch (i) {
@@ -581,29 +523,27 @@ const ShotView = (props) => {
             //<Path id="zone345" d={d345} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
             let styles = {
                 position: "absolute",
-                transform: `translate(${-(widthAltered / 2)}px, ${-heightAltered / 2}px)`,
+                transform: `translate(${-(width / 2)}px, ${-height / 2}px)`,
                 zIndex: 0
             }
             return (<div id="inner-imageview-div" style={styles}>
-                <Svg className="imageview-child" id="zones-underneath" height={heightAltered} width={widthAltered} >
+                <Svg className="imageview-child" id="zones-underneath" height={height} width={width} >
                     {coloredZones}
                 </Svg>
             </div>)
         }
     }
 
-    function generateZoneLabels(view) {
+    function generateZoneLabels(view, inputShots) {
         console.log(`generateZoneLabels(${view})`)
-        if (allShotsRef.current && view === "Zone") {
-            let allZones = mapShotsToZones()
+        if (inputShots && view === "Zone") {
+            let allZones = mapShotsToZones(inputShots)
             let zoneLabels = []
             const height = document.getElementById('transparent-court-on-top').clientHeight
             const width = document.getElementById('transparent-court-on-top').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
             let fontSizeFrac = scaleNumber(18)
             let fontSizePerc = scaleNumber(16)
-            let fontWidth = scaleNumber(10 * fontSizeFrac)
+            //let fontWidth = scaleNumber(10 * fontSizeFrac)
             for (let i = 1; i < allZones.length; i++) {
                 let divStyles = { position: "absolute", width: "auto", backgroundColor: "transparent", zIndex: 1 }
                 let labelFracStyle = {
@@ -669,7 +609,7 @@ const ShotView = (props) => {
                 if (allZones[i][1] !== 0) {
                     percent = (allZones[i][0] * 100 / allZones[i][1]) % 1 === 0 ? `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(0)}%` : `${Number(allZones[i][0] / allZones[i][1] * 100).toFixed(1)}%`
                 }
-                zoneLabels.push(<div height={heightAltered} width={widthAltered} style={divStyles}>
+                zoneLabels.push(<div height={height} width={width} style={divStyles}>
                     <p className="labelFrac" style={labelFracStyle}>{`${allZones[i][0]}/${allZones[i][1]}`}</p>
                     <p className="labelPerc" style={labelPercStyle}>{percent}</p>
                 </div>)
@@ -679,10 +619,10 @@ const ShotView = (props) => {
         return
     }
 
-    function displayHeat() {
+    function displayHeat(inputShots) {
         console.log("displayHeat()")
-        if (allShotsRef.current.shots && allShotsRef.current.shots.length !== 0) {
-            let allShotsTemp = allShotsRef.current.shots.simplesearch ? allShotsRef.current.shots.simplesearch : allShotsRef.current.shots.advancedsearch
+        if (inputShots && inputShots.length !== 0) {
+            let allShotsTemp = inputShots.simplesearch ? inputShots.simplesearch : inputShots.advancedsearch
             let allTiles = {}
             for (let x = -250; x <= 250; x++) {
                 for (let y = -55; y < 400; y++) {
@@ -772,76 +712,48 @@ const ShotView = (props) => {
                         })
                     }
                 })
-                if (heatTileInfo.length === 0) {
-                    setAllHeatTiles(<div></div>)
-                } else {
-                    setAllHeatTiles(heatTileInfo)
-                }
+                heatTileInfo.length === 0 ? setCombinedState({ ...combinedState, allHeatTiles: <div></div> }) : setCombinedState({ ...combinedState, allHeatTiles: heatTileInfo.forEach(each => combinedState.allHeatTiles.push(each)) })
             }
         }
     }
 
     function resizeHeat() {
         console.log("resizeHeat()")
-        if (allHeatTiles.length > 0) {
-            let circles1 = [], circles2 = [], circles3 = [], circles4 = [], circles5 = [], circles6 = [], circles7 = []
+        if (combinedState.allHeatTiles.length > 0) {
+            let circlesArray = [[], [], [], [], [], [], []]
             let gradients = []
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
-            const heightAltered = height * 1.1
-            const widthAltered = width * 1.1
             let radius = 25 * height / 470
-            allHeatTiles.forEach(eachHeatTile => {
-                let cx = widthAltered / 2 + eachHeatTile.x * width / 500
-                let cy = heightAltered / 2 + eachHeatTile.y * height / 470 - 185 * height / 470
+            combinedState.allHeatTiles.forEach(eachHeatTile => {
+                let cx = width / 2 + eachHeatTile.x * width / 500
+                let cy = height / 2 + eachHeatTile.y * height / 470 - 185 * height / 470
                 let circle = <Circle cx={cx} cy={cy} r={radius} fill={`url(#grad_${eachHeatTile.x}_${eachHeatTile.y})`} stroke="none" strokeWidth="3" />
-                switch (eachHeatTile.circleArray) {
-                    case "1":
-                        circles1.push(circle)
-                        break;
-                    case "2":
-                        circles2.push(circle)
-                        break;
-                    case "3":
-                        circles3.push(circle)
-                        break;
-                    case "4":
-                        circles4.push(circle)
-                        break;
-                    case "5":
-                        circles5.push(circle)
-                        break;
-                    case "6":
-                        circles6.push(circle)
-                        break;
-                    case "7":
-                        circles7.push(circle)
-                        break;
-                }
+                circlesArray[eachHeatTile.circleArray - 1].push(circle)
                 let eachGradient = <RadialGradient id={`grad_${eachHeatTile.x}_${eachHeatTile.y}`} cx={cx} cy={cy} r={radius} fx={cx} fy={cy} gradientUnits="userSpaceOnUse">
                     <Stop offset="0" stopColor={eachHeatTile.color} stopOpacity="0.4" />
                     <Stop offset="1" stopColor={eachHeatTile.color} stopOpacity="0" />
                 </RadialGradient>
                 gradients.push(eachGradient)
             })
-            return (<Svg className="imageview-child" height={height * 1.1} width={width * 1.1} >
+            return (<Svg className="imageview-child" height={height} width={width} >
                 <Defs>
                     {gradients}
                 </Defs>
-                {circles1}
-                {circles2}
-                {circles3}
-                {circles4}
-                {circles5}
-                {circles6}
-                {circles7}
+                {circlesArray[0]}
+                {circlesArray[1]}
+                {circlesArray[2]}
+                {circlesArray[3]}
+                {circlesArray[4]}
+                {circlesArray[5]}
+                {circlesArray[6]}
             </Svg>)
         }
         return <div></div>
     }
 
-    function generateLegend() {
-        if (localViewTypeRef.current.type === "Classic") {
+    function generateLegend(view) {
+        if (view === "Classic") {
             return <div></div>
         } else {
             let dimensions = getDimensions()
@@ -856,7 +768,7 @@ const ShotView = (props) => {
             }
             let topLabelStyle = { fontSize: height / 470 * 12 }
             let wrapperStyle = { fontSize: height / 470 * 10 }
-            switch (localViewTypeRef.current.type) {
+            switch (view) {
                 case "Hex":
                     let sizeLegendStyle = {
                         width: legendWidth * 0.7,
@@ -867,19 +779,11 @@ const ShotView = (props) => {
                     let h = s / Math.cos(30 * Math.PI / 180)
                     let tan = Math.tan(30 * Math.PI / 180)
                     let hexArray = [], hexArrayPlain = []
-                    let fillMap = {
-                        1: "#7babff",
-                        2: "#8bc9ff",
-                        3: "#aed9ff",
-                        4: "white",
-                        5: "#ff9c9c",
-                        6: "#ff6363",
-                        7: "#fc2121"
-                    }
+                    let fillMap = ["#7babff", "#8bc9ff", "#aed9ff", "white", "#ff9c9c", "#ff6363", "#fc2121"]
                     let sModSum = 0;
                     for (let i = 0; i < 7; i++) {
                         hexArray.push(<Path d={`m${(2 * s * i + s)} ${s / 2} l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
-                            l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`} fill={fillMap[i + 1]} opacity="0.7" />)
+                            l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`} fill={fillMap[i]} opacity="0.7" />)
                         let sMod = s * (0.3 + (i * 0.1))
                         let distance = s * 0.85
                         sModSum += sMod + distance + sMod / 2
@@ -936,7 +840,6 @@ const ShotView = (props) => {
         return number * document.getElementById('transparent-court').clientHeight / 470
     }
 
-
     function determineHeight() {
         if (document.getElementById("transparent-court") === null) {
             return 0
@@ -955,9 +858,6 @@ const ShotView = (props) => {
         if (!court && document.getElementById("transparent-court-on-top") && document.getElementById("transparent-court-on-top").clientHeight > 0) {
             court = document.getElementById("transparent-court-on-top")
         }
-        if (!court && document.getElementById("trad-court") && document.getElementById("trad-court").clientHeight > 0) {
-            court = document.getElementById("trad-court")
-        }
         if (court) {
             height = court.clientHeight
             width = court.clientWidth
@@ -968,10 +868,11 @@ const ShotView = (props) => {
         }
     }
 
-    function makeLoadingAnimation() {
+    function makeLoadingAnimation(isLoading, viewType) {
         console.log("makeLoadingAnimation()")
-        //if (true) {
-        if (props.isLoading) {
+        console.log(`${isLoading}, ${viewType}`)
+        // if (true) {
+        if (isLoading) {
             let dimensions = getDimensions()
             let height = dimensions.height
             let width = dimensions.width
@@ -1039,14 +940,26 @@ const ShotView = (props) => {
                             <Path d={`m${centerX} ${centerY - innerR2} l0 -${thickness2} a${outerR2},${outerR2} 0 0,1 0,${2 * (innerR2 + thickness2)} l0 ${-thickness2}  a${innerR2},${innerR2} 0 0,0 0,${-2 * innerR2}`} fill="lightblue" stroke="none" strokeWidth="1"></Path>
                         </Svg>
              */
-            console.log(localViewType.type)
-            let view = allShotsRef.current.shots === null ? allShotsRef.current.view : localViewType.type
+            //let view = allShotsRef.current.shots === null ? allShotsRef.current.view : combinedState.localViewType.type
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
-                    <p>Loading {view}</p>
+                    <p>Generating {viewType}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
-                        <Svg width={width / 3} height={height / 3} style={{ animation: `spin 1s linear infinite`, opacity: "1", position: "absolute" }} >
-                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="white" stroke="none" strokeWidth="1"></Path>
+                        <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.65s linear infinite`, opacity: "1", position: "absolute" }} >
+                            <Defs>
+                                <linearGradient
+                                    id="loading-gradient"
+                                    x1="0" y1="1" x2="0" y2="0">
+                                    <Stop offset="0%" stopColor="#bc53f8" stopOpacity="1" />
+                                    <Stop offset="18%" stopColor="#dd76ff" stopOpacity="1" />
+                                    <Stop offset="36%" stopColor="#e696fa" stopOpacity="1" />
+                                    <Stop offset="50%" stopColor="#c4b8ff" stopOpacity="1" />
+                                    <Stop offset="69%" stopColor="#6bb2f8" stopOpacity="1" />
+                                    <Stop offset="83%" stopColor="#62c8ff" stopOpacity="1" />
+                                    <Stop offset="95%" stopColor="#90ebff" stopOpacity="1" />
+                                </linearGradient>
+                            </Defs>
+                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
                         </Svg>
                     </div>
 
@@ -1058,9 +971,9 @@ const ShotView = (props) => {
     }
 
     function handleViewTypeButtonClick(viewType) {
-        if (!props.isLoading && localViewType.type !== viewType && allShotsRef.current) {
+        if (!props.isLoading && combinedState.localViewType.type !== viewType && allShotsRef.current) {
             console.log(`${viewType} Button Clicked`)
-            setLocalViewType({ type: viewType, isOriginal: false })
+            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(true, viewType), localViewType: { type: viewType, isOriginal: false } })
         }
     }
 
@@ -1069,105 +982,102 @@ const ShotView = (props) => {
     }
 
     useEffect(() => {
-        console.log(`useEffect for localViewType`)
-        //Initial case
-        if (!allShotsRef.current && whatToDisplay.length === 0) {
+        console.log(props.size)
+        setCombinedState({ ...combinedState, whatToDisplay: generateWhatToDisplay(localViewTypeRef.current.type, allShotsRef.current.shots), legend: generateLegend(combinedState.localViewType.type) })
+    }, [props.size])
 
-        }//Click button after running search
-        else if (allShotsRef.current.shots && !props.isLoading) {
-            props.setIsLoading(true)
-        } else if (allShotsRef.current.shots && allShotsRef.current.length !== 0 && props.isLoading) {
-            setWhatToDisplay([])
-        } else if (allShotsRef.current.length === 0 && props.isLoading) {
-            setLoadingAnimation(makeLoadingAnimation())
+    useEffect(() => {
+        console.log(props.isCurrentViewSimple)
+        setCombinedState({
+            ...combinedState, whatToDisplay: [], legend: [], allShots: []
+        })
+    }, [props.isCurrentViewSimple])
+
+    useEffect(() => {
+        console.log(`useEffect for localViewType`)
+        if (!combinedState.localViewType.isOriginal) {
+            setCombinedState({
+                ...combinedState, whatToDisplay: generateWhatToDisplay(combinedState.localViewType.type,
+                    allShotsRef.current.shots), legend: generateLegend(combinedState.localViewType.type)
+            })
         }
-    }, [localViewType])
+    }, [combinedState.localViewType])
 
     useEffect(() => {
         console.log("useEffect for props.allSearchData")
-        setAllShots(props.allSearchData)
+        console.log(props.allSearchData.shots)
         if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
-            setAllHexTiles([])
+            if (Object.keys(props.allSearchData).length !== 0) {
+                setCombinedState({
+                    ...combinedState, allShots: props.allSearchData, allHexTiles: [], allHeatTiles: [],
+                    localViewType: { type: props.allSearchData.view, isOriginal: true }, loadingAnimation: makeLoadingAnimation(false),
+                    whatToDisplay: generateWhatToDisplay(props.allSearchData.view, props.allSearchData.shots),
+                    legend: generateLegend(props.allSearchData.view)
+                })
+                chooseCourt(props.allSearchData.view)
+            } else {
+                setCombinedState({ ...combinedState, allHexTiles: [], allHeatTiles: [] })
+            }
         }
     }, [props.allSearchData])
 
     useEffect(() => {
         console.log("useEffect for props.isLoading")
-        if (props.isLoading) {
-            setWhatToDisplay([])
+        if (props.isLoading.state && props.isLoading.newShots && props.isCurrentViewSimple) {
+            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestSimpleViewType) })
+        } else if (props.isLoading.state && props.isLoading.newShots && !props.isCurrentViewSimple) {
+            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestAdvancedViewType) })
         } else {
-            setLoadingAnimation(makeLoadingAnimation())
+            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [props.isLoading])
 
     useEffect(() => {
         console.log("useEffect for loadingAnimation")
-        setTimeout(() => {
-            console.log("TIMEOUT")
-            if (allShotsRef.current && allShotsRef.current.length !== 0 && whatToDisplay.length === 0) {
-                generateWhatToDisplay()
-            }
-        }, 100)
-    }, [loadingAnimation])
+        //props.setIsLoading({ state: true, newShots: false })
+    }, [combinedState.loadingAnimation])
 
     useEffect(() => {
         console.log("useEffect for props.latestAdvancedViewType")
     }, [props.latestAdvancedViewType])
 
     useEffect(() => {
-        console.log("useEffect (adding eventlistener)")
-        //window.addEventListener('resize', handleResize)
-        setInterval(() => {
-            handleResize()
-        }, 250)
-    }, [])
-
-    useEffect(() => {
         console.log("useEffect for whatToDisplay")
-        if (allShotsRef.current && allShotsRef.current.shots !== null && whatToDisplay.length !== 0) {
-            if (typeof (whatToDisplay) === 'object') {
-                props.setIsLoading(false)
-            }
-            //Switching view of current shots
-        } else if (allShotsRef.current && whatToDisplay.length === 0) {
-            if (props.isLoading) {
-                setLoadingAnimation(makeLoadingAnimation())
-            } else {
-                console.log("Setting isLoading to true from useEffect(whatToDisplay)")
-                props.setIsLoading(true)
-            }
-        } else {
-            chooseCourt(localViewType.type)
+        if (combinedState.whatToDisplay.length !== 0) {
+            props.setIsLoading(false)
+            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(false) })
         }
-    }, [whatToDisplay])
+    }, [combinedState.whatToDisplay])
 
     useEffect(() => {
         console.log("useEffect for allHexTiles")
-        if (allHexTiles.length !== 0) {
-            setWhatToDisplay(resizeHex())
-        } else {
-            setAllHeatTiles([])
+        if (combinedState.allHexTiles.length !== 0) {
+            setCombinedState({ ...combinedState, whatToDisplay: resizeHex(), loadingAnimation: makeLoadingAnimation(false) })
         }
-    }, [allHexTiles])
+    }, [combinedState.allHexTiles])
 
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
-        if (allHeatTiles.length !== 0) {
-            setWhatToDisplay(resizeHeat())
-        } else {
-            if (allShotsRef.current && allShotsRef.current.length !== 0) {
-                setLocalViewType({ type: allShotsRef.current.view, isOriginal: true })
-            } else if (allShotsRef.current && allShotsRef.current.length === 0 && !props.isCurrentViewSimple) {
-                setLocalViewType({ type: props.latestAdvancedViewType, isOriginal: true })
-            }
+        if (combinedState.allHeatTiles.length !== 0) {
+            setCombinedState({ ...combinedState, whatToDisplay: resizeHeat(), loadingAnimation: makeLoadingAnimation(false) })
         }
-    }, [allHeatTiles])
+    }, [combinedState.allHeatTiles])
 
     useEffect(() => {
-        getHexAverages().then(res => setHexAverages(res))
-        getZoneAverages().then(res => setZoneAverages(res))
-        setLocalViewType(makeLoadingAnimation())
+        let func = async () => {
+            let hexAvg
+            await getHexAverages().then(res => hexAvg = res)
+            let zoneAvg
+            await getZoneAverages().then(res => zoneAvg = res)
+            setCombinedState({ ...combinedState, hexAverages: hexAvg, zoneAverages: zoneAvg })
+        }
+        func()
+        chooseCourt(combinedState.localViewType.type)
     }, [])
+
+    useEffect(() => {
+        console.log(combinedState)
+    }, [combinedState])
 
     return (
         <div className='ShotView'>
@@ -1179,11 +1089,10 @@ const ShotView = (props) => {
                     </Svg>
                 </div>
                 <img src={transparentCourt} className="court-image" id="transparent-court"></img>
-                <img src={tradCourt} className="court-image" id="trad-court" ></img>
                 <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
                 {whatToDisplayRef.current}
-                {legend}
-                {loadingAnimation}
+                {combinedState.legend}
+                {combinedState.loadingAnimation}
             </div>
             <br></br>
             <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
