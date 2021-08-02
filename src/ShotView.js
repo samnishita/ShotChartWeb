@@ -943,9 +943,9 @@ const ShotView = (props) => {
             //let view = allShotsRef.current.shots === null ? allShotsRef.current.view : combinedState.localViewType.type
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
-                    <p>Generating {viewType}</p>
+                    <p id="loading-text">Generating {viewType}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
-                        <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.65s linear infinite`, opacity: "1", position: "absolute" }} >
+                        <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.5s linear infinite`, opacity: "1", position: "absolute" }} >
                             <Defs>
                                 <linearGradient
                                     id="loading-gradient"

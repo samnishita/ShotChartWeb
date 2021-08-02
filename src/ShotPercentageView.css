@@ -4,7 +4,7 @@
 }
 
 .ShotPercentageView{
-    font-family: "MontserratSemiBold";
+    font-family: "MonserratLight";
     display: inline-block;
     color: white;
     overflow-wrap: break-word;
@@ -19,5 +19,8 @@
     margin-left: 1vw;
     margin: 20px;
     padding:5px;
-   
+}
+
+.percentage-title{
+border-bottom: 2px solid rgba(255, 255, 255, 0.5);
 }

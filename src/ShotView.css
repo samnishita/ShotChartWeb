@@ -20,11 +20,13 @@
     color: white;
     font-family: 'MonserratLight';
     height:100%;
-    width:100%;
+    width:95%;
     overflow: auto;
     scroll-behavior: smooth;
+    background-color: rgb(65, 64, 64);
+    margin-top: 2%;
+    border-radius: 30px;
 }
-
 
 button{
     font-family: 'MonserratLight';
@@ -167,5 +169,19 @@ button{
     margin-left: 5px;
     margin-right: 5px;
     width:100px;
-    margin-bottom: 50px;
+    margin-bottom: 5%;
+    background-color: gray;
+    border:0px;
+    border-bottom:2px solid rgba(165, 80, 212, 1);
+    border-radius: 10px;
+    color: white;
+    font-size: 20px;
+}
+
+.view-switch-button:hover{
+    background-color: rgb(156, 156, 156);
+}
+
+#loading-text{
+    font-size: 30px;
 }
