@@ -11,42 +11,40 @@
     grid-template-columns: auto auto ;
     font-family: 'JosefinSansLight';
     color: white;
-    height: min-content;
-    border-bottom: 1.5vh solid white;
+    min-height: 50%;
+    background-color: rgb(31, 30, 30);
+    padding-top: 25px;
 }
 
 #versionText{
-    font-size: 25%;
+    font-size: 20px;
     font-family: 'MonserratLight';
 }
 .header-grid-item {
-   /*  background-color: rgba(255, 255, 255, 0.1);
-   border: 1px solid rgba(0, 0, 0, 0.8);*/
-    padding: 20px 0px 10px 0px ;
-    height:7.5% ;
+    height:80% ;
     font-size: 30px ;
   }
 
  #title {
     text-align: left;
-    font-size: 9vh;
+    font-size: 50px;
     padding-left: 20px;
   }
 
   #date-accuracy{
       text-align: right;
-      margin-right: 10px;
+      margin-right: 30px;
       margin-left: 10px;
   }
 
   #accuracy-title {
     text-align: center;
     font-family: 'MonserratLight';
-    font-size: 2vh;
+    font-size: 15px;
     padding-bottom: 1%;
   }
   #accuracy-date {
     font-family: 'MonserratLight';
     text-align: center;
-    font-size: 3.5vh;
+    font-size: 25px;
   }

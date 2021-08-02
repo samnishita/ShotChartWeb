@@ -1,10 +1,11 @@
 import './Header.css'
 import { useEffect, useState } from "react";
+import SearchTypeButtons from './SearchTypeButtons';
 
-function Header() {
+function Header(props) {
     const [initState, setInitState] = useState([])
     async function getInitData() {
-        const response = await fetch("https://customnbashotcharts.com:8443/shots_request?init=true", {
+        await fetch("https://customnbashotcharts.com:8443/shots_request?init=true", {
             method: 'GET'
         }).then(res => res.json())
             .then(data => {
@@ -14,9 +15,15 @@ function Header() {
     useEffect(() => { getInitData() }, [])
     return (
         <header className='Header'>
-            <div class="header-grid-item" id="title">Custom NBA Shot Charts <span id='versionText'>By Sam Nishita</span></div>
+            <div class="header-grid-item" id="title">Custom NBA Shot Charts
+                {<SearchTypeButtons setTitle={props.setTitle} whichSearchBox={props.whichSearchBox} title={props.title} isLoading={props.isLoading} setIsLoading={props.setIsLoading}
+                    allSearchData={props.allSearchData} allAdvancedSearchData={props.allAdvancedSearchData} isCurrentViewSimple={props.isCurrentViewSimple}
+                    latestAdvancedViewType={props.latestAdvancedViewType} simpleClickHandler={props.handleSimpleClick} advancedClickHandler={props.handleAdvancedClick}
+                    setAllSearchData={props.setAllSearchData} setAllAdvancedSearchData={props.setAllAdvancedSearchData} setIsCurrentViewSimple={props.setIsCurrentViewSimple}
+                    latestSimpleViewType={props.latestSimpleViewType} />}
+            </div>
             <div class="header-grid-item" id="date-accuracy">
-                <div id='accuracy-title'><u>Accurate As Of</u></div>
+                <div id='accuracy-title'>Accurate Through</div>
                 <div id='accuracy-date'>{initState.length !== 0 ? initState[2].value : ""}</div>
             </div>
         </header>
