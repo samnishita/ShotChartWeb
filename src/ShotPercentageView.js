@@ -6,9 +6,9 @@ const ShotPercentageView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for ShotPercentageView")
-        if (props.isCurrentViewSimple && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
+        if (props.isCurrentViewSimple && props.simpleShotData && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
             setShotCalcs(processShotData(props.simpleShotData.simplesearch))
-        } else if (!props.isCurrentViewSimple && typeof (props.advancedShotData.advancedsearch) !== 'undefined' && props.advancedShotData) {
+        } else if (!props.isCurrentViewSimple && props.advancedShotData && typeof (props.advancedShotData.advancedsearch) !== 'undefined') {
             setShotCalcs(processShotData(props.advancedShotData.advancedsearch))
         }
     }, [props.isCurrentViewSimple, props.simpleShotData, props.advancedShotData])

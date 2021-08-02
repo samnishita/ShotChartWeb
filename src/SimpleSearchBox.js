@@ -2,7 +2,9 @@ import './SimpleSearchBox.css'
 import ShotPercentageView from './ShotPercentageView'
 import { useEffect, useState, useRef } from "react";
 import Svg, { Path, Line, Rect, Defs, RadialGradient, Stop } from 'react-native-svg';
-
+import TextArea from 'antd/lib/input/TextArea';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import TextareaAutosize from 'react-textarea-autosize';
 const SimpleSearchBox = (props) => {
     console.log("RERENDER SimpleSearchBox")
     //STATES
@@ -12,6 +14,7 @@ const SimpleSearchBox = (props) => {
     const [activePlayersDisplay, setActivePlayersDisplay] = useState([])
     const [activeSeasonsDisplay, setActiveSeasonsDisplay] = useState([])
     const [shotPercentageData, setShotPercentageData] = useState({})
+    const [invisibleRows, setInvisibleRows] = useState(1)
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
     //STATE REFS
     const selectedYearRef = useRef({});
@@ -130,6 +133,8 @@ const SimpleSearchBox = (props) => {
     }
 
     async function runSimpleSearch() {
+        props.updateLatestSimpleViewType(latestSimpleViewType)
+        props.setIsLoading({ state: true, newShots: true })
         let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log(`runSimpleSearch(${url})`)
         const response = await fetch(url, {
@@ -137,7 +142,6 @@ const SimpleSearchBox = (props) => {
         }).then(res => res.json())
             .then(data => {
                 props.setTitle(`${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}, ${selectedYearRef.current} ${selectedSeasonRef.current}`)
-                props.updateLatestSimpleViewType(latestSimpleViewType)
                 props.setAllSearchData({
                     shots: data,
                     view: latestSimpleViewType
@@ -182,69 +186,140 @@ const SimpleSearchBox = (props) => {
         } else {
             getSeasonsData(document.getElementById(yearResult).textContent, selectedPlayerRef.current.id, selectedPlayerRef.current.playerfirstname, selectedPlayerRef.current.playerlastname)
         }
+    }
 
+    function searchYear(inputText, isFinal) {
+        let years = generateYears(props.currentYear)
+        let found = true;
+        for (let i = 0; i < inputText.length; i++) {
+            let tempArray = years.filter(eachYear => eachYear.props.children.startsWith(inputText.substring(0, i + 1)))
+            if (tempArray.length !== 0) {
+                years = tempArray
+            } else {
+                found = false
+            }
+        }
+        let yearResult = years[0].props.children
+        document.getElementById(yearResult).parentNode.scrollTop = document.getElementById(yearResult).offsetTop;
+        if (isFinal) {
+            props.setSelectedYear(document.getElementById(yearResult).textContent);
+            processYearChange(yearResult)
+        }
+        let autofill = found ? inputText + yearResult.substring(inputText.length, yearResult.length) : inputText
+        return autofill
+    }
+    function searchPlayer(inputText, isFinal) {
+        let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
+        let found = true;
+        for (let i = 0; i < inputText.length; i++) {
+            let tempArray = latestArray.filter(eachPlayer => eachPlayer.startsWith(inputText.substring(0, i + 1).toUpperCase()))
+            if (tempArray.length !== 0) {
+                latestArray = tempArray
+            } else {
+                found = false
+            }
+        }
+        let result = latestArray[0]
+        if (document.getElementById(result)) {
+            document.getElementById(result).parentNode.parentNode.scrollTop = document.getElementById(result).offsetTop;
+            if (isFinal) {
+                props.setSelectedPlayer({
+                    id: document.getElementById(result).getAttribute('playerid'),
+                    playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
+                    playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+                }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
+                );
+            }
+            let disp = initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1] + " " + initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+            let autofill = found ? inputText + disp.substring(inputText.length, disp.length) : inputText
+            return autofill
+        }
     }
     useEffect(() => {
         console.log("useEffect for activePlayers")
         displayActivePlayers()
     }, [activePlayers])
+
     useEffect(() => {
         console.log("useEffect for activeSeasons")
         displayActiveSeasons()
     }, [activeSeasons])
 
     useEffect(() => {
-        console.log("useEffect for SimpleSearchBox keyPressedBuilder")
-        let classes = ""
-        if (typeof (props.keyPressedBuilder.id) === 'string') {
-            classes = props.keyPressedBuilder.id
-        } else if (props.keyPressedBuilder.id !== null) {
-            classes = props.keyPressedBuilder.id.baseVal
-        }
-        if (classes.indexOf('player-dd') !== -1) {
-            let latestArray = activePlayersRef.current.map(eachPlayer => eachPlayer.displayname.toUpperCase())
-            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
-                let tempArray = latestArray.filter(eachPlayer => eachPlayer.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1)))
-                if (tempArray.length !== 0) {
-                    latestArray = tempArray
-                }
-            }
-            let result = latestArray[0]
-
-            document.getElementById(result).parentNode.parentNode.scrollTop = document.getElementById(result).offsetTop;
-            props.setSelectedPlayer({
-                id: document.getElementById(result).getAttribute('playerid'),
-                playerfirstname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1],
-                playerlastname: initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
-            }, getSeasonsData(selectedYearRef.current, initPlayersRef.current[document.getElementById(result).textContent][0], initPlayersRef.current[document.getElementById(result).textContent][1], initPlayersRef.current[document.getElementById(result).textContent][2])
-            );
-        }
-        else if (classes.indexOf('year-dd') !== -1) {
-            let years = generateYears(props.currentYear)
-            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
-                let tempArray = years.filter(eachYear => eachYear.props.children.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1)))
-                if (tempArray.length !== 0) {
-                    years = tempArray
-                }
-            }
-            let yearResult = years[0].props.children
-            document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
-            props.setSelectedYear(document.getElementById(yearResult).textContent);
-            processYearChange(yearResult)
-        }
-    }, [props.keyPressedBuilder])
+        console.log(props.TextAreaText)
+    }, [props.TextAreaText])
 
     useEffect(() => {
         console.log(`useEffect for SimpleSearchBox selectedPlayer`)
-        // console.log(props.selectedPlayer)
     }, [props.selectedPlayer])
 
-    function createButton(id, selection, displayState, scrollable) {
+    function handleKeyPress(event, id) {
+        let newString = event.target.value
+        if (event.keyCode === 8) {
+            newString = newString.substring(0, newString.length - 1)
+        } else if (event.keyCode === 222) {
+            newString += "'"
+        } else if (event.keyCode === 189) {
+            newString += "-"
+        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
+            newString += event.key
+        } else if (event.key === 'Enter') {
+            event.preventDefault()
+            props.handleDDButtonClick(event, `${id}-dd`)
+        }
+        if (id === "year") {
+            event.key === 'Enter' ? searchYear(newString, true) : searchYear(newString, false)
+        } else if (id === "player") {
+            event.key === 'Enter' ? searchPlayer(newString, true) : searchPlayer(newString, false)
+        }
+        props.setTextAreaText({ id: `${id}-dd`, text: newString })
+    }
+
+    function handleButtonClick(event, id) {
+        props.setTextAreaText({ id: id, text: "" })
+        props.handleDDButtonClick(event, `${id}-dd`)
+    }
+    useEffect(() => {
+        if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
+            console.log(invisibleRows)
+            setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
+        }
+    })
+
+    function createButton(id, selection, displayState, scrollable, placeholder) {
         let height = 20
-        return (<button class={`dropdown-button ${id}-dd`} id={`${id}-button`} onClick={(e) => { props.handleDDButtonClick(e, `${id}-dd`) }}>
-            <p className={`dropdown-button-display ${id}-dd`}>{selection}</p >
+        let whatToShow = selection
+        if (document.getElementById(`${id}-dd`) && document.getElementById(`${id}-dd`).classList.contains("show")) {
+            whatToShow = props.textAreaText.text
+        }
+        let value = ""
+        if (props.textAreaText.text.length !== 0) {
+            if (id === "year") {
+                value = searchYear(whatToShow, false)
+            } else if (id === "player") {
+                value = searchPlayer(whatToShow, false)
+            }
+        }
+        let width = 100
+        if (document.getElementById(`${id}-button`) && document.getElementById(`${id}-button`).clientWidth) {
+            width = document.getElementById(`${id}-button`).clientWidth * 0.7
+        }
+        let buttonFace2 = (id === "year" || id === "player") ? <TextareaAutosize spellcheck="false" minRows={id === "player" ? invisibleRows : 1}
+            className={`dropdown-button-display ${id}-dd text-area-2`} id={`${id}-button-display-2`} maxRows="3"
+            value={value}
+            style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
+            : <p className={`dropdown-button-display ${id}-dd`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{selection}</p>
+        let buttonFace = (id === "year" || id === "player") ? < TextareaAutosize spellcheck="false" minRows={id === "player" ? invisibleRows : 1}
+            className={`dropdown-button-display ${id}-dd text-area `} id={`${id}-button-display`} maxRows="3"
+            value={whatToShow}
+            style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
+            onKeyDown={e => { handleKeyPress(e, id) }}
+            placeholder={placeholder} />
+            : <p className={`dropdown-button-display ${id}-dd`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{selection}</p>
+        return (<button className={`dropdown-button ${id}-dd`} id={`${id}-button`} onClick={(e) => { handleButtonClick(e, id) }}>
+            {buttonFace2}{buttonFace}
             <Svg className={`arrow-svg ${id}-dd`} height={height} width={height}>
-                <Path className={`arrow-path ${id}-dd`} d={`m0,${height / 2} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
+                <Path className={`arrow-path ${id}-dd`} d={`m0,${(id === "year" || id === "player") ? 0 : 8} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
                 </Path>
             </Svg>
             <div className={`dropdown-content ${scrollable}`} id={`${id}-dd`}>
@@ -252,70 +327,39 @@ const SimpleSearchBox = (props) => {
             </div>
         </button>)
     }
+    function createInvisibleTextArea() {
+        let value = ""
+        if (props.textAreaText.text.length !== 0) {
+            value = searchPlayer(props.textAreaText.text, false)
+        }
+        let width = 50
+        if (document.getElementById(`player-button`) && document.getElementById(`player-button`).clientWidth) {
+            width = document.getElementById(`player-button`).clientWidth * 0.7
+        }
+        let buttonFace2 = <TextareaAutosize rows="1" className={`dropdown-button-display player-dd-invisible text-area-2`} id={`player-button-display-invisible`} maxRows="3"
+            value={value} style={{ position: "absolute", resize: "none", overflowWrap: "break-word", position: "absolute", color: "transparent", maxWidth: width, minWidth: width }} />
+        return <button className={`dropdown-button player-invisible-dd`} id={`player-invisible-button`} style={{ backgroundColor: "transparent", borderColor: "transparent", transform: "translate(-1000px,0px)" }} >
+            {buttonFace2}
+        </button>
+    }
 
-    /**
-     * <button class="dropdown-button year-dd" id="year-button" onClick={(e) => { props.handleDDButtonClick(e, "year-dd") }}>
-                        <p className="dropdown-button-display  year-dd">{selectedYearRef.current}</p >
-                        <Svg className="arrow-svg year-dd" height="20" width="20">
-                            <Path className="arrow-path year-dd" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                            </Path>
-                        </Svg>
-                        <div className="dropdown-content scrollable" id="year-dd">
-                            {yearDisplay}
-                        </div>
-                    </button>
-                    <button class="dropdown-button player-dd" id="player-button" onClick={(e) => props.handleDDButtonClick(e, "player-dd")}>
-                        <p className="dropdown-button-display  player-dd" id="player-dd-display">{selectedPlayerRef.current.playerfirstname} {selectedPlayerRef.current.playerlastname}</p>
-                        <Svg className="arrow-svg  player-dd" id="player-dd-arrow-svg" height="20" width="20">
-                            <Path className="arrow-path  player-dd" id="player-dd-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                            </Path>
-                        </Svg>
-                        <div className="dropdown-content scrollable" id="player-dd">
-                            {activePlayersDisplay}
-                        </div>
-                    </button>
-                     <button class="dropdown-button" id="season-type-button" onClick={(e) => props.handleDDButtonClick(e, "season-type-dd")}>
-                        <p className="dropdown-button-display">{selectedSeasonRef.current}</p>
-                        <Svg className="arrow-svg" height="20" width="20">
-                            <Path className="arrow-path" d='m0,8 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                            </Path>
-                        </Svg>
-                        <div className="dropdown-content" id="season-type-dd">
-                            {activeSeasonsDisplay}
-                        </div>
-                    </button>
-                    <button class="dropdown-button" id="view-selector" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
-                        <span className="dropdown-button-display">{latestSimpleViewType}</span>
-                        <span className="arrow">
-                            <Svg className="arrow-svg" height="20" width="20">
-                                <Path className="arrow-path" d='m0,5 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                                </Path>
-                            </Svg>
-                        </span>
-                        <div className="dropdown-content" id="view-selection-dd">
-                            <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Traditional</p>
-                            <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Grid</p>
-                            <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Zone</p>
-                            <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>
-                        </div>
-                    </button>
-     */
     return (
-        <div className="SimpleSearchBox">
+        <div className="SimpleSearchBox" id="simple-search-box">
             <div className="search-box-body">
                 <div className="search-box-inner-body">
                     <h6 className="choose-parameters-label">Choose your search parameters</h6>
-                    {createButton("year", selectedYearRef.current, yearDisplay, "scrollable")}
+                    {createInvisibleTextArea()}
+                    {createButton("year", selectedYearRef.current, yearDisplay, "scrollable", "Season")}
                     <br></br>
-                    {createButton("player", `${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}`, activePlayersDisplay, "scrollable")}
+                    {createButton("player", `${selectedPlayerRef.current.playerfirstname} ${selectedPlayerRef.current.playerlastname}`, activePlayersDisplay, "scrollable", "Player")}
                     <br></br>
-                    {createButton("season-type", selectedSeasonRef.current, activeSeasonsDisplay, "")}
+                    {createButton("season-type", selectedSeasonRef.current, activeSeasonsDisplay, "", "Season Type")}
                     <br></br>
                     {createButton("view-selection", latestSimpleViewType, [<p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Classic</p>,
                     <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Hex</p>,
                     <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Zone</p>,
                     <p className='dropdown-item view-display' onClick={(event) => handleViewSelectionButtonClick(event)}>Heat</p>,
-                    ], "")}
+                    ], "", "View Type")}
                     <br></br>
                     <button id="run-simple-search-button" onClick={e => runSimpleSearch()}>
                         Run It
