@@ -9,7 +9,7 @@
 .Header {
     display: inline-grid;
     grid-template-columns: auto auto ;
-    font-family: 'JosefinSansLight';
+    font-family: 'MonserratLight';
     color: white;
     min-height: 50%;
     background-color: rgb(31, 30, 30);
@@ -18,8 +18,8 @@
 
 #versionText{
     font-size: 20px;
-    font-family: 'MonserratLight';
 }
+
 .header-grid-item {
     height:80% ;
     font-size: 30px ;
@@ -27,7 +27,7 @@
 
  #title {
     text-align: left;
-    font-size: 50px;
+    font-size: 40px;
     padding-left: 20px;
   }
 
@@ -39,12 +39,10 @@
 
   #accuracy-title {
     text-align: center;
-    font-family: 'MonserratLight';
     font-size: 15px;
     padding-bottom: 1%;
   }
   #accuracy-date {
-    font-family: 'MonserratLight';
     text-align: center;
     font-size: 25px;
   }
