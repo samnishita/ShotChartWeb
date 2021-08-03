@@ -871,7 +871,7 @@ const ShotView = (props) => {
     function makeLoadingAnimation(isLoading, viewType) {
         console.log("makeLoadingAnimation()")
         console.log(`${isLoading}, ${viewType}`)
-        // if (true) {
+        //if (true) {
         if (isLoading) {
             let dimensions = getDimensions()
             let height = dimensions.height
@@ -941,6 +941,9 @@ const ShotView = (props) => {
                         </Svg>
              */
             //let view = allShotsRef.current.shots === null ? allShotsRef.current.view : combinedState.localViewType.type
+            //animation: `spin 0.5s linear infinite`,
+            //                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
+
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
                     <p id="loading-text">Generating {viewType}</p>
@@ -949,7 +952,7 @@ const ShotView = (props) => {
                             <Defs>
                                 <linearGradient
                                     id="loading-gradient"
-                                    x1="0" y1="1" x2="0" y2="0">
+                                    x1="0" y1="0" x2="0" y2="1">
                                     <Stop offset="0%" stopColor="#bc53f8" stopOpacity="1" />
                                     <Stop offset="18%" stopColor="#dd76ff" stopOpacity="1" />
                                     <Stop offset="36%" stopColor="#e696fa" stopOpacity="1" />
@@ -959,7 +962,11 @@ const ShotView = (props) => {
                                     <Stop offset="95%" stopColor="#90ebff" stopOpacity="1" />
                                 </linearGradient>
                             </Defs>
-                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
+                            <Path d={`m${centerX + innerR3 * Math.sin(45 * Math.PI / 180)} ${centerY - innerR3 * Math.cos(45 * Math.PI / 180)} 
+                            l${thickness3 * Math.sin(45 * Math.PI / 180)} -${thickness3 * Math.cos(45 * Math.PI / 180)} 
+                            a${outerR3},${outerR3} 0 1,1 ${-2 * outerR3 * Math.sin(45 * Math.PI / 180)},0 
+                            l${thickness3 * Math.sin(45 * Math.PI / 180)} ${thickness3 * Math.cos(45 * Math.PI / 180)}  
+                            a${innerR3},${innerR3} 0 1,0 ${2 * innerR3 * Math.sin(45 * Math.PI / 180)},0`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
                         </Svg>
                     </div>
 
