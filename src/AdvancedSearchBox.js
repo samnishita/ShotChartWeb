@@ -3,15 +3,26 @@ import SelectionViewer from './SelectionViewer'
 import ShotPercentageView from './ShotPercentageView'
 import { useEffect, useState, useRef } from "react";
 import Svg, { Path } from 'react-native-svg';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const AdvancedSearchBox = (props) => {
     console.log("RERENDER AdvancedSearchBox")
     const [latestAdvancedViewType, setLatestAdvancedViewType] = useState(props.latestAdvancedViewType)
     const [shotPercentageData, setShotPercentageData] = useState({})
+    const [invisibleRows, setInvisibleRows] = useState(1)
 
     useEffect(() => {
         console.log("useEffect for props.allSearchParameters")
     }, [props.allSearchParameters])
+
+    useEffect(() => {
+        window.addEventListener('keydown', function (event) {
+            if (event.keyCode == 32) {
+                console.log("SPACEBAR")
+                event.preventDefault();
+            }
+        });
+    }, [])
 
     const relevantTeams = {
         "Atlanta Hawks": 1610612737,
@@ -71,16 +82,16 @@ const AdvancedSearchBox = (props) => {
         "year-advanced-dd-end": "endSeason",
         "player-advanced-dd": "allSelectedPlayers",
         "season-advanced-dd": "allSelectedSeasonTypes",
-        "distance-begin": "beginDistance",
-        "distance-end": "endDistance",
-        "success": "shotSuccess",
-        "shot-value": "shotValue",
-        "shot-types": "allSelectedShotTypes",
-        "shooting-teams": "allSelectedTeams",
-        "home-teams": "allSelectedHomeTeams",
-        "away-teams": "allSelectedAwayTeams",
-        "court-areas": "allSelectedCourtAreas",
-        "court-sides": "allSelectedCourtSides",
+        "distance-dd-begin": "beginDistance",
+        "distance-dd-end": "endDistance",
+        "success-dd": "shotSuccess",
+        "shot-value-dd": "shotValue",
+        "shot-types-dd": "allSelectedShotTypes",
+        "shooting-teams-dd": "allSelectedTeams",
+        "home-teams-dd": "allSelectedHomeTeams",
+        "away-teams-dd": "allSelectedAwayTeams",
+        "court-areas-dd": "allSelectedCourtAreas",
+        "court-sides-dd": "allSelectedCourtSides",
     }
     const initPlayersRef = useRef({});
     initPlayersRef.current = props.initPlayers;
@@ -96,7 +107,6 @@ const AdvancedSearchBox = (props) => {
     })
 
     function createDropDown(className) {
-        console.log(`createDropDown(${className})`)
         switch (className) {
             case "year-advanced-dd-begin":
             case "year-advanced-dd-end":
@@ -105,36 +115,36 @@ const AdvancedSearchBox = (props) => {
                 return createPlayerDropDown(className)
             case "season-advanced-dd":
                 return [createMultipleSelectionDD(className, "Preseason"), createMultipleSelectionDD(className, "Regular Season"), createMultipleSelectionDD(className, "Playoffs")]
-            case "distance-begin":
-            case "distance-end":
+            case "distance-dd-begin":
+            case "distance-dd-end":
                 let distances = []
                 for (let i = 0; i < 89; i++) {
-                    distances.push(createSingleSelectionDD(className, i))
+                    distances.push(createSingleSelectionDD(className, i, className + "-" + i))
                 }
                 return distances
-            case "success":
+            case "success-dd":
                 return [createSingleSelectionDD(className, "Makes"), createSingleSelectionDD(className, "Misses")]
-            case "shot-value":
+            case "shot-value-dd":
                 return [createSingleSelectionDD(className, "2PT"), createSingleSelectionDD(className, "3PT")]
-            case "shot-types":
-                return props.shotTypes.map(shotType => createMultipleSelectionDD(className, shotType))
-            case "shooting-teams":
-            case "home-teams":
-            case "away-teams":
-                return Object.keys(relevantTeams).map(key => createMultipleSelectionDD(className, key))
-            case "court-areas":
+            case "shot-types-dd":
+                return props.shotTypes.map(shotType => createMultipleSelectionDD(className, shotType, shotType.replace(/ /g, "-").toLowerCase()))
+            case "shooting-teams-dd":
+            case "home-teams-dd":
+            case "away-teams-dd":
+                return Object.keys(relevantTeams).map(key => createMultipleSelectionDD(className, key, className.replace("teams-dd", "") + key.replace(/ /g, "-").toLowerCase()))
+            case "court-areas-dd":
                 return courtAreas.map(courtArea => createMultipleSelectionDD(className, courtArea))
-            case "court-sides":
+            case "court-sides-dd":
                 return courtSides.map(courtSide => createMultipleSelectionDD(className, courtSide))
         }
     }
 
-    function createSingleSelectionDD(className, display) {
-        return <p className={`dropdown-item ${className}`} onClick={event => props.setAllSearchParameters({ ...props.allSearchParameters, [className]: event.target.textContent })}>{display}</p>
+    function createSingleSelectionDD(className, display, id) {
+        return <p className={`dropdown-item ${className}`} id={id} onClick={event => props.setAllSearchParameters({ ...props.allSearchParameters, [className]: event.target.textContent })}>{display}</p>
     }
 
-    function createMultipleSelectionDD(className, display) {
-        return <p className={`dropdown-item ${className}`} onClick={event => checkIfExistsInArray(className, display)}>{display}</p>
+    function createMultipleSelectionDD(className, display, id) {
+        return <p className={`dropdown-item ${className}`} id={id} onClick={event => checkIfExistsInArray(className, display)}>{display}</p>
     }
 
     function checkIfExistsInArray(key, value) {
@@ -145,59 +155,246 @@ const AdvancedSearchBox = (props) => {
 
     function createYearDropDown(inputClassName) {
         console.log(`createYearDropDown(${inputClassName})`)
-        let year = Number(props.currentYear.substring(0, 4)), subYearString, elements = []
-        for (let eachYear = year; eachYear >= 1996; eachYear--) {
-            subYearString = (eachYear - 1899) % 100 < 10 ? subYearString = "0" + (eachYear - 1899) % 100 : subYearString = "" + (eachYear - 1899) % 100
-            elements.push(createSingleSelectionDD(inputClassName, `${eachYear}-${subYearString}`))
-        }
-        return elements
+        return generateYears(props.currentYear).map(eachYear => createSingleSelectionDD(inputClassName, eachYear, eachYear))
     }
 
     function createPlayerDropDown(inputClassName) {
         console.log(`createPlayerDropDown(${inputClassName})`)
-        let elements = []
-        Object.values(initPlayersRef.current).forEach(value => {
-            elements.push(<p className='dropdown-item player-display'
+        return Object.values(initPlayersRef.current).map(value =>
+            <p className='dropdown-item player-display'
                 id={`${value[1]} ${value[2]}`.trim().toUpperCase()
                 } playerid={value[0]}
-                onClick={() => checkIfExistsInArray(inputClassName, `${value[1]} ${value[2]}`.trim())}>{`${value[1]} ${value[2]}`.trim()}</p>)
-        })
-        elements.sort((a, b) => {
+                onClick={() => checkIfExistsInArray(inputClassName, `${value[1]} ${value[2]}`.trim())}>{`${value[1]} ${value[2]}`.trim()}</p>
+        ).sort((a, b) => {
             if (a.props.id < b.props.id) { return -1; }
             if (a.props.id > b.props.id) { return 1; }
             return 0;
         })
+    }
+
+    function handleKeyPress(event, id) {
+        let newString = event.target.value
+        //builds string
+        if (event.keyCode === 8) {
+            newString = newString.substring(0, newString.length - 1)
+        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32 || event.keyCode === 222 || event.keyCode === 189) {
+            newString += event.key
+        } else if (event.key === 'Enter') {
+            event.preventDefault()
+            props.handleDDButtonClick(event, `${id}-dd`)
+        }
+        //Close drowdown and set search parameter
+        if (event.key === 'Enter') {
+            handleTextInput(id, newString, event.key === 'Enter')
+        }
+        props.setTextAreaText({ id: id, text: newString })
+    }
+
+    function handleTextInput(id, builtString, isKeyEnter) {
+        switch (id) {
+            case "year-advanced-dd-begin":
+            case "year-advanced-dd-end":
+                return searchDropDown(generateYears(props.currentYear), builtString, isKeyEnter, false, id)
+            case "player-advanced-dd":
+                return searchDropDown(initPlayersSortedRef.current.map(eachPlayer => eachPlayer.toUpperCase()), builtString, isKeyEnter, true, id)
+            case "distance-dd-begin":
+            case "distance-dd-end":
+                let distanceArray = []
+                for (let i = 0; i < 89; i++) {
+                    distanceArray.push(i + "")
+                }
+                return searchDropDown(distanceArray, builtString, isKeyEnter, false, id)
+            case "shot-types-dd":
+                return searchDropDown(props.shotTypes.map(eachShotType => eachShotType.toUpperCase()), builtString, isKeyEnter, true, id)
+            case "shooting-teams-dd":
+            case "home-teams-dd":
+            case "away-teams-dd":
+                return searchDropDown(Object.keys(relevantTeams).map(each => each.toUpperCase()), builtString, isKeyEnter, true, id)
+        }
+    }
+
+    function generateYears(currentYear) {
+        let year = Number(currentYear.substring(0, 4)), subYearString
+        let elements = []
+        for (let eachYear = year; eachYear >= 1996; eachYear--) {
+            subYearString = (eachYear - 1899) % 100 < 10 ? subYearString = "0" + (eachYear - 1899) % 100 : subYearString = "" + (eachYear - 1899) % 100
+            elements.push(eachYear + "-" + subYearString)
+        }
         return elements
     }
 
-    function makeButton(name, descriptor) {
-        console.log(`makeButton(${name}, ${descriptor}`)
-        if (props.allSearchParameters[descriptor] && props.allSearchParameters[descriptor].length !== 0) {
-            if (Array.isArray(props.allSearchParameters[descriptor])) {
-                name = props.allSearchParameters[descriptor][props.allSearchParameters[descriptor].length - 1]
+    function searchDropDown(inputArray, inputText, isFinal, isMultiSelect, id) {
+        let found = true;
+        for (let i = 0; i < inputText.length; i++) {
+            let tempArray = inputArray.filter(eachItem => eachItem.startsWith(inputText.substring(0, i + 1).toUpperCase()))
+            if (tempArray.length !== 0) {
+                inputArray = tempArray
             } else {
-                name = props.allSearchParameters[descriptor]
+                found = false
             }
         }
-        let scrollable = "scrollable"
-        if (descriptor === "season-advanced-dd" || descriptor === "success" || descriptor === "shot-value") {
-            scrollable = ""
+        let result = inputArray[0]
+        let elementId = result
+        switch (id) {
+            case "distance-dd-begin":
+            case "distance-dd-end":
+                elementId = id + "-" + result
+                break;
+            case "shot-types-dd":
+                elementId = result.replace(/ /g, "-").toLowerCase()
+                break;
+            case "shooting-teams-dd":
+            case "home-teams-dd":
+            case "away-teams-dd":
+                elementId = id.replace("teams-dd", "") + result.replace(/ /g, "-").toLowerCase()
+                break;
         }
-        let rangeButtonClass = descriptor.includes("-begin") || descriptor.includes("-end") ? "range-button" : ""
-        let rangeButtonDisplayClass = descriptor.includes("-begin") || descriptor.includes("-end") ? "range-button-display" : ""
-        return <button className={`${rangeButtonClass} dropdown-button ${descriptor}`} id={`${descriptor}-button`} onClick={(e) => { props.handleDDButtonClick(e, descriptor) }}>
-            <p className={`${rangeButtonDisplayClass} dropdown-button-display ${descriptor}`}>{name}</p>
-            <p className={`arrow ${descriptor}`}>
-                <Svg className={`arrow-svg ${descriptor}`} height="20" width="20">
-                    <Path className={`arrow-path ${descriptor}`} d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+        if (document.getElementById(elementId)) {
+            document.getElementById(elementId).parentNode.scrollTop = document.getElementById(elementId).offsetTop;
+            let disp = result
+            if (id === "player-advanced-dd") {
+                disp = initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][1] + " " + initPlayersReverseMapRef.current[document.getElementById(result).getAttribute('playerid')][2]
+            } else if (id === "distance-begin-dd" || id === "distance-end-dd" || id === "shot-types-dd" || id.includes("teams")) {
+                disp = document.getElementById(elementId).textContent
+            }
+            if (isFinal && !isMultiSelect) {
+                props.setAllSearchParameters({ ...props.allSearchParameters, [id]: disp })
+            } else if (isFinal && isMultiSelect) {
+                checkIfExistsInArray(id, disp)
+            }
+            return found ? inputText + disp.substring(inputText.length, disp.length) : inputText
+        }
+    }
+
+    function handleButtonClick(event, id) {
+        props.setTextAreaText({ id: id, text: "" })
+        props.handleDDButtonClick(event, `${id}`)
+    }
+
+    useEffect(() => {
+        if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
+            console.log(invisibleRows)
+            setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
+        }
+    })
+
+    function makeButton(id, suffix, scrollable, placeholder) {
+        let fullId = suffix !== "" ? id + "-dd-" + suffix : id + "-dd"
+        let whatToShow = placeholder
+        //Display latest search parameter if applicable
+        if (props.allSearchParameters[fullId] && props.allSearchParameters[fullId].length !== 0) {
+            if (Array.isArray(props.allSearchParameters[fullId])) {
+                whatToShow = props.allSearchParameters[fullId][props.allSearchParameters[fullId].length - 1]
+            } else {
+                whatToShow = props.allSearchParameters[fullId]
+            }
+        }
+        //If dropdown is showing, set display text to the text input
+        if (document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show") && scrollable && !id.includes("court")) {
+            whatToShow = props.textAreaText.text
+        }
+        //If dropdown is showing and there is text input, display autofill
+        let value = ""
+        if (props.textAreaText.text.length !== 0 && document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
+            value = handleTextInput(fullId, props.textAreaText.text, false)
+        }
+        let width = 100
+        if (document.getElementById(`${id}-dd-button`) && document.getElementById(`${id}-dd-button`).clientWidth) {
+            width = document.getElementById(`${id}-dd-button`).clientWidth * 0.7
+        }
+        let rangeButtonClass = suffix !== "" ? "range-button" : ""
+        let minRows = 1
+        if (document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
+            minRows = invisibleRows
+        }
+        let willShowTextArea = scrollable && !id.includes("court")
+        let arrowOffset = willShowTextArea ? 0 : 10
+        let buttonFace2 = willShowTextArea ? <TextareaAutosize spellcheck="false" minRows={minRows}
+            className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
+            value={value} style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
+            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{value}</p>
+        let buttonFace = willShowTextArea ? < TextareaAutosize spellcheck="false" minRows={minRows}
+            className={`dropdown-button-display ${fullId} text-area `} id={`${id}-button-display`} maxRows="3"
+            value={whatToShow} style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
+            onKeyDown={e => { handleKeyPress(e, fullId) }} placeholder={placeholder} />
+            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{whatToShow}</p>
+
+        return <button className={`${rangeButtonClass} dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }}>
+            {buttonFace2}{buttonFace}
+            <p className={`arrow ${fullId}`}>
+                <Svg className={`arrow-svg ${fullId}`} height="20" width="20">
+                    <Path className={`arrow-path ${fullId}`} d={`m0,${arrowOffset} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
                     </Path>
                 </Svg>
             </p>
-            <div className={`dropdown-content ${scrollable}`} id={descriptor}>
-                {createDropDown(descriptor)}
+            <div className={`dropdown-content ${scrollable}`} id={fullId}>
+                {createDropDown(fullId)}
             </div>
         </button>
     }
+
+    function createLeftButtons() {
+        console.log(props.allSearchParameters)
+        let allLeftButtons = [<p className="param-title">Seasons: </p>,
+        <p className="param-content">{makeButton("year-advanced", "begin", "scrollable", "Start")} - {makeButton("year-advanced", "end", "scrollable", "End")}</p>,
+        <p className="param-title">Players: </p >,
+        <p className="param-content">{makeButton("player-advanced", "", "scrollable", "Player")}</p>,
+        <p className="param-title">Season Types: </p>,
+        <p className="param-content">{makeButton("season-advanced", "", "", "Season Type")}</p>,
+        <p className="param-title">Shot Distance (ft.): </p >,
+        <p className="param-content"> {makeButton("distance", "begin", "scrollable", "Start")} - {makeButton("distance", "end", "scrollable", "End")}</p >,
+        <p className="param-title">Shot Success: </p>,
+        <p className="param-content">{makeButton("success", "", "", "Makes or Misses")}</p>,
+        <p className="param-title">Shot Value: </p>,
+        <p className="param-content">{makeButton("shot-value", "", "", "2PT or 3PT")}</p>
+        ]
+        return allLeftButtons;
+    }
+
+    function createRightButtons() {
+        let allRightButtons = [
+            <p className="param-title">Shot Types: </p>,
+            <p className="param-content">{makeButton("shot-types", "", "scrollable", "Shot Type")}</p>,
+            <p className="param-title">Shooting Teams: </p>,
+            <p className="param-content">{makeButton("shooting-teams", "", "scrollable", "Shooting Team")}</p>,
+            <p className="param-title">Home Teams: </p>,
+            <p className="param-content">{makeButton("home-teams", "", "scrollable", "Home Team")}</p>,
+            <p className="param-title">Away Teams: </p>,
+            <p className="param-content">{makeButton("away-teams", "", "scrollable", "Away Team")}</p>,
+            <p className="param-title">Court Areas: </p>,
+            <p className="param-content">{makeButton("court-areas", "", "scrollable", "Court Area")}</p>,
+            <p className="param-title">Sides of Court: </p>,
+            <p className="param-content"> {makeButton("court-sides", "", "scrollable", "Court Side")}</p>
+        ]
+        return allRightButtons
+    }
+    function createInvisibleTextArea() {
+        let value = ""
+        if (props.textAreaText.text.length !== 0) {
+            if (document.getElementById("player-advanced-dd").classList.contains("show")) {
+                value = searchDropDown(initPlayersSortedRef.current.map(eachPlayer => eachPlayer.toUpperCase()), props.textAreaText.text, false, true, "player-advanced-dd")
+            } else if (document.getElementById("shot-types-dd").classList.contains("show")) {
+                value = searchDropDown(props.shotTypes.map(eachShotType => eachShotType.toUpperCase()), props.textAreaText.text, false, true, "shot-types-dd")
+            } else if (document.getElementById("shooting-teams-dd").classList.contains("show") || document.getElementById("home-teams-dd").classList.contains("show")
+                || document.getElementById("away-teams-dd").classList.contains("show")) {
+                value = searchDropDown(Object.keys(relevantTeams).map(each => each.toUpperCase()), props.textAreaText.text, false, true, "shooting-teams-dd")
+            }
+        }
+        let width = 50
+        if (document.getElementById("player-advanced-dd") && document.getElementById("player-advanced-dd").classList.contains("show") && document.getElementById(`player-advanced-dd-button`) && document.getElementById(`player-advanced-dd-button`).clientWidth) {
+            width = document.getElementById(`player-advanced-dd-button`).clientWidth
+        } else if (document.getElementById("shot-types-dd") && document.getElementById("shot-types-dd").classList.contains("show") && document.getElementById(`shot-types-dd-button`) && document.getElementById(`shot-types-dd-button`).clientWidth) {
+            width = document.getElementById(`shot-types-dd-button`).clientWidth
+        } else if (document.getElementById("shooting-teams-dd") && document.getElementById("shooting-teams-dd").classList.contains("show") && document.getElementById(`shooting-teams-dd-button`) && document.getElementById(`shooting-teams-dd-button`).clientWidth) {
+            width = document.getElementById(`shooting-teams-dd-button`).clientWidth
+        }
+        let innerWidth = width * 0.7
+        return <button className={`dropdown-button player-invisible-dd`} id={`player-invisible-button`} style={{ position: "absolute", backgroundColor: "transparent", borderColor: "transparent", transform: "translate(-1000px,0px)", marginBottom: "0px", maxWidth: width, minWidth: width }} >
+            <TextareaAutosize rows="1" className={`dropdown-button-display player-dd-invisible text-area-2`} id={`player-button-display-invisible`} maxRows="3"
+                value={value} style={{ position: "absolute", resize: "none", overflowWrap: "break-word", position: "absolute", color: "transparent", maxWidth: innerWidth, minWidth: innerWidth }} />
+        </button>
+    }
+
     async function runAdvancedSearch() {
         console.log("runAdvancedSearch()")
         let url = `https://customnbashotcharts.com:8443/shots_request_advanced?`
@@ -208,7 +405,7 @@ const AdvancedSearchBox = (props) => {
                 allSearchParametersRef.current[eachKey].forEach(eachValue => {
                     if (eachKey === "player-advanced-dd") {
                         urlBuilder = urlBuilder + mapIdsToSearchParams[eachKey] + "=" + props.initPlayers[eachValue][0]
-                    } else if (eachKey === "shooting-teams" || eachKey === "home-teams" || eachKey === "away-teams") {
+                    } else if (eachKey === "shooting-teams-dd" || eachKey === "home-teams-dd" || eachKey === "away-teams-dd") {
                         urlBuilder = urlBuilder + mapIdsToSearchParams[eachKey] + "=" + relevantTeams[eachValue]
                     } else {
                         urlBuilder = urlBuilder + mapIdsToSearchParams[eachKey] + "=" + eachValue
@@ -232,6 +429,7 @@ const AdvancedSearchBox = (props) => {
             props.setTitle("Custom Search")
             url = url + urlBuilder
             console.log(url)
+            props.setIsLoading({ state: true, newShots: true })
             props.setAllSearchData({ shots: null, view: latestAdvancedViewType })
             props.updateLatestAdvancedViewType(latestAdvancedViewType)
             setTimeout(async () => {
@@ -250,98 +448,32 @@ const AdvancedSearchBox = (props) => {
         }
     }
 
-    useEffect(() => {
-        let classes = ""
-        if (typeof (props.keyPressedBuilder.id) === 'string') {
-            classes = props.keyPressedBuilder.id
-        } else if (props.keyPressedBuilder.id !== null) {
-            classes = props.keyPressedBuilder.id.baseVal
-        }
-        if (classes.indexOf('player-advanced-dd') !== -1) {
-            let latestArray = initPlayersSortedRef.current
-            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
-                let tempArray = []
-                latestArray.forEach(eachPlayer => {
-                    if (eachPlayer.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
-                        tempArray.push(eachPlayer)
-                    }
-                })
-                if (tempArray.length !== 0) {
-                    latestArray = tempArray
-                }
-            }
-            let result = latestArray[0]
-            document.getElementById(result).parentNode.scrollTop = document.getElementById(result).offsetTop;
-        } else if (classes.indexOf('year-advanced-dd') !== -1) {
-            let year = Number(props.currentYear.substring(0, 4));
-            let subYearString, years = []
-            while (year >= 1996) {
-                if ((year - 1899) % 100 < 10) {
-                    subYearString = "0" + (year - 1899) % 100;
-                } else {
-                    subYearString = "" + (year - 1899) % 100;
-                }
-                years.push(year + "-" + subYearString)
-                year--;
-            }
-            for (let i = 0; i < props.keyPressedBuilder.builder.length; i++) {
-                let tempArray = []
-                years.forEach(eachYear => {
-                    if (eachYear.startsWith(props.keyPressedBuilder.builder.substring(0, i + 1))) {
-                        tempArray.push(eachYear)
-                    }
-                })
-                if (tempArray.length !== 0) {
-                    years = tempArray
-                }
-            }
-            let yearResult = years[0]
-            document.getElementById(yearResult).scrollIntoView({ behavior: 'auto' })
-        }
-    }, [props.keyPressedBuilder])
-
     const selectionViewerRef = useRef({})
     selectionViewerRef.current = <SelectionViewer allSearchParameters={allSearchParametersRef.current} setAllSearchParameters={props.setAllSearchParameters} />
+
     return (
-        <div className="AdvancedSearchBox">
+        <div className="AdvancedSearchBox" id="advanced-search-box">
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
-                    <h6 className="choose-parameters-label">Choose your search filters</h6>
-                    <div id='selection-scrollable'>
-                        <p className="param-title">Seasons: </p>
-                        <p className="param-content">{makeButton("Begin", "year-advanced-dd-begin")} - {makeButton("End", "year-advanced-dd-end")}</p>
-                        <p className="param-title">Players: </p>
-                        <p className="param-content">{makeButton("Choose Players", "player-advanced-dd")}</p>
-                        <p className="param-title">Season Types: </p>
-                        <p className="param-content">{makeButton("Choose Season Types", "season-advanced-dd")}</p>
-                        <p className="param-title">Shot Distance (ft.): </p>
-                        <p className="param-content">{makeButton("Begin", "distance-begin")} - {makeButton("End", "distance-end")}</p>
-                        <p className="param-title">Shot Success: </p>
-                        <p className="param-content">{makeButton("Choose Makes or Misses", "success")}</p>
-                        <p className="param-title">Shot Value:</p>
-                        <p className="param-content">{makeButton("Choose 2PT or 3PT", "shot-value")}</p>
-                        <p className="param-title">Shot Types:</p>
-                        <p className="param-content">{makeButton("Choose Shot Types", "shot-types")}</p>
-                        <p className="param-title">Shooting Teams:</p>
-                        <p className="param-content">{makeButton("Choose Teams", "shooting-teams")}</p>
-                        <p className="param-title">Home Teams: </p>
-                        <p className="param-content">{makeButton("Choose Home Teams", "home-teams")}</p>
-                        <p className="param-title">Away Teams: </p>
-                        <p className="param-content">{makeButton("Choose Away Teams", "away-teams")}</p>
-                        <p className="param-title">Court Areas: </p>
-                        <p className="param-content">{makeButton("Choose Court Areas", "court-areas")}</p>
-                        <p className="param-title">Sides of Court: </p>
-                        <p className="param-content"> {makeButton("Choose Sides of Court", "court-sides")}</p>
+                    <h6 className="choose-parameters-label">Search Parameters</h6>
+                    <div className="advanced-grid">
+                        <div className="advanced-grid-item">
+                            {createInvisibleTextArea()}
+                            {createLeftButtons()}
+                        </div>
+                        <div className="advanced-grid-item">
+                            {createRightButtons()}
+                        </div>
                     </div>
-                    <button className="dropdown-button static-button " id="adv-view-button" onClick={e => props.handleDDButtonClick(e, "view-selection-dd")}>
-                        <p className="dropdown-button-display">{latestAdvancedViewType}</p>
-                        <p className="arrow">
-                            <Svg className="arrow-svg" height="20" width="20">
-                                <Path className="arrow-path" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                    <button className="dropdown-button static-button view-selection-adv-dd" id="view-selection-adv-button" onClick={e => props.handleDDButtonClick(e, "view-selection-adv-dd")}>
+                        <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
+                        <p className="arrow view-selection-adv-dd" >
+                            <Svg className="arrow-svg view-selection-adv-dd" height="20" width="20">
+                                <Path className="arrow-path view-selection-adv-dd" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                                 </Path>
                             </Svg>
                         </p>
-                        <div className="dropdown-content" id="view-selection-dd">
+                        <div className="dropdown-content" id="view-selection-adv-dd">
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Classic</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Hex</p>
                             <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Zone</p>

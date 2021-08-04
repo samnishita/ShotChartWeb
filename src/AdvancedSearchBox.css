@@ -12,6 +12,7 @@
     color: white;
     min-height: 50vh;
 }
+.show{display: block;}
 
 .AdvancedSearchBox .search-box-body{
     min-height: 100%;
@@ -101,6 +102,10 @@ h6{
     max-width: 85%;
     min-width: 85%;
     text-align: center;
+    background-color: transparent;
+    font-family: 'MonserratLight';
+    border: none;
+    text-align: left;
 }
 .AdvancedSearchBox .search-box-body .range-button.dropdown-button {
     max-width: 30%;
@@ -110,7 +115,12 @@ h6{
     position: relative;
     max-width: 60%;
     min-width: 60%;
-    background-color: rgb(219, 219, 219);
+    background-color: rgba(219, 219, 219,0.2);
+    border:0px;
+    border-bottom:2px solid rgba(165, 80, 212, 1);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -130,3 +140,9 @@ h6{
     text-align: center;
     margin: 0px;
 }
+
+.advanced-grid{
+    display: grid;
+    grid-template-columns: 50% 50% ;
+}
+
