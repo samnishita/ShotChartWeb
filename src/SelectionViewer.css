@@ -1,5 +1,7 @@
 .SelectionViewer{
     scroll-behavior: smooth;
+    width:100%;
+    display: inline-block;
     overflow-y:scroll;
     border-style: solid;
     border-top: 10px;
@@ -10,18 +12,31 @@
 }
 
 .selection-div{
-    height: 20px;
-text-align: left;
-display: flex;
-padding-left: 10px;
+    height: 15px;
+    text-align: left;
+    padding: 10px;
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 10px;
+    background-color: rgba(184, 182, 186, 0.3    );
 }
 
 .selection-span{
-font-size: 14px;
-padding-left: 10px;
+    font-size: 15px;
+    padding-left: 10px;
+    margin: 0px;
 }
 
-#selections{
-    max-height: 10vh;
-    min-height: 10vh;
+.delete-button{
+    background-color: rgb(77, 77, 78);
+    border-radius: 5px;
+}
+
+.delete-button:hover{
+    background-color: red;
+    cursor:pointer;
 }
