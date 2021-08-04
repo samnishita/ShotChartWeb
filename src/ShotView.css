@@ -20,11 +20,10 @@
     color: white;
     font-family: 'MonserratLight';
     height:100%;
-    width:95%;
+    width:auto;
     overflow: auto;
     scroll-behavior: smooth;
     background-color: rgb(65, 64, 64);
-    margin-top: 2%;
     border-radius: 30px;
 }
 

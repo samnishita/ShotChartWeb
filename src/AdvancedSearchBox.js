@@ -435,6 +435,7 @@ const AdvancedSearchBox = (props) => {
             props.setTitle("Custom Search")
             url = url + urlBuilder
             console.log(url)
+            document.getElementById("shotview-grid-item").scrollIntoView({ behavior: "smooth" })
             props.setIsLoading({ state: true, newShots: true })
             props.setAllSearchData({ shots: null, view: latestAdvancedViewType })
             props.updateLatestAdvancedViewType(latestAdvancedViewType)
@@ -450,7 +451,7 @@ const AdvancedSearchBox = (props) => {
                         })
                         setShotPercentageData(data)
                     })
-            }, 300)
+            }, 750)
         }
     }
 

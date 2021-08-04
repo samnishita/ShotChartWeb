@@ -11,14 +11,16 @@ const App = () => {
   console.log("RERENDER APP")
   console.log("isMobile: " + isMobile)
   const currentYear = '2020-21'
+  const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Classic")
   const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Classic")
   const [allSearchData, setAllSearchData] = useState({})
+  const [allAdvancedSearchData, setAllAdvancedSearchData] = useState({})
   const [title, setTitle] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isCurrentViewSimple, setIsCurrentViewSimple] = useState(true)
-  const [keyPressedState, setKeyPressedState] = useState(() => event => handleKeyPressed(event))
+  const [isLoading, setIsLoading] = useState({ state: false, newShots: true })
+  const [isCurrentViewSimple, setIsCurrentViewSimple] = useState(!window.location.href.includes("Advanced"))
   const [keyPressedBuilder, setKeyPressedBuilder] = useState({ id: null, builder: "" })
+  const [textAreaText, setTextAreaText] = useState({ id: null, text: "" })
   const [simpleSelectedYear, setSimpleSelectedYear] = useState(currentYear);
   const [simpleSelectedPlayer, setSimpleSelectedPlayer] = useState({
     id: 203932,
@@ -26,22 +28,16 @@ const App = () => {
     playerlastname: "Gordon"
   });
   const [simpleSelectedSeason, setSimpleSelectedSeason] = useState("Regular Season");
-  const keyPressedStateRef = useRef({});
-  keyPressedStateRef.current = keyPressedState;
-  const keyPressedBuilderRef = useRef({});
-  keyPressedBuilderRef.current = keyPressedBuilder;
   const [initPlayers, setInitPlayers] = useState([])
   const [initPlayersReverseMap, setInitPlayersReverseMap] = useState([])
   const simpleSearchBoxRef = useRef({})
   simpleSearchBoxRef.current =
     <SimpleSearchBox
       updateLatestSimpleViewType={setLatestSimpleViewType}
-      //latestSimpleViewType={latestSimpleViewTypeRef.current}
       latestSimpleViewType={latestSimpleViewType}
       setTitle={setTitle} setIsLoading={setIsLoading}
       setAllSearchData={setAllSearchData}
       isCurrentViewSimple={isCurrentViewSimple}
-      keyPressedBuilder={keyPressedBuilderRef.current}
       handleDDButtonClick={handleDDButtonClick}
       currentYear={currentYear}
       getSearchData={getSearchData}
@@ -53,7 +49,11 @@ const App = () => {
       setSelectedSeason={setSimpleSelectedSeason}
       selectedYear={simpleSelectedYear}
       setSelectedYear={setSimpleSelectedYear}
+      setTextAreaText={setTextAreaText}
+      textAreaText={textAreaText}
+      size={size}
     />
+
   const [whichSearchBox, setWhichSearchBox] = useState(simpleSearchBoxRef.current)
   const [shotTypes, setShotTypes] = useState([])
   const [allAdvancedSearchParameters, setAllAdvancedSearchParameters] = useState({
@@ -61,17 +61,38 @@ const App = () => {
     "year-advanced-dd-end": "",
     "player-advanced-dd": [],
     "season-advanced-dd": [],
-    "distance-begin": "",
-    "distance-end": "",
-    "success": "",
-    "shot-value": "",
-    "shot-types": [],
-    "shooting-teams": [],
-    "home-teams": [],
-    "away-teams": [],
-    "court-areas": [],
-    "court-sides": []
+    "distance-dd-begin": "",
+    "distance-dd-end": "",
+    "success-dd": "",
+    "shot-value-dd": "",
+    "shot-types-dd": [],
+    "shooting-teams-dd": [],
+    "home-teams-dd": [],
+    "away-teams-dd": [],
+    "court-areas-dd": [],
+    "court-sides-dd": []
   })
+  const advancedSearchBoxRef = useRef({})
+  advancedSearchBoxRef.current = <AdvancedSearchBox
+    currentYear={currentYear}
+    isCurrentViewSimple={isCurrentViewSimple}
+    handleDDButtonClick={handleDDButtonClick}
+    initPlayers={initPlayers}
+    initPlayersReverseMap={initPlayersReverseMap}
+    shotTypes={shotTypes}
+    allSearchParameters={allAdvancedSearchParameters}
+    setAllSearchParameters={setAllAdvancedSearchParameters}
+    latestAdvancedViewType={latestAdvancedViewType}
+    setLatestAdvancedViewType={setLatestAdvancedViewType}
+    setTitle={setTitle} setIsLoading={setIsLoading}
+    updateLatestAdvancedViewType={setLatestAdvancedViewType}
+    setAllSearchData={setAllAdvancedSearchData}
+    setTextAreaText={setTextAreaText}
+    textAreaText={textAreaText}
+    size={size} />
+
+  const sizeRef = useRef({})
+  sizeRef.current = size
 
   function getInitPlayersData() {
     console.log("getInitPlayersData()")
@@ -108,29 +129,6 @@ const App = () => {
       })
   }
 
-  function handleKeyPressed(event) {
-    console.log(`handleKeyPressed(${event})`)
-    let string = null
-    if (event.keyCode === 8 && keyPressedBuilderRef.current.builder.length > 0) {
-      string = keyPressedBuilderRef.current.builder.substring(0, keyPressedBuilderRef.current.builder.length - 1)
-      console.log(string)
-    } else if (event.keyCode === 222) {
-      string = keyPressedBuilderRef.current.builder + "'"
-    } else if (event.keyCode === 189) {
-      string = keyPressedBuilderRef.current.builder + "-"
-    } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
-      string = keyPressedBuilderRef.current.builder + String.fromCharCode(event.keyCode)
-    }
-    console.log(event.target)
-    //Safari does not recognize correct event target
-    if (string !== null) {
-      setKeyPressedBuilder({
-        id: event.target.className,
-        builder: string
-      })
-    }
-  }
-
   function handleSimpleClick() {
     console.log("handleSimpleClick()")
     setIsCurrentViewSimple(true)
@@ -141,26 +139,29 @@ const App = () => {
     setIsCurrentViewSimple(false)
   }
 
-  function removeEventListener() {
-    console.log("Removing event listener")
-    window.removeEventListener('keydown', keyPressedStateRef.current)
-    setKeyPressedBuilder({ id: null, builder: "" })
-  }
-
-  function addEventListener() {
-    console.log("Adding event listener")
-    window.addEventListener('keydown', keyPressedStateRef.current)
-  }
+  const acceptedTargets = ["year-dd", "player-dd", "season-type-dd", "view-selection-dd",
+    "year-advanced-dd-begin", "year-advanced-dd-end", "player-advanced-dd", "season-advanced-dd",
+    "distance-dd-begin", "distance-dd-end", "success-dd", "shot-value-dd", "shot-types-dd", "shooting-teams-dd",
+    "home-teams-dd", "away-teams-dd", "court-areas-dd", "court-sides-dd", "view-selection-adv-dd"]
 
   function hideDD(event) {
     console.log(`hideDD(${event})`)
-    if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button-display') && !event.target.matches('.arrow-path') && !event.target.matches('.arrow-svg') && !event.target.matches('.arrow')) {
+    console.log(event.target.classList)
+    let willPass = true
+    acceptedTargets.forEach(eachTarget => {
+      if (willPass && event.target.classList.contains(eachTarget)) {
+        willPass = false
+      }
+    });
+    // if (!event.target.classList.contains("year-dd") && !event.target.classList.contains("player-dd") && !event.target.classList.contains("season-type-dd") && !event.target.classList.contains("view-selection-dd") && !event.target.classList.contains("year-advanced-dd-begin")) {
+    if (willPass) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       for (let i = 0; i < dropdowns.length; i++) {
         var openDropdown = dropdowns[i];
         if (openDropdown.classList.contains('show')) {
           openDropdown.classList.remove('show');
-          removeEventListener()
+          console.log("reseting textarea")
+          setTextAreaText({ id: null, text: "" })
         }
       }
     }
@@ -171,59 +172,67 @@ const App = () => {
     console.log(`handleDDButtonClick(${event},${type})`)
     hideDD(event);
     var dropdowns = document.getElementsByClassName("dropdown-content");
-    let shouldAddEventListener = false
+    console.log(type)
+    console.log(acceptedTargets.includes(type))
     for (let i = 0; i < dropdowns.length; i++) {
       var dropdown = dropdowns[i];
       if (dropdown.id !== type) {
         if (dropdown.classList.contains('show')) {
           dropdown.classList.remove('show');
-          removeEventListener()
         }
       } else {
-        if (dropdown.classList.contains('show')) {
+        if (dropdown.classList.contains('show') && !event.target.classList.contains("text-area")) {
           dropdown.classList.remove('show');
-          removeEventListener()
-        } else {
-          shouldAddEventListener = true
+        } else if (dropdown.classList.contains('show') && event.target.classList.contains("text-area") && event.key === "Enter") {
+          dropdown.classList.remove('show');
+        } else if (!dropdown.classList.contains('show') && acceptedTargets.includes(type)) {
+          console.log("showing")
           document.getElementById(type).classList.toggle("show")
         }
       }
-    }
-    if (shouldAddEventListener) {
-      addEventListener()
     }
   };
 
   function determineWhichView() {
     console.log("determineWhichView()")
+    /*
+    console.log(isCurrentViewSimple)
     if (isCurrentViewSimple) {
-      setWhichSearchBox(simpleSearchBoxRef.current)
+      if (document.getElementById("simple-search-box") && !document.getElementById("simple-search-box").classList.contains("show")) {
+        console.log("Showing simple")
+        document.getElementById("simple-search-box").classList.toggle("show")
+        document.getElementById("advanced-search-box").classList.remove("show")
+      }
     } else {
-      setWhichSearchBox(<AdvancedSearchBox
-        currentYear={currentYear}
-        isCurrentViewSimple={isCurrentViewSimple}
-        keyPressedBuilder={keyPressedBuilderRef.current}
-        handleDDButtonClick={handleDDButtonClick}
-        initPlayers={initPlayers}
-        initPlayersReverseMap={initPlayersReverseMap}
-        shotTypes={shotTypes}
-        allSearchParameters={allAdvancedSearchParameters}
-        setAllSearchParameters={setAllAdvancedSearchParameters}
-        latestAdvancedViewType={latestAdvancedViewType}
-        setLatestAdvancedViewType={setLatestAdvancedViewType}
-        setTitle={setTitle} setIsLoading={setIsLoading}
-        updateLatestAdvancedViewType={setLatestAdvancedViewType}
-        setAllSearchData={setAllSearchData}
-      //style={isMobile ? { display: "block" } : { display: "block" }}
-      />)
+      console.log(document.getElementById("advanced-search-box"))
+      if (document.getElementById("advanced-search-box")) {
+        console.log(document.getElementById("advanced-search-box").classList.contains("show"))
+      }
+      if (document.getElementById("advanced-search-box") && !document.getElementById("advanced-search-box").classList.contains("show")) {
+        console.log("Showing advanced")
+        document.getElementById("simple-search-box").classList.remove("show")
+        document.getElementById("advanced-search-box").classList.toggle("show")
+      }
+    }
+    */
+  }
+
+  function handleResize() {
+    if (sizeRef.current[0] !== window.innerHeight || sizeRef.current[1] !== window.innerWidth) {
+      console.log("handleResize()")
+      console.log("Size Not Okay")
+      console.log(`${window.innerHeight}!=${sizeRef.current[0]} OR ${window.innerWidth}!=${sizeRef.current[1]}`)
+      setWindowSize([window.innerHeight, window.innerWidth])
     }
   }
+
   useEffect(() => {
     console.log("useEffect for App []")
     getInitPlayersData().then(res => {
       determineWhichView()
     })
     getShotTypesData()
+    setInterval(() => handleResize(), 100)
   }, [])
 
   useEffect(() => {
@@ -234,7 +243,14 @@ const App = () => {
   useEffect(() => {
     console.log("useEffect for App isCurrentViewSimple, simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer")
     determineWhichView()
-  }, [isCurrentViewSimple, simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer])
+  }, [simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer])
+
+  useEffect(() => {
+    console.log(`useEffect for App isCurrentViewSimple`)
+    determineWhichView()
+    setAllSearchData({})
+    setAllAdvancedSearchData({})
+  }, [isCurrentViewSimple])
 
   useEffect(() => {
     console.log("useEffect for App allAdvancedSearchParameters")
@@ -246,11 +262,23 @@ const App = () => {
   }, [latestAdvancedViewType])
 
   useEffect(() => {
+    console.log(`useEffect for App latestSimpleViewType = ${latestSimpleViewType}`)
+  }, [latestSimpleViewType])
+
+  useEffect(() => {
     console.log("useEffect for App allSearchData")
+    console.log(allSearchData)
     if (allSearchData.shots === null) {
-      setIsLoading(true)
+      setIsLoading({ state: true, newShots: true })
     }
   }, [allSearchData])
+
+  useEffect(() => {
+    console.log("useEffect for App allAdvancedSearchData")
+    if (allAdvancedSearchData.shots === null) {
+      setIsLoading({ state: true, newShots: true })
+    }
+  }, [allAdvancedSearchData])
 
   useEffect(() => {
     console.log(`useEffect for App isLoading = ${isLoading}`)
@@ -258,17 +286,31 @@ const App = () => {
 
   return (
     <div className="App" style={isMobile ? { minWidth: "500px" } : {}}>
-      <Header />
-      <div className="BaseGrid" style={isMobile ? { display: "block" } : {}}>
-        <div height="100%">
-          <SearchTypeButtons simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick} />
-          {whichSearchBox}
+      <Header setTitle={setTitle} whichSearchBox={whichSearchBox} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
+        allSearchData={allSearchData} allAdvancedSearchData={allAdvancedSearchData} isCurrentViewSimple={isCurrentViewSimple}
+        latestAdvancedViewType={latestAdvancedViewType} simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick}
+        setAllSearchData={setAllSearchData} setAllAdvancedSearchData={setAllAdvancedSearchData} setIsCurrentViewSimple={setIsCurrentViewSimple}
+        latestSimpleViewType={latestSimpleViewType}
+      />
+      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>
+        <div height="100%" id="simple-search-box-wrapper-div">
+          {simpleSearchBoxRef.current}
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item" >
-          <ShotView title={title} isLoading={isLoading} setIsLoading={setIsLoading}
-            allSearchData={allSearchData} isCurrentViewSimple={isCurrentViewSimple} latestAdvancedViewType={latestAdvancedViewType} />
+          <ShotView size={size} title={isCurrentViewSimple ? title : ""} isLoading={isLoading} setIsLoading={setIsLoading}
+            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
         </div>
-      </div>
+      </div> : <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>
+        <div height="100%">
+          {advancedSearchBoxRef.current}
+        </div>
+        <div className="basegrid-grid-item" id="shotview-grid-item" >
+          <ShotView size={size} title={""} isLoading={isLoading} setIsLoading={setIsLoading}
+            allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
+        </div>
+      </div>}
+
+
     </div >
   );
 }

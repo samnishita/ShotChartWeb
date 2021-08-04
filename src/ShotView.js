@@ -1102,10 +1102,10 @@ const ShotView = (props) => {
                 {combinedState.loadingAnimation}
             </div>
             <br></br>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
-            <button className="view-switch-button" onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
         </div>
     )
 }
