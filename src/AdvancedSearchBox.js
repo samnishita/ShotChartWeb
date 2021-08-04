@@ -382,13 +382,18 @@ const AdvancedSearchBox = (props) => {
             }
         }
         let width = 50
-        if (document.getElementById("player-advanced-dd") && document.getElementById("player-advanced-dd").classList.contains("show") && document.getElementById(`player-advanced-dd-button`) && document.getElementById(`player-advanced-dd-button`).clientWidth) {
-            width = document.getElementById(`player-advanced-dd-button`).clientWidth
-        } else if (document.getElementById("shot-types-dd") && document.getElementById("shot-types-dd").classList.contains("show") && document.getElementById(`shot-types-dd-button`) && document.getElementById(`shot-types-dd-button`).clientWidth) {
-            width = document.getElementById(`shot-types-dd-button`).clientWidth
-        } else if (document.getElementById("shooting-teams-dd") && document.getElementById("shooting-teams-dd").classList.contains("show") && document.getElementById(`shooting-teams-dd-button`) && document.getElementById(`shooting-teams-dd-button`).clientWidth) {
-            width = document.getElementById(`shooting-teams-dd-button`).clientWidth
-        }
+        if (document.getElementById("shooting-teams-dd"))
+            if (document.getElementById("player-advanced-dd") && document.getElementById("player-advanced-dd").classList.contains("show") && document.getElementById(`player-advanced-dd-button`) && document.getElementById(`player-advanced-dd-button`).clientWidth) {
+                width = document.getElementById(`player-advanced-dd-button`).clientWidth
+            } else if (document.getElementById("shot-types-dd") && document.getElementById("shot-types-dd").classList.contains("show") && document.getElementById(`shot-types-dd-button`) && document.getElementById(`shot-types-dd-button`).clientWidth) {
+                width = document.getElementById(`shot-types-dd-button`).clientWidth
+            } else if (document.getElementById("shooting-teams-dd") && document.getElementById("shooting-teams-dd").classList.contains("show") && document.getElementById(`shooting-teams-dd-button`) && document.getElementById(`shooting-teams-dd-button`).clientWidth) {
+                width = document.getElementById(`shooting-teams-dd-button`).clientWidth
+            } else if (document.getElementById("home-teams-dd") && document.getElementById("home-teams-dd").classList.contains("show") && document.getElementById(`home-teams-dd-button`) && document.getElementById(`home-teams-dd-button`).clientWidth) {
+                width = document.getElementById(`home-teams-dd-button`).clientWidth
+            } else if (document.getElementById("away-teams-dd") && document.getElementById("away-teams-dd").classList.contains("show") && document.getElementById(`away-teams-dd-button`) && document.getElementById(`away-teams-dd-button`).clientWidth) {
+                width = document.getElementById(`away-teams-dd-button`).clientWidth
+            }
         let innerWidth = width * 0.7
         return <button className={`dropdown-button player-invisible-dd`} id={`player-invisible-button`} style={{ position: "absolute", backgroundColor: "transparent", borderColor: "transparent", transform: "translate(-1000px,0px)", marginBottom: "0px", maxWidth: width, minWidth: width }} >
             <TextareaAutosize rows="1" className={`dropdown-button-display player-dd-invisible text-area-2`} id={`player-button-display-invisible`} maxRows="3"
