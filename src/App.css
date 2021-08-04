@@ -32,3 +32,9 @@
 #simple-search-box-wrapper-div{
   margin: 20px;
 }
+p:hover{
+  cursor: default;
+}
+div:hover{
+  cursor: default;
+}

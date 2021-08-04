@@ -297,7 +297,7 @@ const App = () => {
           {simpleSearchBoxRef.current}
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item" >
-          <ShotView size={size} title={isCurrentViewSimple ? title : ""} isLoading={isLoading} setIsLoading={setIsLoading}
+          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
             allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
         </div>
       </div> : <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>

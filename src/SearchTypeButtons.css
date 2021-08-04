@@ -20,5 +20,9 @@
     margin-left: 75px;
     max-height:100%;
     display: inline-block;
-    padding-bottom:5%
+    padding-bottom:5%;
+}
+
+.link:hover{
+    cursor:pointer;
 }

@@ -33,10 +33,8 @@ function SearchTypeButtons(props) {
         borderBottom: "5px solid rgba(165, 80, 212, 0.8)",
         fontWeight: "bold"
     }
-
-    return (
-        <div className="SearchTypeButtons">
-            <Router>
+    /*
+<Router>
                 <div style={{ height: "100%" }}>
                     <Link className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : {}} to="/" onClick={(() => displaySimple())}>Simple Search</Link>
                     <Link className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : {}} to="/Advanced" onClick={(() => displayAdvanced())}>Advanced Search</Link>
@@ -50,6 +48,12 @@ function SearchTypeButtons(props) {
                     </Switch>
                 </div>
             </Router>
+    */
+
+    return (
+        <div className="SearchTypeButtons">
+            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : {}} onClick={(() => displaySimple())}>Simple Search</div>
+            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : {}} onClick={(() => displayAdvanced())}>Advanced Search</div>
         </div>
     );
 }
