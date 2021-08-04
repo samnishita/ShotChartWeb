@@ -200,7 +200,9 @@ const SimpleSearchBox = (props) => {
             }
         }
         let yearResult = years[0].props.children
-        document.getElementById(yearResult).parentNode.scrollTop = document.getElementById(yearResult).offsetTop;
+        if (document.getElementById(yearResult)) {
+            document.getElementById(yearResult).parentNode.scrollTop = document.getElementById(yearResult).offsetTop;
+        }
         if (isFinal) {
             props.setSelectedYear(document.getElementById(yearResult).textContent);
             processYearChange(yearResult)
@@ -246,8 +248,8 @@ const SimpleSearchBox = (props) => {
     }, [activeSeasons])
 
     useEffect(() => {
-        console.log(props.TextAreaText)
-    }, [props.TextAreaText])
+        console.log(props.textAreaText)
+    }, [props.textAreaText])
 
     useEffect(() => {
         console.log(`useEffect for SimpleSearchBox selectedPlayer`)
@@ -280,6 +282,14 @@ const SimpleSearchBox = (props) => {
         props.handleDDButtonClick(event, `${id}-dd`)
     }
     useEffect(() => {
+        /*
+        console.log(document.getElementById("player-button-display-invisible"))
+        console.log(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows)
+        console.log(invisibleRows)
+        console.log(document.getElementById("player-button-display-invisible").textContent)
+        console.log(document.getElementById("player-button-display-invisible").textContent.split(" "))
+        console.log(document.getElementById("player-button-display-invisible").textContent.split("-"))
+        */
         if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
             console.log(invisibleRows)
             setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
@@ -327,6 +337,7 @@ const SimpleSearchBox = (props) => {
             </div>
         </button>)
     }
+
     function createInvisibleTextArea() {
         let value = ""
         if (props.textAreaText.text.length !== 0) {
@@ -338,7 +349,7 @@ const SimpleSearchBox = (props) => {
         }
         let buttonFace2 = <TextareaAutosize rows="1" className={`dropdown-button-display player-dd-invisible text-area-2`} id={`player-button-display-invisible`} maxRows="3"
             value={value} style={{ position: "absolute", resize: "none", overflowWrap: "break-word", position: "absolute", color: "transparent", maxWidth: width, minWidth: width }} />
-        return <button className={`dropdown-button player-invisible-dd`} id={`player-invisible-button`} style={{ backgroundColor: "transparent", borderColor: "transparent", transform: "translate(-1000px,0px)" }} >
+        return <button className={`dropdown-button player-invisible-dd`} id={`player-invisible-button`} style={{ backgroundColor: "transparent", borderColor: "transparent", transform: "translate(-1000px,0px)", marginBottom: "0px" }} >
             {buttonFace2}
         </button>
     }
@@ -347,7 +358,7 @@ const SimpleSearchBox = (props) => {
         <div className="SimpleSearchBox" id="simple-search-box">
             <div className="search-box-body">
                 <div className="search-box-inner-body">
-                    <h6 className="choose-parameters-label">Choose your search parameters</h6>
+                    <h6 className="choose-parameters-label">Search Parameters</h6>
                     {createInvisibleTextArea()}
                     {createButton("year", selectedYearRef.current, yearDisplay, "scrollable", "Season")}
                     <br></br>

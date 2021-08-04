@@ -371,12 +371,13 @@ const AdvancedSearchBox = (props) => {
     function createInvisibleTextArea() {
         let value = ""
         if (props.textAreaText.text.length !== 0) {
-            if (document.getElementById("player-advanced-dd").classList.contains("show")) {
+            if (document.getElementById("player-advanced-dd") && document.getElementById("player-advanced-dd").classList.contains("show")) {
                 value = searchDropDown(initPlayersSortedRef.current.map(eachPlayer => eachPlayer.toUpperCase()), props.textAreaText.text, false, true, "player-advanced-dd")
-            } else if (document.getElementById("shot-types-dd").classList.contains("show")) {
+            } else if (document.getElementById("shot-types-dd") && document.getElementById("shot-types-dd").classList.contains("show")) {
                 value = searchDropDown(props.shotTypes.map(eachShotType => eachShotType.toUpperCase()), props.textAreaText.text, false, true, "shot-types-dd")
-            } else if (document.getElementById("shooting-teams-dd").classList.contains("show") || document.getElementById("home-teams-dd").classList.contains("show")
-                || document.getElementById("away-teams-dd").classList.contains("show")) {
+            } else if ((document.getElementById("shooting-teams-dd") && document.getElementById("shooting-teams-dd").classList.contains("show"))
+                || (document.getElementById("home-teams-dd") && document.getElementById("home-teams-dd").classList.contains("show"))
+                || (document.getElementById("away-teams-dd") && document.getElementById("away-teams-dd").classList.contains("show"))) {
                 value = searchDropDown(Object.keys(relevantTeams).map(each => each.toUpperCase()), props.textAreaText.text, false, true, "shooting-teams-dd")
             }
         }

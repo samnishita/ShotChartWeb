@@ -3,7 +3,6 @@
     src: url('./fonts/Montserrat-Light.ttf') format('truetype');
 }
 .SimpleSearchBox{
-    display: none;
     text-align: center;
     font-family: 'MonserratLight';
     color: white;
@@ -58,13 +57,12 @@
     background-color: rgba(230, 230, 230,0.3);
 }
 
-
 .dropdown-button:hover {
     background-color: white;
 }
 
 #run-simple-search-button{
-    background-color: gray;
+    background-color: rgba(219, 219, 219,0.2);
     border:0px;
     border-bottom:2px solid rgba(165, 80, 212, 1);
     border-radius: 10px;
@@ -73,8 +71,9 @@
     width: auto;
     padding:10px;
 }
+
 #run-simple-search-button:hover{
-    background-color: rgb(156, 156, 156);
+    background-color: rgba(230, 230, 230,0.3);
 }
 
 .dropdown-content{
@@ -141,6 +140,7 @@
     margin: 4px;
     position: absolute;
 }
+
 .SimpleSearchBox .dropdown-button-display{
     font-size: 18px;
     background-color: transparent;
@@ -159,9 +159,11 @@
     position: relative;
     color:white;
 }
+
 .choose-parameters-label{
     font-family:'MonserratLight' ;
 }
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -169,7 +171,7 @@ ul {
   }
   
  .SimpleSearchBox h6{
-    font-family: 'MontserratSemiBold';
-    font-size: 3vh;
-    margin: 20px 0px 20px 0px;
+    font-family: 'MonserratLight';
+    font-size: 25px;
+    margin-top: 20px;
 }

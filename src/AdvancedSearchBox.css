@@ -124,6 +124,10 @@ h6{
     text-align: center;
 }
 
+.AdvancedSearchBox .search-box-body .dropdown-button:hover{
+    background-color: rgba(230, 230, 230,0.3);
+}
+
 .param-title{
     margin: 0px;
     margin-top: 6px;
@@ -146,3 +150,17 @@ h6{
     grid-template-columns: 50% 50% ;
 }
 
+#run-advanced-search-button{
+    background-color: rgba(219, 219, 219,0.2);
+    border:0px;
+    border-bottom:2px solid rgba(165, 80, 212, 1);
+    border-radius: 10px;
+    color: white;
+    font-size: 20px;
+    width: auto;
+    padding:10px;
+    margin-bottom: 20px;
+}
+#run-advanced-search-button:hover{
+    background-color: rgba(230, 230, 230,0.3);
+}
