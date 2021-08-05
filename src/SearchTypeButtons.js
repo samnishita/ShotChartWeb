@@ -31,8 +31,19 @@ function SearchTypeButtons(props) {
 
     const activeStyle = {
         borderBottom: "5px solid rgba(165, 80, 212, 0.8)",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginLeft: "25px"
     }
+    const inActiveStyle = {
+        fontWeight: "bold",
+        marginLeft: "25px"
+    }
+
+    if (props.isMobile) {
+        activeStyle.fontSize = "15px"
+        inActiveStyle.fontSize = "15px"
+    }
+
     /*
 <Router>
                 <div style={{ height: "100%" }}>
@@ -52,8 +63,8 @@ function SearchTypeButtons(props) {
 
     return (
         <div className="SearchTypeButtons">
-            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : {}} onClick={(() => displaySimple())}>Simple Search</div>
-            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : {}} onClick={(() => displayAdvanced())}>Advanced Search</div>
+            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displaySimple())}>Simple Search</div>
+            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displayAdvanced())}>Advanced Search</div>
         </div>
     );
 }

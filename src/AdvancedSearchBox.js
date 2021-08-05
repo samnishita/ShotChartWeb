@@ -299,8 +299,8 @@ const AdvancedSearchBox = (props) => {
             value = handleTextInput(fullId, props.textAreaText.text, false)
         }
         let width = 100
-        if (document.getElementById(`${id}-dd-button`) && document.getElementById(`${id}-dd-button`).clientWidth) {
-            width = document.getElementById(`${id}-dd-button`).clientWidth * 0.7
+        if (document.getElementById(`${fullId}-button`) && document.getElementById(`${fullId}-button`).clientWidth) {
+            width = document.getElementById(`${fullId}-button`).clientWidth * 0.7
         }
         let rangeButtonClass = suffix !== "" ? "range-button" : ""
         let minRows = 1
