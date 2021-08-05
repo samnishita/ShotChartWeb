@@ -270,8 +270,11 @@ const ShotView = (props) => {
                     let h = s / Math.cos(30 * Math.PI / 180)
                     let tan = Math.tan(30 * Math.PI / 180)
                     let moveX = (eachTile.y + 55) % (squareSizeOrig * 2) === 0 ? width / 2 + (eachTile.x + squareSizeOrig * 1.1547005 / 2) * height / 470 : width / 2 + (eachTile.x) * height / 470
-                    //let moveY = height / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
-                    let moveY = height / 2 + (eachTile.y - 175 + (squareSizeOrig / 2 - squareSide / 2) * 1.1547005 / 2) * height / 470 - 5
+                    let moveY = height / 2 + (eachTile.y - 175 - squareSide / 2) * height / 470 - 5
+                    if (!props.isCurrentViewSimple) {
+                        moveY = height / 2 + (eachTile.y - 175 + ((squareSize / 2 * 1.05 / Math.cos(3 * Math.PI / 180)) - (h)) / 2) * height / 470 - 5
+                    }
+                    //let moveY = height / 2 + (eachTile.y - 175 + (squareSizeOrig / 2 - squareSide / 2) * 1.1547005 / 2) * height / 470 - 5
                     allNewTiles.push(<Path d={`m${moveX} ${moveY} 
                         l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
                         l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
