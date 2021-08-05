@@ -7,12 +7,8 @@ function SearchTypeButtons(props) {
         console.log("displaySimple()")
         if (!props.isCurrentViewSimple) {
             props.setIsCurrentViewSimple(true)
-            if (props.allSearchData.length !== 0 && !props.isLoading) {
-                props.setAllSearchData([])
-            }
-            if (props.allAdvancedSearchData.length !== 0 && !props.isLoading) {
-                props.setAllAdvancedSearchData([])
-            }
+            props.setAllSearchData([])
+            props.setAllAdvancedSearchData([])
         }
     }
 
@@ -20,12 +16,8 @@ function SearchTypeButtons(props) {
         console.log("displayAdvanced()")
         if (props.isCurrentViewSimple) {
             props.setIsCurrentViewSimple(false)
-            if (props.allSearchData.length !== 0 && !props.isLoading) {
-                props.setAllSearchData([])
-            }
-            if (props.allAdvancedSearchData.length !== 0 && !props.isLoading) {
-                props.setAllAdvancedSearchData([])
-            }
+            props.setAllSearchData([])
+            props.setAllAdvancedSearchData([])
         }
     }
 

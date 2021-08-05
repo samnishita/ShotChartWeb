@@ -277,6 +277,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("useEffect for App allAdvancedSearchData")
+    console.log(allAdvancedSearchData)
     if (allAdvancedSearchData.shots === null) {
       setIsLoading({ state: true, newShots: true })
     }

@@ -982,7 +982,8 @@ const ShotView = (props) => {
     }
 
     function handleViewTypeButtonClick(viewType) {
-        if (!props.isLoading && combinedState.localViewType.type !== viewType && allShotsRef.current) {
+        console.log(allShotsRef.current)
+        if (!props.isLoading && combinedState.localViewType.type !== viewType && !Array.isArray(allShotsRef.current)) {
             console.log(`${viewType} Button Clicked`)
             setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(true, viewType), localViewType: { type: viewType, isOriginal: false } })
         }
