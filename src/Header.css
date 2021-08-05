@@ -8,7 +8,7 @@
 }
 .Header {
     display: inline-grid;
-    grid-template-columns: auto auto ;
+    grid-template-columns: 70% 30% ;
     font-family: 'MonserratLight';
     color: white;
     min-height: 50%;
