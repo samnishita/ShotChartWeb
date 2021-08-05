@@ -543,8 +543,9 @@ const ShotView = (props) => {
         if (inputShots && view === "Zone") {
             let allZones = mapShotsToZones(inputShots)
             let zoneLabels = []
-            const height = document.getElementById('transparent-court-on-top').clientHeight
-            const width = document.getElementById('transparent-court-on-top').clientWidth
+            let dimensions = getDimensions()
+            const height = dimensions.height
+            const width = dimensions.width
             let fontSizeFrac = scaleNumber(18)
             let fontSizePerc = scaleNumber(16)
             //let fontWidth = scaleNumber(10 * fontSizeFrac)
