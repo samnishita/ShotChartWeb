@@ -38,10 +38,10 @@ function SearchTypeButtons(props) {
     }
 
     if (props.isMobile) {
-        activeStyle.fontSize = "15px"
-        inActiveStyle.fontSize = "15px"
-        activeStyle.marginLeft = "25px"
-        inActiveStyle.marginLeft = "25px"
+        activeStyle.fontSize = "13px"
+        inActiveStyle.fontSize = "13px"
+        activeStyle.marginLeft = "15px"
+        inActiveStyle.marginLeft = "15px"
     }
 
     /*
