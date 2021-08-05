@@ -9,6 +9,7 @@ function SearchTypeButtons(props) {
             props.setIsCurrentViewSimple(true)
             props.setAllSearchData([])
             props.setAllAdvancedSearchData([])
+            props.setTitle("")
         }
     }
 
@@ -18,6 +19,7 @@ function SearchTypeButtons(props) {
             props.setIsCurrentViewSimple(false)
             props.setAllSearchData([])
             props.setAllAdvancedSearchData([])
+            props.setTitle("")
         }
     }
 

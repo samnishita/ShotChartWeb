@@ -1001,9 +1001,15 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log(props.isCurrentViewSimple)
-        setCombinedState({
-            ...combinedState, whatToDisplay: [], legend: [], allShots: []
-        })
+        if (props.isCurrentViewSimple) {
+            setCombinedState({
+                ...combinedState, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestSimpleViewType, isOriginal: "false" }
+            })
+        } else {
+            setCombinedState({
+                ...combinedState, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestAdvancedViewType, isOriginal: "false" }
+            })
+        }
     }, [props.isCurrentViewSimple])
 
     useEffect(() => {

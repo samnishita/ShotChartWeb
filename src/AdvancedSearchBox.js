@@ -4,12 +4,15 @@ import ShotPercentageView from './ShotPercentageView'
 import { useEffect, useState, useRef } from "react";
 import Svg, { Path } from 'react-native-svg';
 import TextareaAutosize from 'react-textarea-autosize';
+import 'antd/dist/antd.css';
+import { Switch } from 'antd';
 
 const AdvancedSearchBox = (props) => {
     console.log("RERENDER AdvancedSearchBox")
     const [latestAdvancedViewType, setLatestAdvancedViewType] = useState(props.latestAdvancedViewType)
     const [shotPercentageData, setShotPercentageData] = useState({})
     const [invisibleRows, setInvisibleRows] = useState(1)
+    const [displayAdvancedSearchSelections, setDisplayAdvancedSearchSelections] = useState(true)
 
     useEffect(() => {
         console.log("useEffect for props.allSearchParameters")
@@ -473,31 +476,37 @@ const AdvancedSearchBox = (props) => {
             {createRightButtons()}
         </div>
     </div>)
+    //                    <p id="current-selections">Current Selections: </p>
+
     return (
         <div className="AdvancedSearchBox" id="advanced-search-box">
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
-                    <h6 className="choose-parameters-label">Search Parameters</h6>
-                    {willDisplayInGrid}
-                    <button className="dropdown-button static-button view-selection-adv-dd" id="view-selection-adv-button" onClick={e => props.handleDDButtonClick(e, "view-selection-adv-dd")}>
-                        <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
-                        <p className="arrow view-selection-adv-dd" >
-                            <Svg className="arrow-svg view-selection-adv-dd" height="20" width="20">
-                                <Path className="arrow-path view-selection-adv-dd" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
-                                </Path>
-                            </Svg>
-                        </p>
-                        <div className="dropdown-content" id="view-selection-adv-dd">
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Classic</p>
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Hex</p>
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Zone</p>
-                            <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Heat</p>
-                        </div></button>
-                    <br></br>
-                    <button className="static-button" id="run-advanced-search-button" onClick={() => runAdvancedSearch()}>Run It</button>
-                    <br></br>
-                    <p id="current-selections">Current Selections: </p>
+                    <h6 className="choose-parameters-label">Search Parameters
+                        <Switch id="show-advanced-parameters" checkedChildren="Show" unCheckedChildren="Hide" defaultChecked onChange={(checked => setDisplayAdvancedSearchSelections(checked))} />
+                    </h6>
                     {selectionViewerRef.current}
+                    <div id="hide-advanced-div" style={displayAdvancedSearchSelections ? {} : { display: "none" }}>
+                        {willDisplayInGrid}
+                        <button className="dropdown-button static-button view-selection-adv-dd" id="view-selection-adv-button" onClick={e => props.handleDDButtonClick(e, "view-selection-adv-dd")}>
+                            <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
+                            <p className="arrow view-selection-adv-dd" >
+                                <Svg className="arrow-svg view-selection-adv-dd" height="20" width="20">
+                                    <Path className="arrow-path view-selection-adv-dd" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                    </Path>
+                                </Svg>
+                            </p>
+                            <div className="dropdown-content" id="view-selection-adv-dd">
+                                <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Classic</p>
+                                <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Hex</p>
+                                <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Zone</p>
+                                <p className='dropdown-item view-display' onClick={(event) => setLatestAdvancedViewType(event.target.textContent)}>Heat</p>
+                            </div></button>
+                        <br></br>
+                        <button className="static-button" id="run-advanced-search-button" onClick={() => runAdvancedSearch()}>Run It</button>
+                        <br></br>
+
+                    </div>
                 </div>
             </div>
             <ShotPercentageView advancedShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} />
