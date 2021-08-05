@@ -135,6 +135,7 @@ const SimpleSearchBox = (props) => {
     async function runSimpleSearch() {
         props.updateLatestSimpleViewType(latestSimpleViewType)
         props.setIsLoading({ state: true, newShots: true })
+        document.getElementById("shotview-grid-item").scrollIntoView({ behavior: "smooth" })
         let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log(`runSimpleSearch(${url})`)
         const response = await fetch(url, {
