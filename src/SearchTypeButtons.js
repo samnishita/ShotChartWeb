@@ -38,6 +38,18 @@ function SearchTypeButtons(props) {
         inActiveStyle.marginLeft = "10px"
     }
 
+    function handleMouseHover(event) {
+        if ((props.isCurrentViewSimple && event.target.id === "advanced-link") || (!props.isCurrentViewSimple && event.target.id === "simple-link")) {
+            event.target.style.borderBottom = "5px solid white"
+        }
+    }
+
+    function handleMouseExit(event) {
+        if ((props.isCurrentViewSimple && event.target.id === "advanced-link") || (!props.isCurrentViewSimple && event.target.id === "simple-link")) {
+            event.target.style.borderBottom = ""
+        }
+    }
+
     /*
 <Router>
                 <div style={{ height: "100%" }}>
@@ -57,8 +69,8 @@ function SearchTypeButtons(props) {
 
     return (
         <div className="SearchTypeButtons">
-            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displaySimple())}>Simple Search</div>
-            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displayAdvanced())}>Advanced Search</div>
+            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displaySimple())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Simple Search</div>
+            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displayAdvanced())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Advanced Search</div>
         </div>
     );
 }
