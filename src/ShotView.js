@@ -945,7 +945,7 @@ const ShotView = (props) => {
             //                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
 
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
-                <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
+                <div style={{ fontSize: height / 37, transform: `translate(0px, ${height / 3}px)` }}>
                     <p id="loading-text">Generating {viewType}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
                         <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.5s linear infinite`, opacity: "1", position: "absolute" }} >
