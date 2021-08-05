@@ -32,16 +32,16 @@ function SearchTypeButtons(props) {
     const activeStyle = {
         borderBottom: "5px solid rgba(165, 80, 212, 0.8)",
         fontWeight: "bold",
-        marginLeft: "25px"
     }
     const inActiveStyle = {
         fontWeight: "bold",
-        marginLeft: "25px"
     }
 
     if (props.isMobile) {
         activeStyle.fontSize = "15px"
         inActiveStyle.fontSize = "15px"
+        activeStyle.marginLeft = "25px"
+        inActiveStyle.marginLeft = "25px"
     }
 
     /*

@@ -16,6 +16,7 @@ function Header(props) {
     return (
         <header className='Header'>
             <div class="header-grid-item" id="title">Custom NBA Shot Charts
+                {props.isMobile ? <br></br> : ""}
                 {<SearchTypeButtons isMobile={props.isMobile} setTitle={props.setTitle} whichSearchBox={props.whichSearchBox} title={props.title} isLoading={props.isLoading} setIsLoading={props.setIsLoading}
                     allSearchData={props.allSearchData} allAdvancedSearchData={props.allAdvancedSearchData} isCurrentViewSimple={props.isCurrentViewSimple}
                     latestAdvancedViewType={props.latestAdvancedViewType} simpleClickHandler={props.handleSimpleClick} advancedClickHandler={props.handleAdvancedClick}

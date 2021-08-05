@@ -20,7 +20,10 @@
     width: auto;
     padding:0px;
     padding-top: 15px;
-}
+    background-color: rgb(65, 64, 64);
+    margin: 20px;
+    padding-bottom: 20px;
+    border-radius: 30px;}
 
 .AdvancedSearchBox .search-box-inner-body {
     text-align: center;
