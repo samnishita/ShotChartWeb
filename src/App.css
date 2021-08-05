@@ -4,6 +4,7 @@
   text-align: center;
   min-height: 100vh;
   min-width: 850px;
+  min-width: 100vh;
   /*background-image: linear-gradient(135deg, #434343 25% , 65%, #cdcccc);*/
   background-color: rgb(56, 56, 56);
   background-attachment: fixed;

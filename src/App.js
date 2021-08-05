@@ -52,6 +52,7 @@ const App = () => {
       setTextAreaText={setTextAreaText}
       textAreaText={textAreaText}
       size={size}
+      isMobile={isMobile}
     />
 
   const [whichSearchBox, setWhichSearchBox] = useState(simpleSearchBoxRef.current)
@@ -89,7 +90,8 @@ const App = () => {
     setAllSearchData={setAllAdvancedSearchData}
     setTextAreaText={setTextAreaText}
     textAreaText={textAreaText}
-    size={size} />
+    size={size}
+    isMobile={isMobile} />
 
   const sizeRef = useRef({})
   sizeRef.current = size

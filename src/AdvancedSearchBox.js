@@ -458,20 +458,27 @@ const AdvancedSearchBox = (props) => {
     const selectionViewerRef = useRef({})
     selectionViewerRef.current = <SelectionViewer allSearchParameters={allSearchParametersRef.current} setAllSearchParameters={props.setAllSearchParameters} />
 
+    let willDisplayInGrid = props.isMobile ? (<div className="advanced-grid" style={{ gridTemplateColumns: "100% " }}>
+        <div className="advanced-grid-item" >
+            {createInvisibleTextArea()}
+            {createLeftButtons()}
+            {createRightButtons()}
+        </div>
+    </div>) : (<div className="advanced-grid">
+        <div className="advanced-grid-item">
+            {createInvisibleTextArea()}
+            {createLeftButtons()}
+        </div>
+        <div className="advanced-grid-item">
+            {createRightButtons()}
+        </div>
+    </div>)
     return (
         <div className="AdvancedSearchBox" id="advanced-search-box">
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
                     <h6 className="choose-parameters-label">Search Parameters</h6>
-                    <div className="advanced-grid">
-                        <div className="advanced-grid-item">
-                            {createInvisibleTextArea()}
-                            {createLeftButtons()}
-                        </div>
-                        <div className="advanced-grid-item">
-                            {createRightButtons()}
-                        </div>
-                    </div>
+                    {willDisplayInGrid}
                     <button className="dropdown-button static-button view-selection-adv-dd" id="view-selection-adv-button" onClick={e => props.handleDDButtonClick(e, "view-selection-adv-dd")}>
                         <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
                         <p className="arrow view-selection-adv-dd" >
