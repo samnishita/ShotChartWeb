@@ -946,7 +946,7 @@ const ShotView = (props) => {
 
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
-                    <p style={{ fontSize: height / 20 }} id="loading-text">Generating {viewType}</p>
+                    <p style={{ fontSize: height / 20, color: "white" }} id="loading-text">Generating {viewType}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
                         <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.5s linear infinite`, opacity: "1", position: "absolute" }} >
                             <Defs>
