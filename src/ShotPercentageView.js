@@ -79,6 +79,7 @@ const ShotPercentageView = (props) => {
                         '100%': 'rgb(246, 134, 7)',
                     }}
                     percent={percentDisplay}
+                    format={percent => `${percent}%`}
                     trailColor="#3d3e3e"
                     gapDegree="0"
                 />

@@ -35,3 +35,9 @@
     font-family: 'MonserratLight';
     font-variant: normal;
 }
+.ShotPercentageView .ant-progress-circle.ant-progress-status-success .ant-progress-text {
+    color: white;
+    font-feature-settings: normal;
+    font-family: 'MonserratLight';
+    font-variant: normal;
+}

@@ -34,6 +34,7 @@
     position:absolute;
     align-items: center;
 }
+
 #zones-underneath{
     z-index: 0;
 }
@@ -81,6 +82,7 @@
     width: 100%;
     position: absolute;
 }
+
 @keyframes spin {
     from {transform:rotate(0deg)}
     to {transform:rotate(360deg)}
@@ -106,6 +108,7 @@
 .legend-left-label{
     text-align: left;
 }
+
 .legend-right-label{
     text-align: right;
 }
@@ -119,6 +122,7 @@
     position: absolute;
     background-color: #2d2d2d;
 }
+
 #heat-color-legend{
     position: absolute;
 }
@@ -145,11 +149,14 @@
     margin: 0 auto;
     
 }
+
 #size-legend-gradient{
     width: 90%;
     height: 40%;
     margin: 0 auto;
+    line-height: 1;
 }
+
 #heat-legend-gradient{
     width: 90%;
     height: 20%;
@@ -200,4 +207,9 @@
     font-feature-settings: normal;
     font-family: 'MonserratLight';
     font-variant: normal;
+}
+
+.hex-legend-wrapper{
+    padding: 0px;
+    line-height: 1;
 }
