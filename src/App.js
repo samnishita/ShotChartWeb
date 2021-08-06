@@ -165,6 +165,11 @@ const App = () => {
           console.log("reseting textarea")
           setTextAreaText({ id: null, text: "" })
         }
+        if (document.getElementById(`${openDropdown.id}-button`)) {
+          document.getElementById(`${openDropdown.id}-button`).style.borderBottomLeftRadius = "10px"
+          document.getElementById(`${openDropdown.id}-button`).style.borderBottomRightRadius = "10px"
+        }
+
       }
     }
   }
@@ -192,6 +197,14 @@ const App = () => {
           document.getElementById(type).classList.toggle("show")
         }
       }
+    }
+    if (document.getElementById(`${type}`) && document.getElementById(`${type}`).classList.contains("show")) {
+      console.log(document.getElementById(`${type}-button`).style)
+      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "0px"
+      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "0px"
+    } else if (document.getElementById(`${type}-button`)) {
+      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
+      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
     }
   };
 

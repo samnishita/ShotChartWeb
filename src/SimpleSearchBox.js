@@ -268,19 +268,19 @@ const SimpleSearchBox = (props) => {
             newString += event.key
         } else if (event.key === 'Enter') {
             event.preventDefault()
-            props.handleDDButtonClick(event, `${id}-dd`)
+            props.handleDDButtonClick(event, `${id}`)
         }
         if (id === "year") {
             event.key === 'Enter' ? searchYear(newString, true) : searchYear(newString, false)
         } else if (id === "player") {
             event.key === 'Enter' ? searchPlayer(newString, true) : searchPlayer(newString, false)
         }
-        props.setTextAreaText({ id: `${id}-dd`, text: newString })
+        props.setTextAreaText({ id: `${id}`, text: newString })
     }
 
     function handleButtonClick(event, id) {
         props.setTextAreaText({ id: id, text: "" })
-        props.handleDDButtonClick(event, `${id}-dd`)
+        props.handleDDButtonClick(event, `${id}`)
     }
     useEffect(() => {
         /*
@@ -299,8 +299,9 @@ const SimpleSearchBox = (props) => {
 
     function createButton(id, selection, displayState, scrollable, placeholder) {
         let height = 20
+        let fullId = id + "-dd"
         let whatToShow = selection
-        if (document.getElementById(`${id}-dd`) && document.getElementById(`${id}-dd`).classList.contains("show")) {
+        if (document.getElementById(`${fullId}`) && document.getElementById(`${fullId}`).classList.contains("show")) {
             whatToShow = props.textAreaText.text
         }
         let value = ""
@@ -312,28 +313,28 @@ const SimpleSearchBox = (props) => {
             }
         }
         let width = 100
-        if (document.getElementById(`${id}-button`) && document.getElementById(`${id}-button`).clientWidth) {
-            width = document.getElementById(`${id}-button`).clientWidth * 0.7
+        if (document.getElementById(`${fullId}-button`) && document.getElementById(`${fullId}-button`).clientWidth) {
+            width = document.getElementById(`${fullId}-button`).clientWidth * 0.7
         }
         let buttonFace2 = (id === "year" || id === "player") ? <TextareaAutosize spellcheck="false" minRows={id === "player" ? invisibleRows : 1}
-            className={`dropdown-button-display ${id}-dd text-area-2`} id={`${id}-button-display-2`} maxRows="3"
+            className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
             value={value}
             style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
-            : <p className={`dropdown-button-display ${id}-dd`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{selection}</p>
+            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{selection}</p>
         let buttonFace = (id === "year" || id === "player") ? < TextareaAutosize spellcheck="false" minRows={id === "player" ? invisibleRows : 1}
-            className={`dropdown-button-display ${id}-dd text-area `} id={`${id}-button-display`} maxRows="3"
+            className={`dropdown-button-display ${fullId} text-area `} id={`${fullId}-button-display`} maxRows="3"
             value={whatToShow}
             style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
-            onKeyDown={e => { handleKeyPress(e, id) }}
+            onKeyDown={e => { handleKeyPress(e, fullId) }}
             placeholder={placeholder} />
-            : <p className={`dropdown-button-display ${id}-dd`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{selection}</p>
-        return (<button className={`dropdown-button ${id}-dd`} id={`${id}-button`} onClick={(e) => { handleButtonClick(e, id) }}>
+            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{selection}</p>
+        return (<button className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }}>
             {buttonFace2}{buttonFace}
-            <Svg className={`arrow-svg ${id}-dd`} height={height} width={height}>
-                <Path className={`arrow-path ${id}-dd`} d={`m0,${(id === "year" || id === "player") ? 0 : 8} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
+            <Svg className={`arrow-svg ${fullId}`} height={height} width={height}>
+                <Path className={`arrow-path ${fullId}`} d={`m0,${(id === "year" || id === "player") ? 0 : 8} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
                 </Path>
             </Svg>
-            <div className={`dropdown-content ${scrollable}`} id={`${id}-dd`}>
+            <div className={`dropdown-content ${scrollable}`} id={`${fullId}`}>
                 {displayState}
             </div>
         </button>)
