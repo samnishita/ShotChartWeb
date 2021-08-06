@@ -6,20 +6,24 @@ function SearchTypeButtons(props) {
     function displaySimple() {
         console.log("displaySimple()")
         if (!props.isCurrentViewSimple) {
-            props.setIsCurrentViewSimple(true)
             props.setAllSearchData([])
             props.setAllAdvancedSearchData([])
             props.setTitle("")
+            setTimeout(() => {
+                props.setIsCurrentViewSimple(true)
+            }, 100);
         }
     }
 
     function displayAdvanced() {
         console.log("displayAdvanced()")
         if (props.isCurrentViewSimple) {
-            props.setIsCurrentViewSimple(false)
             props.setAllSearchData([])
             props.setAllAdvancedSearchData([])
             props.setTitle("")
+            setTimeout(() => {
+                props.setIsCurrentViewSimple(false)
+            }, 100);
         }
     }
 
