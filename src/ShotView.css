@@ -50,12 +50,14 @@
 .labelFrac {
     height: min-content;
     line-height: 1;
+    font-family: "MontserratSemiBold";
 }
 
 .labelPerc {
     height: fit-content;
     line-height: 1;
     padding-top: 2px;
+    font-family: "MontserratSemiBold";
 }
 
 #transparent-court-on-top{
