@@ -279,6 +279,20 @@ const AdvancedSearchBox = (props) => {
             console.log(invisibleRows)
             setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
         }
+        if (document.getElementById("player-advanced-button-display")) {
+            /*
+            console.log(document.getElementById("year-advanced-dd-begin-button"))
+            console.log(document.getElementById("year-advanced-dd-begin-button").clientWidth)
+            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode)
+            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.clientWidth)
+            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.parentNode)
+            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.parentNode.clientWidth)
+*/
+            console.log(document.getElementById("player-advanced-button-display"))
+            console.log(document.getElementById("player-advanced-button-display").clientWidth)
+            console.log(document.getElementById("player-advanced-button-display").parentNode)
+            console.log(document.getElementById("player-advanced-button-display").parentNode.clientWidth)
+        }
     })
 
     function makeButton(id, suffix, scrollable, placeholder) {
@@ -301,10 +315,11 @@ const AdvancedSearchBox = (props) => {
         if (props.textAreaText.text.length !== 0 && document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
             value = handleTextInput(fullId, props.textAreaText.text, false)
         }
-        let width = 100
+        let width = "70%"
+        /*
         if (document.getElementById(`${fullId}-button`) && document.getElementById(`${fullId}-button`).clientWidth) {
             width = document.getElementById(`${fullId}-button`).clientWidth * 0.7
-        }
+        }*/
         let rangeButtonClass = suffix !== "" ? "range-button" : ""
         let minRows = 1
         if (document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
@@ -476,7 +491,6 @@ const AdvancedSearchBox = (props) => {
             {createRightButtons()}
         </div>
     </div>)
-    //                    <p id="current-selections">Current Selections: </p>
 
     return (
         <div className="AdvancedSearchBox" id="advanced-search-box">

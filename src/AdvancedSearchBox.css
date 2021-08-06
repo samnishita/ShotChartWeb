@@ -90,6 +90,7 @@
 .AdvancedSearchBox .search-box-body .range-button.dropdown-button {
     max-width: 30%;
     min-width: 30%;
+    width: 30%;
 }
 .AdvancedSearchBox .search-box-body .dropdown-button{
     position: relative;
@@ -160,4 +161,14 @@
 
 .AdvancedSearchBox .ant-switch-checked{
     background-color: rgba(165, 80, 212, 1);
+}
+
+.text-area{
+    min-width: 70%;
+    max-width: 70%;
+}
+
+.text-area-2{
+    min-width: 70%;
+    max-width: 70%;
 }
