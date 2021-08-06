@@ -2,7 +2,7 @@ import './ShotView.css'
 import tradCourt from './images/newbackcourt.png'
 import transparentCourt from './images/transparent.png'
 import Svg, { Circle, Path, Line, Rect, Defs, LinearGradient, RadialGradient, Stop } from 'react-native-svg';
-import { Popover } from 'antd';
+import { Popover, Button } from 'antd';
 
 import { useEffect, useState, useRef } from "react";
 
@@ -19,22 +19,24 @@ const ShotView = (props) => {
         loadingAnimation: "",
         legend: [],
     })
+    const combinedStateRef = useRef({})
+    combinedStateRef.current = combinedState
     const whatToDisplayRef = useRef([])
-    whatToDisplayRef.current = combinedState.whatToDisplay
+    whatToDisplayRef.current = combinedStateRef.current.whatToDisplay
     const allShotsRef = useRef({})
-    allShotsRef.current = combinedState.allShots
+    allShotsRef.current = combinedStateRef.current.allShots
     const allHexTilesRef = useRef({})
-    allHexTilesRef.current = combinedState.allHexTiles
+    allHexTilesRef.current = combinedStateRef.current.allHexTiles
     const hexAveragesRef = useRef({})
-    hexAveragesRef.current = combinedState.hexAverages
+    hexAveragesRef.current = combinedStateRef.current.hexAverages
     const allHeatTilesRef = useRef({})
-    allHeatTilesRef.current = combinedState.allHeatTiles
+    allHeatTilesRef.current = combinedStateRef.current.allHeatTiles
     const zoneAveragesRef = useRef({})
-    zoneAveragesRef.current = combinedState.zoneAverages
+    zoneAveragesRef.current = combinedStateRef.current.zoneAverages
     const loadingAnimationRef = useRef({})
-    loadingAnimationRef.current = combinedState.loadingAnimation
+    loadingAnimationRef.current = combinedStateRef.current.loadingAnimation
     const localViewTypeRef = useRef({})
-    localViewTypeRef.current = combinedState.localViewType
+    localViewTypeRef.current = combinedStateRef.current.localViewType
 
     async function getHexAverages() {
         console.log("getHexAverages()")
@@ -113,7 +115,7 @@ const ShotView = (props) => {
                 console.log("Displaying Classic")
                 return displayClassic(shots)
             case "Hex":
-                if (combinedState.allHexTiles.length === 0) {
+                if (combinedStateRef.current.allHexTiles.length === 0) {
                     console.log("Displaying Hex")
                     displayHex(shots)
                 }
@@ -122,7 +124,7 @@ const ShotView = (props) => {
                 console.log("Displaying Zone")
                 return displayZone(shots)
             case "Heat":
-                if (combinedState.allHeatTiles.length === 0) {
+                if (combinedStateRef.current.allHeatTiles.length === 0) {
                     console.log("Displaying Heat")
                     displayHeat(shots)
                 }
@@ -269,7 +271,8 @@ const ShotView = (props) => {
                     })
                 }
             })
-            setCombinedState({ ...combinedState, allHexTiles: squareElements.forEach(each => combinedState.allHexTiles.push(each)) })
+            //setCombinedState({ ...combinedState, allHexTiles: squareElements.forEach(each => combinedState.allHexTiles.push(each)) })
+            setCombinedState({ ...combinedStateRef.current, allHexTiles: squareElements, legend: generateLegend("Hex") })
         }
     }
 
@@ -734,20 +737,21 @@ const ShotView = (props) => {
                         })
                     }
                 })
-                heatTileInfo.length === 0 ? setCombinedState({ ...combinedState, allHeatTiles: <div></div> }) : setCombinedState({ ...combinedState, allHeatTiles: heatTileInfo.forEach(each => combinedState.allHeatTiles.push(each)) })
+                //heatTileInfo.length === 0 ? setCombinedState({ ...combinedState, allHeatTiles: <div></div> }) : setCombinedState({ ...combinedState, allHeatTiles: heatTileInfo.forEach(each => combinedState.allHeatTiles.push(each)) })
+                heatTileInfo.length === 0 ? setCombinedState({ ...combinedStateRef.current, allHeatTiles: <div></div>, legend: generateLegend("Heat") }) : setCombinedState({ ...combinedStateRef.current, allHeatTiles: heatTileInfo, legend: generateLegend("Heat") })
             }
         }
     }
 
     function resizeHeat() {
         console.log("resizeHeat()")
-        if (combinedState.allHeatTiles.length > 0) {
+        if (combinedStateRef.current.allHeatTiles.length > 0) {
             let circlesArray = [[], [], [], [], [], [], []]
             let gradients = []
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
             let radius = 25 * height / 470
-            combinedState.allHeatTiles.forEach(eachHeatTile => {
+            combinedStateRef.current.allHeatTiles.forEach(eachHeatTile => {
                 let cx = width / 2 + eachHeatTile.x * width / 500
                 let cy = height / 2 + eachHeatTile.y * height / 470 - 185 * height / 470
                 let circle = <Circle cx={cx} cy={cy} r={radius} fill={`url(#grad_${eachHeatTile.x}_${eachHeatTile.y})`} stroke="none" strokeWidth="3" />
@@ -775,8 +779,9 @@ const ShotView = (props) => {
     }
 
     function generateLegend(view) {
+        console.log(`generateLegend(${view})`)
         if (view === "Classic") {
-            return <div></div>
+            return <span></span>
         } else {
             let dimensions = getDimensions()
             let height = dimensions.height
@@ -813,6 +818,7 @@ const ShotView = (props) => {
                         hexArrayPlain.push(<Path d={`m${sModSum} ${s / 2 + (s - sMod)} l${sMod} ${sMod * tan} l0 ${modifiedHeight} l${-sMod} ${sMod * tan}
                             l${-sMod} ${-sMod * tan} l0 ${-modifiedHeight} l${sMod} ${-sMod * tan} l${sMod} ${sMod * tan}`} fill="white" opacity="0.7" />)
                     }
+                    console.log("Returning Hex")
                     return [(< div id="color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
                         <div width="100%" style={wrapperStyle}>
@@ -836,6 +842,7 @@ const ShotView = (props) => {
                             </div>
                         </div >)]
                 case "Zone":
+                    console.log("Returning Zone")
                     return (< div id="color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
                         <div width="100%" style={wrapperStyle}>
@@ -844,6 +851,7 @@ const ShotView = (props) => {
                         <div id="color-legend-gradient"></div>
                     </div >)
                 case "Heat":
+                    console.log("Returning Heat")
                     return (< div id="heat-color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
                         <div width="100%" style={wrapperStyle}>
@@ -999,10 +1007,9 @@ const ShotView = (props) => {
     }
 
     function handleViewTypeButtonClick(viewType) {
-        console.log(allShotsRef.current)
-        if (!props.isLoading && combinedState.localViewType.type !== viewType && !Array.isArray(allShotsRef.current)) {
+        if (!props.isLoading && combinedStateRef.current.localViewType.type !== viewType && !Array.isArray(allShotsRef.current)) {
             console.log(`${viewType} Button Clicked`)
-            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(true, viewType), localViewType: { type: viewType, isOriginal: false } })
+            setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(true, viewType), localViewType: { type: viewType, isOriginal: false } })
         }
     }
 
@@ -1011,47 +1018,53 @@ const ShotView = (props) => {
     }
 
     useEffect(() => {
-        console.log(props.size)
-        setCombinedState({ ...combinedState, whatToDisplay: generateWhatToDisplay(localViewTypeRef.current.type, allShotsRef.current.shots), legend: generateLegend(combinedState.localViewType.type) })
+        setCombinedState({ ...combinedStateRef.current, whatToDisplay: generateWhatToDisplay(localViewTypeRef.current.type, allShotsRef.current.shots), legend: generateLegend(combinedStateRef.current.localViewType.type) })
     }, [props.size])
 
     useEffect(() => {
         console.log(props.isCurrentViewSimple)
         if (props.isCurrentViewSimple) {
             setCombinedState({
-                ...combinedState, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestSimpleViewType, isOriginal: "false" }
+                ...combinedStateRef.current, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestSimpleViewType, isOriginal: "false" }
             })
         } else {
             setCombinedState({
-                ...combinedState, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestAdvancedViewType, isOriginal: "false" }
+                ...combinedStateRef.current, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestAdvancedViewType, isOriginal: "false" }
             })
         }
     }, [props.isCurrentViewSimple])
 
     useEffect(() => {
         console.log(`useEffect for localViewType`)
-        if (!combinedState.localViewType.isOriginal) {
-            setCombinedState({
-                ...combinedState, whatToDisplay: generateWhatToDisplay(combinedState.localViewType.type,
-                    allShotsRef.current.shots), legend: generateLegend(combinedState.localViewType.type)
-            })
+        if (!combinedStateRef.current.localViewType.isOriginal) {
+            setTimeout(() => {
+                console.log(combinedStateRef.current)
+                setCombinedState({
+                    ...combinedStateRef.current, whatToDisplay: generateWhatToDisplay(combinedStateRef.current.localViewType.type, allShotsRef.current.shots),
+                    legend: generateLegend(combinedState.localViewType.type)
+                })
+                console.log(generateLegend(combinedStateRef.current.localViewType.type))
+            }, 500);
         }
     }, [combinedState.localViewType])
 
     useEffect(() => {
         console.log("useEffect for props.allSearchData")
-        console.log(props.allSearchData.shots)
         if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
-            if (Object.keys(props.allSearchData).length !== 0) {
+            if (Object.keys(props.allSearchData).length !== 0 && props.allSearchData.shots) {
                 setCombinedState({
-                    ...combinedState, allShots: props.allSearchData, allHexTiles: [], allHeatTiles: [],
-                    localViewType: { type: props.allSearchData.view, isOriginal: true }, loadingAnimation: makeLoadingAnimation(false),
-                    whatToDisplay: generateWhatToDisplay(props.allSearchData.view, props.allSearchData.shots),
-                    legend: generateLegend(props.allSearchData.view)
+                    ...combinedStateRef.current, allShots: props.allSearchData, allHexTiles: [], allHeatTiles: [],
+                    localViewType: { type: props.allSearchData.view, isOriginal: true },
                 })
-                chooseCourt(props.allSearchData.view)
+                setTimeout(() => {
+                    setCombinedState({
+                        ...combinedStateRef.current,
+                        whatToDisplay: generateWhatToDisplay(props.allSearchData.view, props.allSearchData.shots),
+                        legend: generateLegend(props.allSearchData.view)
+                    })
+                }, 1000);
             } else {
-                setCombinedState({ ...combinedState, allHexTiles: [], allHeatTiles: [] })
+                setCombinedState({ ...combinedStateRef.current, allHexTiles: [], allHeatTiles: [] })
             }
         }
     }, [props.allSearchData])
@@ -1059,11 +1072,11 @@ const ShotView = (props) => {
     useEffect(() => {
         console.log("useEffect for props.isLoading")
         if (props.isLoading.state && props.isLoading.newShots && props.isCurrentViewSimple) {
-            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestSimpleViewType) })
+            setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestSimpleViewType) })
         } else if (props.isLoading.state && props.isLoading.newShots && !props.isCurrentViewSimple) {
-            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestAdvancedViewType) })
+            setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestAdvancedViewType) })
         } else {
-            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(false) })
+            setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [props.isLoading])
 
@@ -1078,23 +1091,24 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
-        if (combinedState.whatToDisplay.length !== 0) {
+        if (combinedStateRef.current.whatToDisplay.length !== 0) {
             props.setIsLoading(false)
-            setCombinedState({ ...combinedState, loadingAnimation: makeLoadingAnimation(false) })
+            setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(false) })
+            chooseCourt(combinedStateRef.current.localViewType.type)
         }
     }, [combinedState.whatToDisplay])
 
     useEffect(() => {
         console.log("useEffect for allHexTiles")
-        if (combinedState.allHexTiles.length !== 0) {
-            setCombinedState({ ...combinedState, whatToDisplay: resizeHex(), loadingAnimation: makeLoadingAnimation(false) })
+        if (combinedStateRef.current.allHexTiles.length !== 0) {
+            setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHex(), loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [combinedState.allHexTiles])
 
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
-        if (combinedState.allHeatTiles.length !== 0) {
-            setCombinedState({ ...combinedState, whatToDisplay: resizeHeat(), loadingAnimation: makeLoadingAnimation(false) })
+        if (combinedStateRef.current.allHeatTiles.length !== 0) {
+            setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHeat(), loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [combinedState.allHeatTiles])
 
@@ -1104,15 +1118,20 @@ const ShotView = (props) => {
             await getHexAverages().then(res => hexAvg = res)
             let zoneAvg
             await getZoneAverages().then(res => zoneAvg = res)
-            setCombinedState({ ...combinedState, hexAverages: hexAvg, zoneAverages: zoneAvg })
+            setCombinedState({ ...combinedStateRef.current, hexAverages: hexAvg, zoneAverages: zoneAvg })
         }
         func()
-        chooseCourt(combinedState.localViewType.type)
+        chooseCourt(combinedStateRef.current.localViewType.type)
     }, [])
 
     useEffect(() => {
         console.log(combinedState)
     }, [combinedState])
+
+    useEffect(() => {
+        console.log("useEffect for combinedState.allShots")
+        console.log(combinedState.allShots)
+    }, [combinedState.allShots])
 
     return (
         <div className='ShotView'>
@@ -1127,15 +1146,24 @@ const ShotView = (props) => {
                 <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
                 {whatToDisplayRef.current}
                 {combinedState.legend}
-                {combinedState.loadingAnimation}
+                {combinedStateRef.current.loadingAnimation}
             </div>
             <br></br>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
+            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</Button>
+            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</Button>
+            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</Button>
+            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</Button>
+
         </div>
     )
 }
+/*
+<button className="view-switch-button" style={combinedState.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
+            <button className="view-switch-button" style={combinedState.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
+        
+*/
+
 
 export default ShotView

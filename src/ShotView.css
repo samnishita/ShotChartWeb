@@ -169,24 +169,6 @@
     border-color: black;
 }
 
-.view-switch-button{
-    margin-left: 5px;
-    margin-right: 5px;
-    width:100px;
-    margin-bottom: 5%;
-    background-color: rgba(219, 219, 219,0.2);
-    border:0px;
-    border-bottom:2px solid rgba(165, 80, 212, 1);
-    border-radius: 10px;
-    color: white;
-    font-size: 20px;
-}
-
-.view-switch-button:hover{
-    background-color: rgba(230, 230, 230,0.3);
-    cursor: pointer;
-}
-
 #loading-text{
     font-size: 30px;
 }
@@ -212,4 +194,27 @@
 .hex-legend-wrapper{
     padding: 0px;
     line-height: 1;
+}
+
+.ShotView .view-switch-button.ant-btn {
+    margin-left: 5px;
+    margin-right: 5px;
+    width:100px;
+    margin-bottom: 5%;
+    background-color: rgba(219, 219, 219,0.2);
+    border:0px;
+    border-bottom:2px solid rgba(165, 80, 212, 1);
+    border-radius: 10px;
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.ShotView .view-switch-button.ant-btn:hover{
+    background-color: rgba(230, 230, 230,0.3);
+    cursor: pointer;
+}
+
+html {
+    --antd-wave-shadow-color:rgba(165, 80, 212, 1) !important;
 }

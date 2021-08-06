@@ -198,13 +198,17 @@ const App = () => {
         }
       }
     }
-    if (document.getElementById(`${type}`) && document.getElementById(`${type}`).classList.contains("show")) {
+    if (type !== "view-selection-adv-dd" && document.getElementById(`${type}`) && document.getElementById(`${type}`).classList.contains("show")) {
       console.log(document.getElementById(`${type}-button`).style)
       document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "0px"
       document.getElementById(`${type}-button`).style.borderBottomRightRadius = "0px"
     } else if (document.getElementById(`${type}-button`)) {
       document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
       document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
+    } else if (type == "view-selection-adv-dd") {
+      console.log(document.getElementById(`${type}`).style)
+      document.getElementById(`${type}`).style.borderBottomLeftRadius = "0px"
+      document.getElementById(`${type}`).style.borderBottomRightRadius = "0px"
     }
   };
 
@@ -282,7 +286,6 @@ const App = () => {
 
   useEffect(() => {
     console.log("useEffect for App allSearchData")
-    console.log(allSearchData)
     if (allSearchData.shots === null) {
       setIsLoading({ state: true, newShots: true })
     }
