@@ -1,26 +1,29 @@
 {
   "files": {
-    "main.css": "/ShotChartWeb/static/css/main.15db60a6.chunk.css",
-    "main.js": "/ShotChartWeb/static/js/main.3127835d.chunk.js",
-    "main.js.map": "/ShotChartWeb/static/js/main.3127835d.chunk.js.map",
-    "runtime-main.js": "/ShotChartWeb/static/js/runtime-main.ff83033d.js",
-    "runtime-main.js.map": "/ShotChartWeb/static/js/runtime-main.ff83033d.js.map",
-    "static/js/2.2ec138b7.chunk.js": "/ShotChartWeb/static/js/2.2ec138b7.chunk.js",
-    "static/js/2.2ec138b7.chunk.js.map": "/ShotChartWeb/static/js/2.2ec138b7.chunk.js.map",
-    "static/js/3.4de26e93.chunk.js": "/ShotChartWeb/static/js/3.4de26e93.chunk.js",
-    "static/js/3.4de26e93.chunk.js.map": "/ShotChartWeb/static/js/3.4de26e93.chunk.js.map",
+    "main.css": "/ShotChartWeb/static/css/main.68437bda.chunk.css",
+    "main.js": "/ShotChartWeb/static/js/main.6cdbc7a2.chunk.js",
+    "main.js.map": "/ShotChartWeb/static/js/main.6cdbc7a2.chunk.js.map",
+    "runtime-main.js": "/ShotChartWeb/static/js/runtime-main.59de01bb.js",
+    "runtime-main.js.map": "/ShotChartWeb/static/js/runtime-main.59de01bb.js.map",
+    "static/css/2.83a79fa7.chunk.css": "/ShotChartWeb/static/css/2.83a79fa7.chunk.css",
+    "static/js/2.fb9e37b4.chunk.js": "/ShotChartWeb/static/js/2.fb9e37b4.chunk.js",
+    "static/js/2.fb9e37b4.chunk.js.map": "/ShotChartWeb/static/js/2.fb9e37b4.chunk.js.map",
+    "static/js/3.592879b4.chunk.js": "/ShotChartWeb/static/js/3.592879b4.chunk.js",
+    "static/js/3.592879b4.chunk.js.map": "/ShotChartWeb/static/js/3.592879b4.chunk.js.map",
     "index.html": "/ShotChartWeb/index.html",
-    "static/css/main.15db60a6.chunk.css.map": "/ShotChartWeb/static/css/main.15db60a6.chunk.css.map",
-    "static/js/2.2ec138b7.chunk.js.LICENSE.txt": "/ShotChartWeb/static/js/2.2ec138b7.chunk.js.LICENSE.txt",
-    "static/media/Header.css": "/ShotChartWeb/static/media/JosefinSans-Light.05518b75.ttf",
-    "static/media/AdvancedSearchBox.css": "/ShotChartWeb/static/media/Montserrat-SemiBold.fa8441f3.ttf",
+    "static/css/2.83a79fa7.chunk.css.map": "/ShotChartWeb/static/css/2.83a79fa7.chunk.css.map",
+    "static/css/main.68437bda.chunk.css.map": "/ShotChartWeb/static/css/main.68437bda.chunk.css.map",
+    "static/js/2.fb9e37b4.chunk.js.LICENSE.txt": "/ShotChartWeb/static/js/2.fb9e37b4.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/ShotChartWeb/static/media/Montserrat-Light.02afb26f.ttf",
+    "static/media/ShotView.css": "/ShotChartWeb/static/media/Montserrat-SemiBold.fa8441f3.ttf",
     "static/media/newbackcourt.18ebe08e.png": "/ShotChartWeb/static/media/newbackcourt.18ebe08e.png",
     "static/media/transparent.37e32258.png": "/ShotChartWeb/static/media/transparent.37e32258.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.ff83033d.js",
-    "static/js/2.2ec138b7.chunk.js",
-    "static/css/main.15db60a6.chunk.css",
-    "static/js/main.3127835d.chunk.js"
+    "static/js/runtime-main.59de01bb.js",
+    "static/css/2.83a79fa7.chunk.css",
+    "static/js/2.fb9e37b4.chunk.js",
+    "static/css/main.68437bda.chunk.css",
+    "static/js/main.6cdbc7a2.chunk.js"
   ]
 }
