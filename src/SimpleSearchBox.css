@@ -1,99 +1,73 @@
-@font-face{
-    font-family: 'MonserratLight';
-    src: url('./fonts/Montserrat-Light.ttf') format('truetype');
-}
 .SimpleSearchBox{
-    text-align: center;
-    font-family: 'MonserratLight';
-    color: white;
     height: auto;
     width: 100%;
 }
+
 .SimpleSearchBox .search-box-body{
     min-height: 100%;
     max-height: 100vh;
-    width: 90%;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-color: rgb(65, 64, 64);
-    margin: 20px;
-    padding-bottom: 20px;
-    border-radius: 30px;
-}
-.search-box-inner-body {
-    text-align: center;
-    align-items: center;
-    width: 100%;
-    min-height: 100%;
+    justify-content: center;    
 }
 
-.SimpleSearchBox .search-box-body button{
-    text-align: center;
-    font-family: 'MonserratLight';
-    background-color: lightgray;
-    position: relative;
-    width: 70%;
-    background-color: white;
-    margin: 4px;
+.search-box-inner-body {
+    align-items: center;
+    width: 90%;
+    min-height: 100%;
+    background-color: #0e0c0c;
+    margin: 10px;
+    padding-bottom: 20px;
+    border-radius: 15px;
 }
 
 .SimpleSearchBox .search-box-body .dropdown-button{
+    width: 70%;
+    margin: 4px; 
     position: relative;
     max-width: 50%;
-    /*background-color: rgb(219, 219, 219);*/
-    background-color: rgba(219, 219, 219,0.2);
-    border:0px;
-    border-bottom:2px solid rgba(165, 80, 212, 1);
-    border-radius: 10px;
-    color: white;
     margin-bottom: 20px;
 }
+
 ::placeholder{
     color: rgba(255, 255, 255, 0.5);
 }
 
-.SimpleSearchBox .search-box-body .dropdown-button:hover{
-    background-color: rgba(230, 230, 230,0.3);
-}
-
-.dropdown-button:hover {
-    background-color: white;
-}
-
-#run-simple-search-button{
+button{
     background-color: rgba(219, 219, 219,0.2);
     border:0px;
     border-bottom:2px solid rgba(165, 80, 212, 1);
     border-radius: 10px;
-    color: white;
+}
+
+button:hover{
+    background-color: rgba(230, 230, 230,0.3);
+    cursor: pointer;
+}
+
+#run-simple-search-button{
     font-size: 20px;
     width: auto;
     padding:10px;
 }
 
-#run-simple-search-button:hover{
-    background-color: rgba(230, 230, 230,0.3);
-}
-
 .dropdown-content{
+    font-size: 18px;
     display: none;
     background-color: gray;
     border:0px;
-    border-bottom:2px solid rgba(165, 80, 212, 1);
+    border-bottom: 2px solid rgba(165, 80, 212, 1);
     border-radius: 10px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    color: white;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     position: absolute;
-    left:0;
-    width:100%;
+    left: 0;
+    width: 100%;
 }
-
-.show {display: block;}
 
 .dropdown-content.scrollable {
     height: 20vh;
@@ -102,12 +76,50 @@
 }
 
  .dropdown-item{
-    padding: 0.5vh;
+    padding:5px;
     margin:0px;
 }
 
 .dropdown-item:hover{
     background-color: rgb(156, 156, 156);
+}
+
+.SimpleSearchBox .arrow {
+    text-align: left;
+    display: inline-block;
+    width:10%;
+    margin: 4px;
+    position: absolute;
+}
+
+.dropdown-button-display{
+    font-size: 18px;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    display: inline-block;
+    margin: 4px;
+    margin-right: 0;
+    max-width:85%;
+    overflow-wrap: break-word;
+    position: relative;
+}
+
+.App ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+  
+.App h6{
+    font-family: 'MonserratLight';
+    font-size: 25px;
+    margin-top: 20px;
+    color: white;
+}
+
+p.dropdown-button-display{
+    cursor: pointer;
 }
 
 .scrollable::-webkit-scrollbar-track:vertical {
@@ -131,47 +143,4 @@
     border-radius: 9px 8px 8px 9px;
     border-style: solid;
     border-width: 3px 3px 3px 4px; /* Workaround because margins aren't supported */
-}
-
-.SimpleSearchBox .arrow {
-    text-align: left;
-    display: inline-block;
-    width:10%;
-    margin: 4px;
-    position: absolute;
-}
-
-.SimpleSearchBox .dropdown-button-display{
-    font-size: 18px;
-    background-color: transparent;
-    border: none;
-    font-family: "MonserratLight";
-    text-align: left;
-}
-
-.dropdown-button-display{
-    display: inline-block;
-    margin: 4px;
-    margin-right: 0;
-    max-width:85%;
-    font-size: 18px;
-    overflow-wrap: break-word;
-    position: relative;
-    color:white;
-}
-
-.choose-parameters-label{
-    font-family:'MonserratLight' ;
-}
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-  
- .SimpleSearchBox h6{
-    font-family: 'MonserratLight';
-    font-size: 25px;
-    margin-top: 20px;
 }

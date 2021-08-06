@@ -509,7 +509,7 @@ const AdvancedSearchBox = (props) => {
                     </div>
                 </div>
             </div>
-            <ShotPercentageView advancedShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} />
+            <ShotPercentageView advancedShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} isLoading={props.isLoading} />
         </div>
     )
 }

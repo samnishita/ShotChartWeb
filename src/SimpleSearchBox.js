@@ -293,7 +293,7 @@ const SimpleSearchBox = (props) => {
         */
         if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
             console.log(invisibleRows)
-            setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
+            setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 30))
         }
     })
 
@@ -378,7 +378,7 @@ const SimpleSearchBox = (props) => {
                     </button>
                 </div>
             </div>
-            <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} />
+            <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} isLoading={props.isLoading} />
         </div>
     )
 }

@@ -1,26 +1,36 @@
-@font-face{
-    font-family: 'MontserratSemiBold';
-    src: url('./fonts/Montserrat-SemiBold.ttf') format('truetype');
-}
-
 .ShotPercentageView{
-    font-family: "MonserratLight";
     display: inline-block;
-    color: white;
     overflow-wrap: break-word;
     max-width: 100%;
-    margin-top: 30px;
-    background-color: rgb(65, 64, 64);
-    border-radius: 20px;}
+    width: 90%;
+    background-color: #0e0c0c;
+    margin: 10px;
+    padding-bottom: 20px;
+    border-radius: 15px;
+}
 
 .perc-div{
     display: inline-block;
-    margin-right: 1vw;
-    margin-left: 1vw;
-    margin: 20px;
-    padding:5px;
+    margin: 10px;
+    padding: 5px;
+}
+
+.perc-div p{
+    margin-bottom: 5px;
 }
 
 .percentage-title{
-border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+}
+
+.percentage-content{
+    margin-top: 5px;
+}
+
+.ShotPercentageView .ant-progress-circle .ant-progress-text {
+    color: white;
+    font-feature-settings: normal;
+    font-family: 'MonserratLight';
+    font-variant: normal;
 }
