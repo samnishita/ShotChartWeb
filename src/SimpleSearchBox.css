@@ -78,10 +78,11 @@ button:hover{
  .dropdown-item{
     padding:5px;
     margin:0px;
+    background-color: rgb(88, 88, 88);
 }
 
 .dropdown-item:hover{
-    background-color: rgb(156, 156, 156);
+    background-color: rgb(110, 110, 110);
 }
 
 .SimpleSearchBox .arrow {

@@ -268,14 +268,14 @@ const SimpleSearchBox = (props) => {
             newString += event.key
         } else if (event.key === 'Enter') {
             event.preventDefault()
-            props.handleDDButtonClick(event, `${id}`)
+            props.handleDDButtonClick(event, id)
         }
-        if (id === "year") {
+        if (id === "year-dd") {
             event.key === 'Enter' ? searchYear(newString, true) : searchYear(newString, false)
-        } else if (id === "player") {
+        } else if (id === "player-dd") {
             event.key === 'Enter' ? searchPlayer(newString, true) : searchPlayer(newString, false)
         }
-        props.setTextAreaText({ id: `${id}`, text: newString })
+        props.setTextAreaText({ id: id, text: newString })
     }
 
     function handleButtonClick(event, id) {
@@ -293,7 +293,7 @@ const SimpleSearchBox = (props) => {
         */
         if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
             console.log(invisibleRows)
-            setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 30))
+            setInvisibleRows((Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight) + 4) / 30)
         }
     })
 
@@ -346,8 +346,8 @@ const SimpleSearchBox = (props) => {
             value = searchPlayer(props.textAreaText.text, false)
         }
         let width = 50
-        if (document.getElementById(`player-button`) && document.getElementById(`player-button`).clientWidth) {
-            width = document.getElementById(`player-button`).clientWidth * 0.7
+        if (document.getElementById(`player-dd-button`) && document.getElementById(`player-dd-button`).clientWidth) {
+            width = document.getElementById(`player-dd-button`).clientWidth * 0.7
         }
         let buttonFace2 = <TextareaAutosize rows="1" className={`dropdown-button-display player-dd-invisible text-area-2`} id={`player-button-display-invisible`} maxRows="3"
             value={value} style={{ position: "absolute", resize: "none", overflowWrap: "break-word", position: "absolute", color: "transparent", maxWidth: width, minWidth: width }} />
