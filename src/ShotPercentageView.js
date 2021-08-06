@@ -24,47 +24,33 @@ const ShotPercentageView = (props) => {
         let threes = { frac: "--", perc: "--", efg: "--", pps: "--", }
         let fgs = { frac: "--", perc: "--", efg: "--", pps: "--", }
         inputShotData.forEach(each => {
-            if (each.make == 1 && each.shottype === "2PT Field Goal") {
-                twoPMakes++
+            if (each.shottype === "2PT Field Goal") {
                 twoPTotal++
-            } else if (each.make == 0 && each.shottype === "2PT Field Goal") {
-                twoPTotal++
-            } else if (each.make == 1 && each.shottype === "3PT Field Goal") {
-                threePMakes++
+                if (each.make == 1) {
+                    twoPMakes++
+                }
+            } else if (each.shottype === "3PT Field Goal") {
                 threePTotal++
-            } else {
-                threePTotal++
+                if (each.make == 1 && each.shottype === "3PT Field Goal") {
+                    threePMakes++
+                }
             }
         })
         if (twoPTotal !== 0) {
-            /*
-            twoPFrac = twoPMakes + "/" + twoPTotal
-            twoPPerc = Number(twoPMakes / twoPTotal * 100).toFixed(2) + "%"
-            */
             twos = calculateShotParams(twoPMakes, 0, twoPTotal)
         }
         if (threePTotal !== 0) {
-            /*
-            threePFrac = threePMakes + "/" + threePTotal
-            threePPerc = Number(threePMakes / threePTotal * 100).toFixed(2) + "%"
-            */
             threes = calculateShotParams(0, threePMakes, threePTotal)
         }
         if (twoPTotal + threePTotal !== 0) {
-            /*
-            fgFrac = (twoPMakes + threePMakes) + "/" + (twoPTotal + threePTotal)
-            fgPerc = Number((twoPMakes + threePMakes) / (twoPTotal + threePTotal) * 100).toFixed(2) + "%"
-            */
             fgs = calculateShotParams(twoPMakes, threePMakes, twoPTotal + threePTotal)
         }
-        //return { fgFrac: fgFrac, fgPerc: fgPerc, twoPFrac: twoPFrac, twoPPerc: twoPPerc, threePFrac: threePFrac, threePPerc: threePPerc }
         return { twos: twos, threes: threes, fgs: fgs }
     }
 
     function calculateShotParams(twoPMakes, threePMakes, total) {
         return {
             frac: (twoPMakes + threePMakes) + "/" + total,
-            //perc: Number((twoPMakes + threePMakes) / total * 100).toFixed(2) + "%",
             perc: Number((twoPMakes + threePMakes) / total * 100).toFixed(2),
             efg: Number((twoPMakes + 1.5 * threePMakes) / total * 100).toFixed(2) + "%",
             pps: Number((2 * twoPMakes + 3 * threePMakes) / total).toFixed(2)
@@ -78,15 +64,21 @@ const ShotPercentageView = (props) => {
         let titles = ["FG", "2P", "3P"]
         let keys = ["fgs", "twos", "threes"]
         for (let i = 0; i < 3; i++) {
+            let percentDisplay
+            if (isLoadDelay.isDelayed && shotCalcs[keys[i]].frac === "--") {
+                percentDisplay = 0
+            } else if (!isLoadDelay.isDelayed && shotCalcs[keys[i]].frac !== "--") {
+                percentDisplay = Number(shotCalcs[keys[i]].perc * isLoadDelay.offset).toFixed(2)
+            }
             elements.push(<div className="perc-div">
                 <p className="percentage-title" style={{ fontSize: fontSizeTitle }}>{titles[i]}</p>
-                <Progress overlayClassName="dashboard-shot"
+                <Progress className="dashboard-shot"
                     type="dashboard"
                     strokeColor={{
                         '0%': 'rgb(138, 7, 200)',
                         '100%': 'rgb(246, 134, 7)',
                     }}
-                    percent={isLoadDelay.isDelayed && shotCalcs.fgs.frac === "--" ? 0 : Number(shotCalcs[keys[i]].perc * isLoadDelay.offset).toFixed(2)}
+                    percent={percentDisplay}
                     trailColor="#3d3e3e"
                     gapDegree="0"
                 />
@@ -95,14 +87,6 @@ const ShotPercentageView = (props) => {
                 <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{"PPS: " + shotCalcs[keys[i]].pps}</p>
             </div>)
         }
-        /**
-         *  <p className="percentage-title" style={{ fontSize: fontSizeTitle }}>{titles[i]}</p>
-                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{shotCalcs[keys[i]].frac}</p>
-                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{shotCalcs[keys[i]].perc}</p>
-                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{"eFG: " + shotCalcs[keys[i]].efg}</p>
-                <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{"PPS: " + shotCalcs[keys[i]].pps}</p>
-            
-         */
         if (isLoadDelay.isDelayed && !props.isLoading && shotCalcs.fgs.frac !== "--") {
             setTimeout(() => {
                 setIsLoadDelay({ isDelayed: false, offset: 0.0 })
@@ -115,8 +99,6 @@ const ShotPercentageView = (props) => {
         }
         return elements
     }
-    <Switch id="toggle-efg" />
-
     return (
         <div className="ShotPercentageView">
             <h6>Shot Breakdown</h6>

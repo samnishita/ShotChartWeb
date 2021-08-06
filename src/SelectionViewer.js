@@ -42,7 +42,7 @@ function SelectionViewer(props) {
                 }
             })
         }
-        return displayParams.length === 0 ? "No Filters Selected" : displayParams
+        return displayParams.length === 0 ? <p className="selection-placeholder">No Filters Selected</p> : displayParams
     }
 
     function makeDeleteButton(param, value) {
