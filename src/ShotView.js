@@ -671,75 +671,89 @@ const ShotView = (props) => {
             let tileValues = {}
             let allKeys = Object.keys(allTiles)
             let counter = 0;
+            const delay = ms => new Promise(res => setTimeout(res, ms));
             while (counter < allKeys.length) {
-                if (allTiles[allKeys[counter]].x % offset === 0 && (allTiles[allKeys[counter]].y) % offset === 0) {
-                    aSum = 0;
-                    bSum = 0;
-                    let lowerBoundX = allTiles[allKeys[counter]].x - maxDistanceBetweenNodes >= -250 ? allTiles[allKeys[counter]].x - maxDistanceBetweenNodes : -250
-                    let upperBoundX = allTiles[allKeys[counter]].x + maxDistanceBetweenNodes < 250 ? allTiles[allKeys[counter]].x + maxDistanceBetweenNodes : 249
-                    let lowerBoundY = allTiles[allKeys[counter]].y - maxDistanceBetweenNodes >= -55 ? allTiles[allKeys[counter]].y - maxDistanceBetweenNodes : -55
-                    let upperBoundY = allTiles[allKeys[counter]].y + maxDistanceBetweenNodes < 400 ? allTiles[allKeys[counter]].y + maxDistanceBetweenNodes : 399
-                    for (let i = lowerBoundX; i <= upperBoundX; i++) {
-                        for (let j = lowerBoundY; j <= upperBoundY; j++) {
-                            let calcDistance = getDistance(allTiles[allKeys[counter]], allTiles[`tile_${i}_${j}`])
-                            if (calcDistance < maxDistanceBetweenNodes && calcDistance > 0) {
-                                aSum = aSum + (allTiles[`tile_${i}_${j}`].shotinfo[1] * calcDistance / Math.pow(calcDistance, p));
-                                bSum = bSum + (1 / Math.pow(calcDistance, p));
+                let tempTile = [allTiles[allKeys[counter]]]
+                let tempValue = [allKeys[counter]]
+                const idw = async () => {
+                    if (tempTile[0].x % offset === 0 && (tempTile[0].y) % offset === 0) {
+                        await delay(1)
+                        aSum = 0;
+                        bSum = 0;
+                        let lowerBoundX = tempTile[0].x - maxDistanceBetweenNodes >= -250 ? tempTile[0].x - maxDistanceBetweenNodes : -250
+                        let upperBoundX = tempTile[0].x + maxDistanceBetweenNodes < 250 ? tempTile[0].x + maxDistanceBetweenNodes : 249
+                        let lowerBoundY = tempTile[0].y - maxDistanceBetweenNodes >= -55 ? tempTile[0].y - maxDistanceBetweenNodes : -55
+                        let upperBoundY = tempTile[0].y + maxDistanceBetweenNodes < 400 ? tempTile[0].y + maxDistanceBetweenNodes : 399
+                        for (let i = lowerBoundX; i <= upperBoundX; i++) {
+                            for (let j = lowerBoundY; j <= upperBoundY; j++) {
+                                let calcDistance = getDistance(tempTile[0], allTiles[`tile_${i}_${j}`])
+                                if (calcDistance < maxDistanceBetweenNodes && calcDistance > 0) {
+                                    aSum = aSum + (allTiles[`tile_${i}_${j}`].shotinfo[1] * calcDistance / Math.pow(calcDistance, p));
+                                    bSum = bSum + (1 / Math.pow(calcDistance, p));
+                                }
                             }
                         }
+                        tileValues[tempValue[0]] = aSum / bSum;
                     }
-                    tileValues[allKeys[counter]] = aSum / bSum;
                 }
+                idw()
                 counter++;
             }
-            let maxValue = 0.0
-            Object.values(tileValues).forEach(eachValue => {
-                if (eachValue > maxValue) {
-                    maxValue = eachValue
-                }
-            })
-            let heatTileInfo = []
-            if (maxValue != 0) {
-                maxValue = maxValue * (500 * 1.0 / shotCounter);
-                let maxCutoff = 0.00004 * shotCounter / maxValue + 0.3065;
-                let diff = maxCutoff / 7;
-                Object.keys(tileValues).forEach(eachTileKey => {
-                    let color = "", circleArray = ""
-                    let value = tileValues[eachTileKey]
-                    if (value > maxValue * (maxCutoff - (diff * 6))) {
-                        if (value > maxValue * (maxCutoff - (diff * 6)) && value <= maxValue * (maxCutoff - (diff * 5))) {
-                            color = "#bc53f8"
-                            circleArray = "1"
-                        } else if (value > maxValue * (maxCutoff - (diff * 5)) && value <= maxValue * (maxCutoff - (diff * 4))) {
-                            color = "#dd76ff"
-                            circleArray = "2"
-                        } else if (value > maxValue * (maxCutoff - (diff * 4)) && value <= maxValue * (maxCutoff - (diff * 3))) {
-                            color = "#e696fa"
-                            circleArray = "3"
-                        } else if (value > maxValue * (maxCutoff - (diff * 3)) && value <= maxValue * (maxCutoff - (diff * 2))) {
-                            color = "#c4b8ff"
-                            circleArray = "4"
-                        } else if (value > maxValue * (maxCutoff - (diff * 2)) && value <= maxValue * (maxCutoff - (diff * 1))) {
-                            color = "#6bb2f8"
-                            circleArray = "5"
-                        } else if (value > maxValue * (maxCutoff - (diff * 1)) && value <= maxValue * maxCutoff) {
-                            color = "#62c8ff"
-                            circleArray = "6"
-                        } else {
-                            color = "#90ebff"
-                            circleArray = "7"
-                        }
-                        heatTileInfo.push({
-                            x: allTiles[eachTileKey].x,
-                            y: allTiles[eachTileKey].y,
-                            color: color,
-                            circleArray: circleArray
-                        })
+
+            console.log("HERE")
+            const waitHere = async () => {
+                console.log("Waiting........")
+                await delay(100)
+                let maxValue = 0.0
+                Object.values(tileValues).forEach(eachValue => {
+                    if (eachValue > maxValue) {
+                        maxValue = eachValue
                     }
                 })
-                //heatTileInfo.length === 0 ? setCombinedState({ ...combinedState, allHeatTiles: <div></div> }) : setCombinedState({ ...combinedState, allHeatTiles: heatTileInfo.forEach(each => combinedState.allHeatTiles.push(each)) })
-                heatTileInfo.length === 0 ? setCombinedState({ ...combinedStateRef.current, allHeatTiles: <div></div>, legend: generateLegend("Heat") }) : setCombinedState({ ...combinedStateRef.current, allHeatTiles: heatTileInfo, legend: generateLegend("Heat") })
+                let heatTileInfo = []
+                if (maxValue != 0) {
+                    maxValue = maxValue * (500 * 1.0 / shotCounter);
+                    let maxCutoff = 0.00004 * shotCounter / maxValue + 0.3065;
+                    let diff = maxCutoff / 7;
+                    Object.keys(tileValues).forEach(eachTileKey => {
+                        let color = "", circleArray = ""
+                        let value = tileValues[eachTileKey]
+                        if (value > maxValue * (maxCutoff - (diff * 6))) {
+                            if (value > maxValue * (maxCutoff - (diff * 6)) && value <= maxValue * (maxCutoff - (diff * 5))) {
+                                color = "#bc53f8"
+                                circleArray = "1"
+                            } else if (value > maxValue * (maxCutoff - (diff * 5)) && value <= maxValue * (maxCutoff - (diff * 4))) {
+                                color = "#dd76ff"
+                                circleArray = "2"
+                            } else if (value > maxValue * (maxCutoff - (diff * 4)) && value <= maxValue * (maxCutoff - (diff * 3))) {
+                                color = "#e696fa"
+                                circleArray = "3"
+                            } else if (value > maxValue * (maxCutoff - (diff * 3)) && value <= maxValue * (maxCutoff - (diff * 2))) {
+                                color = "#c4b8ff"
+                                circleArray = "4"
+                            } else if (value > maxValue * (maxCutoff - (diff * 2)) && value <= maxValue * (maxCutoff - (diff * 1))) {
+                                color = "#6bb2f8"
+                                circleArray = "5"
+                            } else if (value > maxValue * (maxCutoff - (diff * 1)) && value <= maxValue * maxCutoff) {
+                                color = "#62c8ff"
+                                circleArray = "6"
+                            } else {
+                                color = "#90ebff"
+                                circleArray = "7"
+                            }
+                            heatTileInfo.push({
+                                x: allTiles[eachTileKey].x,
+                                y: allTiles[eachTileKey].y,
+                                color: color,
+                                circleArray: circleArray
+                            })
+                        }
+                    })
+                    //heatTileInfo.length === 0 ? setCombinedState({ ...combinedState, allHeatTiles: <div></div> }) : setCombinedState({ ...combinedState, allHeatTiles: heatTileInfo.forEach(each => combinedState.allHeatTiles.push(each)) })
+                    heatTileInfo.length === 0 ? setCombinedState({ ...combinedStateRef.current, allHeatTiles: <div></div>, legend: generateLegend("Heat") }) : setCombinedState({ ...combinedStateRef.current, allHeatTiles: heatTileInfo, legend: generateLegend("Heat") })
+                }
             }
+            waitHere()
         }
     }
 
@@ -775,7 +789,6 @@ const ShotView = (props) => {
                 {circlesArray[6]}
             </Svg>)
         }
-        return <div></div>
     }
 
     function generateLegend(view) {
@@ -1039,11 +1052,13 @@ const ShotView = (props) => {
         if (!combinedStateRef.current.localViewType.isOriginal) {
             setTimeout(() => {
                 console.log(combinedStateRef.current)
-                setCombinedState({
-                    ...combinedStateRef.current, whatToDisplay: generateWhatToDisplay(combinedStateRef.current.localViewType.type, allShotsRef.current.shots),
-                    legend: generateLegend(combinedState.localViewType.type)
-                })
-                console.log(generateLegend(combinedStateRef.current.localViewType.type))
+                let display = generateWhatToDisplay(combinedStateRef.current.localViewType.type, allShotsRef.current.shots)
+                if (typeof (display[0]) !== "undefined") {
+                    setCombinedState({
+                        ...combinedStateRef.current, whatToDisplay: display,
+                        legend: generateLegend(combinedState.localViewType.type)
+                    })
+                }
             }, 500);
         }
     }, [combinedState.localViewType])
@@ -1091,7 +1106,8 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
-        if (combinedStateRef.current.whatToDisplay.length !== 0) {
+        console.log(combinedState.whatToDisplay)
+        if (typeof (combinedState.whatToDisplay[0]) !== "undefined" && combinedStateRef.current.whatToDisplay.length !== 0) {
             props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(false) })
             chooseCourt(combinedStateRef.current.localViewType.type)
