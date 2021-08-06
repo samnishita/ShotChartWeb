@@ -109,18 +109,20 @@ const ShotView = (props) => {
 
     function determineView(viewType, shots) {
         console.log("Determining viewtype: " + viewType)
-        chooseCourt(viewType)
         switch (viewType) {
             case "Classic":
+                chooseCourt(viewType)
                 console.log("Displaying Classic")
                 return displayClassic(shots)
             case "Hex":
+                chooseCourt(viewType)
                 if (combinedStateRef.current.allHexTiles.length === 0) {
                     console.log("Displaying Hex")
                     displayHex(shots)
                 }
                 return resizeHex()
             case "Zone":
+                chooseCourt(viewType)
                 console.log("Displaying Zone")
                 return displayZone(shots)
             case "Heat":
@@ -131,10 +133,6 @@ const ShotView = (props) => {
                 return resizeHeat()
         }
         return <div></div>
-    }
-
-    function handleTradHover(input) {
-        console.log("HOVER")
     }
 
     function displayClassic(inputShots) {
@@ -760,6 +758,7 @@ const ShotView = (props) => {
     function resizeHeat() {
         console.log("resizeHeat()")
         if (combinedStateRef.current.allHeatTiles.length > 0) {
+            chooseCourt("Heat")
             let circlesArray = [[], [], [], [], [], [], []]
             let gradients = []
             const height = document.getElementById('transparent-court').clientHeight
@@ -1081,6 +1080,13 @@ const ShotView = (props) => {
             } else {
                 setCombinedState({ ...combinedStateRef.current, allHexTiles: [], allHeatTiles: [] })
             }
+        } else {
+            console.log(combinedStateRef.current)
+            console.log(`Switch: ${combinedStateRef.current.localViewType.type}`)
+            if (combinedStateRef.current.whatToDisplay.length !== 0) {
+                setCombinedState({ ...combinedStateRef.current, allShots: [], whatToDisplay: [], legend: [], localViewType: { type: "Classic", isOriginal: false }, })
+                chooseCourt("Classic")
+            }
         }
     }, [props.allSearchData])
 
@@ -1106,7 +1112,6 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for whatToDisplay")
-        console.log(combinedState.whatToDisplay)
         if (typeof (combinedState.whatToDisplay[0]) !== "undefined" && combinedStateRef.current.whatToDisplay.length !== 0) {
             props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(false) })
@@ -1149,6 +1154,10 @@ const ShotView = (props) => {
         console.log(combinedState.allShots)
     }, [combinedState.allShots])
 
+    if (document.getElementsByClassName("labelFrac").length > 0) {
+        console.log("FONTSIZE")
+        console.log(document.getElementsByClassName("labelFrac")[0].style.fontSize)
+    }
     return (
         <div className='ShotView'>
             <p id="view-title">{props.title}</p>

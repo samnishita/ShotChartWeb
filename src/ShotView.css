@@ -51,6 +51,7 @@
 .labelFrac {
     height: min-content;
     line-height: 1;
+    font-size: 18px;
     font-family: "MontserratSemiBold";
 }
 
@@ -59,6 +60,7 @@
     line-height: 1;
     padding-top: 2px;
     font-family: "MontserratSemiBold";
+    font-size: 16px;
 }
 
 #transparent-court-on-top{
