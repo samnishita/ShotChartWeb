@@ -575,7 +575,7 @@ const ShotView = (props) => {
                 }
                 let labelPercStyle = {
                     fontSize: fontSizePerc,
-                    margin: "0px"
+                    margin: "0px",
                 }
                 switch (i) {
                     case 1:
@@ -1154,10 +1154,6 @@ const ShotView = (props) => {
         console.log(combinedState.allShots)
     }, [combinedState.allShots])
 
-    if (document.getElementsByClassName("labelFrac").length > 0) {
-        console.log("FONTSIZE")
-        console.log(document.getElementsByClassName("labelFrac")[0].style.fontSize)
-    }
     return (
         <div className='ShotView'>
             <p id="view-title">{props.title}</p>

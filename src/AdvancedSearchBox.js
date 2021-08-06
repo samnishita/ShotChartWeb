@@ -279,20 +279,6 @@ const AdvancedSearchBox = (props) => {
             console.log(invisibleRows)
             setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
         }
-        if (document.getElementById("player-advanced-button-display")) {
-            /*
-            console.log(document.getElementById("year-advanced-dd-begin-button"))
-            console.log(document.getElementById("year-advanced-dd-begin-button").clientWidth)
-            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode)
-            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.clientWidth)
-            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.parentNode)
-            console.log(document.getElementById("year-advanced-dd-begin-button").parentNode.parentNode.clientWidth)
-*/
-            console.log(document.getElementById("player-advanced-button-display"))
-            console.log(document.getElementById("player-advanced-button-display").clientWidth)
-            console.log(document.getElementById("player-advanced-button-display").parentNode)
-            console.log(document.getElementById("player-advanced-button-display").parentNode.clientWidth)
-        }
     })
 
     function makeButton(id, suffix, scrollable, placeholder) {
