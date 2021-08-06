@@ -1,7 +1,4 @@
-@font-face{
-    font-family: 'MonserratLight';
-    src: url('./fonts/Montserrat-Light.ttf') format('truetype');
-}
+
 @font-face{
     font-family: 'MontserratSemibold';
     src: url('./fonts/Montserrat-SemiBold.ttf') format('truetype');
@@ -17,19 +14,12 @@
 
 
 .ShotView{
-    color: white;
-    font-family: 'MonserratLight';
     height:100%;
-    width:auto;
+    width:fit-content;
     overflow: auto;
     scroll-behavior: smooth;
-    background-color: rgb(65, 64, 64);
-    border-radius: 30px;
-}
-
-button{
-    font-family: 'MonserratLight';
-    background-color: lightgray;
+    background-color: #0e0c0c;
+    border-radius: 15px;
 }
 
 #imageview-div{
@@ -37,6 +27,7 @@ button{
     position: relative;
     justify-content: center;
     align-items: center;
+    width: fit-content;
 }
 
 .imageview-child{
@@ -57,11 +48,16 @@ button{
 }
 
 .labelFrac {
-    font-family: 'MontserratSemibold';
+    height: min-content;
+    line-height: 1;
 }
+
 .labelPerc {
-    font-family: 'MontserratSemibold';
+    height: fit-content;
+    line-height: 1;
+    padding-top: 2px;
 }
+
 #transparent-court-on-top{
     position: relative;
     transform: rotate(180deg);
@@ -119,7 +115,7 @@ button{
     
 #color-legend{
     position: absolute;
-    background-color: #505050;
+    background-color: #2d2d2d;
 }
 #heat-color-legend{
     position: absolute;
@@ -169,7 +165,7 @@ button{
     margin-right: 5px;
     width:100px;
     margin-bottom: 5%;
-    background-color: gray;
+    background-color: rgba(219, 219, 219,0.2);
     border:0px;
     border-bottom:2px solid rgba(165, 80, 212, 1);
     border-radius: 10px;
@@ -178,9 +174,28 @@ button{
 }
 
 .view-switch-button:hover{
-    background-color: rgb(156, 156, 156);
+    background-color: rgba(230, 230, 230,0.3);
+    cursor: pointer;
 }
 
 #loading-text{
     font-size: 30px;
+}
+
+.trad-popover .ant-popover-arrow-content{
+    background-color: rgb(238, 183, 3);
+}
+
+.trad-popover .ant-popover-inner{
+    background-color: transparent;
+}
+
+.trad-popover .ant-popover-inner-content{
+    border:1px solid rgb(238, 183, 3);
+    border-radius: 50px;
+    background-color: black;
+    color: white;
+    font-feature-settings: normal;
+    font-family: 'MonserratLight';
+    font-variant: normal;
 }

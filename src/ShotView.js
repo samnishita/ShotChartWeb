@@ -2,6 +2,7 @@ import './ShotView.css'
 import tradCourt from './images/newbackcourt.png'
 import transparentCourt from './images/transparent.png'
 import Svg, { Circle, Path, Line, Rect, Defs, LinearGradient, RadialGradient, Stop } from 'react-native-svg';
+import { Popover } from 'antd';
 
 import { useEffect, useState, useRef } from "react";
 
@@ -130,6 +131,10 @@ const ShotView = (props) => {
         return <div></div>
     }
 
+    function handleTradHover(input) {
+        console.log("HOVER")
+    }
+
     function displayClassic(inputShots) {
         console.log("displayClassic()")
         let tradArray = []
@@ -142,12 +147,24 @@ const ShotView = (props) => {
             const strokeWidth = 2 * height / 470
             let counter = 0;
             allShotsTemp.forEach(each => {
-                if (each.y <= 410 && counter < 7500) {
+                if (each.y <= 410 && counter < 5000) {
+                    let content = `${each.make === 1 ? "Made" : "Missed"} ${each.distance}' ${each.playtype.replace("shot", "Shot")}`
                     if (each.make === 1) {
-                        tradArray.push(<Circle cx={width / 2 + each.x * width / 500} cy={height / 2 + each.y * height / 470 - 185 * height / 470} r={rad} fill="none" stroke="limegreen" strokeWidth={strokeWidth} />)
+                        tradArray.push(
+                            <Popover overlayClassName="trad-popover" content={content} trigger="hover">
+                                <Svg>
+                                    <Circle cx={width / 2 + each.x * width / 500} cy={height / 2 + each.y * height / 470 - 185 * height / 470} r={rad} fill="transparent" stroke="limegreen" strokeWidth={strokeWidth} />
+                                </Svg >
+                            </Popover>)
                     } else {
-                        tradArray.push(<Line x1={width / 2 - rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 + rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
-                        tradArray.push(<Line x1={width / 2 + rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 - rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />)
+                        tradArray.push(
+                            <Popover overlayClassName="trad-popover" content={content} trigger="hover">
+                                <Svg>
+                                    <Rect x={width / 2 - rad + each.x * width / 500} y={height / 2 - rad + each.y * height / 470 - 185 * height / 470} height={2 * rad} width={2 * rad} fill="transparent"></Rect>
+                                    <Line x1={width / 2 - rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 + rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />
+                                    <Line x1={width / 2 + rad + each.x * width / 500} y1={height / 2 - rad + each.y * height / 470 - 185 * height / 470} x2={width / 2 - rad + each.x * width / 500} y2={height / 2 + rad + each.y * height / 470 - 185 * height / 470} stroke="red" strokeWidth={strokeWidth} />
+                                </Svg>
+                            </Popover>)
                     }
                     counter++;
                 }
@@ -974,7 +991,6 @@ const ShotView = (props) => {
                             a${innerR3},${innerR3} 0 1,0 ${2 * innerR3 * Math.sin(45 * Math.PI / 180)},0`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
                         </Svg>
                     </div>
-
                 </div>
             </div >)
         } else {
@@ -1104,7 +1120,7 @@ const ShotView = (props) => {
             <div id="imageview-div">
                 <div className="court-image" id="gray-background" height={determineHeight()} >
                     <Svg height="100%" width="100%">
-                        <Rect height="100%" width="100%" fill="#505050"></Rect>
+                        <Rect height="100%" width="100%" fill="#2d2d2d"></Rect>
                     </Svg>
                 </div>
                 <img src={transparentCourt} className="court-image" id="transparent-court"></img>
