@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/ShotChartWeb/static/css/main.bb8f6e13.chunk.css",
-    "main.js": "/ShotChartWeb/static/js/main.718e0806.chunk.js",
-    "main.js.map": "/ShotChartWeb/static/js/main.718e0806.chunk.js.map",
+    "main.js": "/ShotChartWeb/static/js/main.30789a76.chunk.js",
+    "main.js.map": "/ShotChartWeb/static/js/main.30789a76.chunk.js.map",
     "runtime-main.js": "/ShotChartWeb/static/js/runtime-main.aa8a2dde.js",
     "runtime-main.js.map": "/ShotChartWeb/static/js/runtime-main.aa8a2dde.js.map",
     "static/css/2.83a79fa7.chunk.css": "/ShotChartWeb/static/css/2.83a79fa7.chunk.css",
@@ -24,6 +24,6 @@
     "static/css/2.83a79fa7.chunk.css",
     "static/js/2.07926c7e.chunk.js",
     "static/css/main.bb8f6e13.chunk.css",
-    "static/js/main.718e0806.chunk.js"
+    "static/js/main.30789a76.chunk.js"
   ]
 }
