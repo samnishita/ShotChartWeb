@@ -56,8 +56,8 @@ button:hover{
     font-size: 18px;
     display: none;
     background-color: gray;
-    border:0px;
-    border-bottom: 2px solid rgba(165, 80, 212, 1);
+    border: 2px solid rgba(165, 80, 212, 1);
+    border-top:0px;
     border-radius: 10px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
