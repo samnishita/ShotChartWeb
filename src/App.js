@@ -6,6 +6,7 @@ import AdvancedSearchBox from './AdvancedSearchBox';
 import SearchTypeButtons from './SearchTypeButtons';
 import React, { useEffect, useState, useRef } from 'react';
 import { BrowserView, isMobile, MobileView } from 'react-device-detect';
+import ShootingBezier from './ShootingBezier';
 
 const App = () => {
   console.log("RERENDER APP")
@@ -304,7 +305,7 @@ const App = () => {
   }, [isLoading])
 
   return (
-    <div className="App" style={isMobile ? { minWidth: "500px" } : {}}>
+    <div className="App" style={isMobile ? { maxWidth: "100vw", width: "100vw", minWidth: "100vw" } : {}}>
       <Header isMobile={isMobile} setTitle={setTitle} whichSearchBox={whichSearchBox} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
         allSearchData={allSearchData} allAdvancedSearchData={allAdvancedSearchData} isCurrentViewSimple={isCurrentViewSimple}
         latestAdvancedViewType={latestAdvancedViewType} simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick}
@@ -318,16 +319,24 @@ const App = () => {
         <div className="basegrid-grid-item" id="shotview-grid-item" >
           <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
             allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
+          <ShootingBezier size={size} isLoading={isLoading}
+            allSearchData={allSearchData} isCurrentViewSimple={true} />
         </div>
-      </div> : <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>
-        <div height="100%">
-          {advancedSearchBoxRef.current}
-        </div>
-        <div className="basegrid-grid-item" id="shotview-grid-item" >
-          <ShotView size={size} title={""} isLoading={isLoading} setIsLoading={setIsLoading}
-            allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
-        </div>
-      </div>}
+      </div>
+        :
+        <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>
+          <div height="100%">
+            {advancedSearchBoxRef.current}
+          </div>
+          <div className="basegrid-grid-item" id="shotview-grid-item" >
+            <ShotView size={size} title={""} isLoading={isLoading} setIsLoading={setIsLoading}
+              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
+          </div>
+          <div className="basegrid-grid-item" id="shooting-bezier-grid-item">
+            <ShootingBezier size={size} isLoading={isLoading}
+              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
+          </div>
+        </div>}
 
 
     </div >

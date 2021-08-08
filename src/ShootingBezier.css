@@ -1,0 +1,13 @@
+.ShotBezier{
+    background-color: #0e0c0c;
+    margin-top:10px;
+    border-radius: 15px;
+    width:99%;
+    height:fit-content;
+    max-width: 95vw;
+}
+
+#shot-bezier-inner-div{
+    height: 100%;
+    width:99%;
+}

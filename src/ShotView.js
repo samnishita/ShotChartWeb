@@ -147,7 +147,7 @@ const ShotView = (props) => {
             const strokeWidth = 2 * height / 470
             let counter = 0;
             allShotsTemp.forEach(each => {
-                if (each.y <= 410 && counter < 5000) {
+                if (each.y <= 410 && counter < 2000) {
                     let content = `${each.make === 1 ? "Made" : "Missed"} ${each.distance}' ${each.playtype.replace("shot", "Shot")}`
                     if (each.make === 1) {
                         tradArray.push(
