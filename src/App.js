@@ -8,6 +8,7 @@ import ShotPercentageView from './ShotPercentageView';
 import React, { useEffect, useState, useRef } from 'react';
 import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 import ShootingBezier from './ShootingBezier';
+import githubLogo from './images/GitHub-Mark-Light-64px.png'
 
 const App = () => {
   console.log("RERENDER APP")
@@ -345,8 +346,7 @@ const App = () => {
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
           </div>
         </div>}
-
-
+      <footer><a href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a></footer>
     </div >
   );
 }

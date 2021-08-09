@@ -25,6 +25,7 @@
   font-family: 'MonserratLight';
   font-variant: normal;
   overflow-x: hidden;
+  position: relative;
 }
 
 .BaseGrid {
@@ -51,3 +52,13 @@ div:hover{
 }
 
 .show{display: block;}
+
+footer{
+  width: 100%;
+  min-height: fit-content;
+  position:absolute;
+  left:0;
+  bottom:0;
+  right:0;
+  margin-bottom: 10px;
+}
