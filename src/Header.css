@@ -2,11 +2,10 @@
 .Header {
   display: inline-grid;
   width: 100%;
-  max-width: 100vw;
   grid-template-columns: 70% 30% ;
   min-height: 50%;
   background-color: rgb(15, 15, 15);
-  padding-top: 25px;
+  padding-top: 1%;
 }
 
 .header-grid-item {

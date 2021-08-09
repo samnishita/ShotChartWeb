@@ -21,7 +21,7 @@ function Header(props) {
                     allSearchData={props.allSearchData} allAdvancedSearchData={props.allAdvancedSearchData} isCurrentViewSimple={props.isCurrentViewSimple}
                     latestAdvancedViewType={props.latestAdvancedViewType} simpleClickHandler={props.handleSimpleClick} advancedClickHandler={props.handleAdvancedClick}
                     setAllSearchData={props.setAllSearchData} setAllAdvancedSearchData={props.setAllAdvancedSearchData} setIsCurrentViewSimple={props.setIsCurrentViewSimple}
-                    latestSimpleViewType={props.latestSimpleViewType} />}
+                    latestSimpleViewType={props.latestSimpleViewType} setShotPercentageData={props.setShotPercentageData} />}
             </div>
             <div class="header-grid-item" id="date-accuracy">
                 <div id='accuracy-title'>Accurate Through</div>

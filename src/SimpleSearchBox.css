@@ -23,11 +23,10 @@
 }
 
 .SimpleSearchBox .search-box-body .dropdown-button{
-    width: 70%;
+    min-width: 80%;
     margin: 4px; 
     position: relative;
-    max-width: 50%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 ::placeholder{
@@ -94,7 +93,7 @@ button:hover{
 }
 
 .dropdown-button-display{
-    font-size: 18px;
+    font-size: 14px;
     background-color: transparent;
     border: none;
     text-align: left;
@@ -115,8 +114,8 @@ button:hover{
 .App h6{
     font-family: 'MonserratLight';
     font-size: 20px;
-    margin-top: 20px;
     color: white;
+    margin: 0px;
 }
 
 p.dropdown-button-display{

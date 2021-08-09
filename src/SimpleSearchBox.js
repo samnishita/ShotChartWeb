@@ -13,7 +13,6 @@ const SimpleSearchBox = (props) => {
     const [yearDisplay, setYearDisplay] = useState([])
     const [activePlayersDisplay, setActivePlayersDisplay] = useState([])
     const [activeSeasonsDisplay, setActiveSeasonsDisplay] = useState([])
-    const [shotPercentageData, setShotPercentageData] = useState({})
     const [invisibleRows, setInvisibleRows] = useState(1)
     const [latestSimpleViewType, setLatestSimpleViewType] = useState(props.latestSimpleViewType)
     //STATE REFS
@@ -149,7 +148,7 @@ const SimpleSearchBox = (props) => {
                     shots: data,
                     view: latestSimpleViewType
                 })
-                setShotPercentageData(data)
+                props.setShotPercentageData(data)
                 return data
             }).catch(error => console.log('error', error))
         return response
@@ -381,7 +380,6 @@ const SimpleSearchBox = (props) => {
                     </button>
                 </div>
             </div>
-            <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} isLoading={props.isLoading} />
         </div>
     )
 }

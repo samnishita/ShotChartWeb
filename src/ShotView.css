@@ -4,24 +4,46 @@
     src: url('./fonts/Montserrat-SemiBold.ttf') format('truetype');
 }
 
+.ShotView{
+    height:100%;
+    width:100%;
+    overflow: auto;
+    position: relative;
+    scroll-behavior: smooth;
+}
+
+#shotview-wrapper{
+    background-color: #0e0c0c;
+    width: 90%;
+    border-radius: 15px;
+    align-items: center;
+    align-content: center;
+    margin: auto;
+    margin-top: 10px;
+}
+
 .court-image{
     transform: rotate(180deg);
     object-fit: cover;
-    max-width :50%;
-    height: auto;
+    max-width :800px;
+    width: 70%;
     display: none;
 }.show {display: block;}
 
+#transparent-court-on-top{
+    position: relative;
+    transform: rotate(180deg);
+    object-fit: cover;
+    width: 70%;
+    max-width :800px;
+    z-index: 1;
+}
 
-.ShotView{
-    height:100%;
-    width:fit-content;
-    overflow: auto;
-    scroll-behavior: smooth;
-    background-color: #0e0c0c;
-    border-radius: 15px;
-    max-width: 95%;
-    margin:auto;
+#gray-background{
+    height: 100%;
+    width: 70%;
+    max-width :800px;
+    position: absolute;
 }
 
 #imageview-div{
@@ -29,7 +51,9 @@
     position: relative;
     justify-content: center;
     align-items: center;
-    width: fit-content;
+    margin: auto;
+    width: 100%;
+    max-width :700px;
 }
 
 .imageview-child{
@@ -65,27 +89,14 @@
     font-size: 16px;
 }
 
-#transparent-court-on-top{
-    position: relative;
-    transform: rotate(180deg);
-    object-fit: cover;
-    max-width :50%;
-    height: auto;
-    z-index: 1;
-}
-
 #view-title{
     padding: 10px 0px 0px 0px;
     font-size: 20px;
     text-align: center;
     height: fit-content ;
+    min-height: 45px;
 }
 
-#gray-background{
-    height: 100%;
-    width: 100%;
-    position: absolute;
-}
 
 @keyframes spin {
     from {transform:rotate(0deg)}
@@ -175,6 +186,7 @@
 
 #loading-text{
     font-size: 30px;
+    font-family: "MontserratSemiBold";
 }
 
 .trad-popover .ant-popover-arrow-content{
@@ -220,5 +232,5 @@
 }
 
 html {
-    --antd-wave-shadow-color:rgba(165, 80, 212, 1) !important;
+    --antd-wave-shadow-color:rgb(255, 255, 255) !important;
 }

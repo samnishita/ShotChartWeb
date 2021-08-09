@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
     console.log("RERENDER ShotView")
+    console.log(props.isLoading)
     const [combinedState, setCombinedState] = useState({
         allHexTiles: [],
         allHeatTiles: [],
@@ -985,10 +986,15 @@ const ShotView = (props) => {
             //let view = allShotsRef.current.shots === null ? allShotsRef.current.view : combinedState.localViewType.type
             //animation: `spin 0.5s linear infinite`,
             //                            <Path d={`m${centerX} ${centerY - innerR3} l0 -${thickness3} a${outerR3},${outerR3} 0 0,1 0,${2 * (innerR3 + thickness3)} l0 ${-thickness3}  a${innerR3},${innerR3} 0 0,0 0,${-2 * innerR3}`} fill="url(#loading-gradient)" stroke="none" strokeWidth="1"></Path>
-
+            let mapTypesToLoadingDisplay = {
+                Classic: "Generating Shots",
+                Hex: "Generating Hex Map",
+                Zone: "Generating Zones",
+                Heat: "Generating Heat Map"
+            }
             return (<div id="loadingAnimation" style={{ position: "absolute", backgroundColor: "gray", opacity: "0.8", zIndex: 1, width: width, height: height, textAlign: "center" }}>
                 <div style={{ transform: `translate(0px, ${height / 3}px)` }}>
-                    <p style={{ fontSize: height / 20, color: "white" }} id="loading-text">Generating {viewType}</p>
+                    <p style={{ fontSize: height / 20, color: "white" }} id="loading-text">{mapTypesToLoadingDisplay[viewType]}</p>
                     <div width="100%" height={height} style={{ position: "absolute", transform: `translate(${width / 2 - centerX}px,0px)` }} >
                         <Svg id="loading-animation" width={width / 3} height={height / 3} style={{ animation: `spin 0.5s linear infinite`, opacity: "1", position: "absolute" }} >
                             <Defs>
@@ -1076,7 +1082,7 @@ const ShotView = (props) => {
                         whatToDisplay: generateWhatToDisplay(props.allSearchData.view, props.allSearchData.shots),
                         legend: generateLegend(props.allSearchData.view)
                     })
-                }, 1000);
+                }, 1500);
             } else {
                 setCombinedState({ ...combinedStateRef.current, allHexTiles: [], allHeatTiles: [] })
             }
@@ -1122,6 +1128,7 @@ const ShotView = (props) => {
     useEffect(() => {
         console.log("useEffect for allHexTiles")
         if (combinedStateRef.current.allHexTiles.length !== 0) {
+            props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHex(), loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [combinedState.allHexTiles])
@@ -1129,6 +1136,7 @@ const ShotView = (props) => {
     useEffect(() => {
         console.log("useEffect for allHeatTiles")
         if (combinedStateRef.current.allHeatTiles.length !== 0) {
+            props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHeat(), loadingAnimation: makeLoadingAnimation(false) })
         }
     }, [combinedState.allHeatTiles])
@@ -1156,25 +1164,28 @@ const ShotView = (props) => {
 
     return (
         <div className='ShotView'>
-            <p id="view-title">{props.title}</p>
-            <div id="imageview-div">
-                <div className="court-image" id="gray-background" height={determineHeight()} >
-                    <Svg height="100%" width="100%">
-                        <Rect height="100%" width="100%" fill="#2d2d2d"></Rect>
-                    </Svg>
+            <div id="shotview-wrapper">
+                <p id="view-title">{props.title}</p>
+                <div id="hideable-imageview-div">
+                    <div id="imageview-div">
+                        <div className="court-image" id="gray-background" height={determineHeight()} >
+                            <Svg height="100%" width="100%">
+                                <Rect height="100%" width="100%" fill="#2d2d2d"></Rect>
+                            </Svg>
+                        </div>
+                        <img src={transparentCourt} className="court-image" id="transparent-court"></img>
+                        <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
+                        {whatToDisplayRef.current}
+                        {combinedState.legend}
+                        {combinedStateRef.current.loadingAnimation}
+                    </div>
+                    <br></br>
+                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</Button>
+                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</Button>
+                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</Button>
+                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</Button>
                 </div>
-                <img src={transparentCourt} className="court-image" id="transparent-court"></img>
-                <img src={transparentCourt} className="court-image" id="transparent-court-on-top" ></img>
-                {whatToDisplayRef.current}
-                {combinedState.legend}
-                {combinedStateRef.current.loadingAnimation}
             </div>
-            <br></br>
-            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</Button>
-            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</Button>
-            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</Button>
-            <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</Button>
-
         </div>
     )
 }

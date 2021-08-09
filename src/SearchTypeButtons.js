@@ -6,8 +6,9 @@ function SearchTypeButtons(props) {
     function displaySimple() {
         console.log("displaySimple()")
         if (!props.isCurrentViewSimple) {
-            props.setAllAdvancedSearchData([])
             props.setAllSearchData([])
+            props.setShotPercentageData()
+            props.setAllAdvancedSearchData([])
             props.setTitle("")
             setTimeout(() => {
                 props.setIsCurrentViewSimple(true)
@@ -19,6 +20,7 @@ function SearchTypeButtons(props) {
         console.log("displayAdvanced()")
         if (props.isCurrentViewSimple) {
             props.setAllAdvancedSearchData([])
+            props.setShotPercentageData()
             props.setAllSearchData([])
             props.setTitle("")
             props.setIsCurrentViewSimple(false)

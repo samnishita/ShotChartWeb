@@ -4,13 +4,14 @@ import { Switch } from 'antd';
 import { Progress } from 'antd';
 
 const ShotPercentageView = (props) => {
-    //const [shotCalcs, setShotCalcs] = useState({ fgFrac: "--", fgPerc: "--", twoPFrac: "--", twoPPerc: "--", threePFrac: "--", threePPerc: "--" })
+    console.log("RERENDER ShotPercentageView")
     const [shotCalcs, setShotCalcs] = useState({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
     const [isLoadDelay, setIsLoadDelay] = useState({ isDelayed: true, offset: 0.0 })
 
     useEffect(() => {
         console.log("useEffect for ShotPercentageView")
         if (props.isCurrentViewSimple && props.simpleShotData && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
+            console.log(props.simpleShotData)
             setShotCalcs(processShotData(props.simpleShotData.simplesearch))
         } else if (!props.isCurrentViewSimple && props.advancedShotData && typeof (props.advancedShotData.advancedsearch) !== 'undefined') {
             setShotCalcs(processShotData(props.advancedShotData.advancedsearch))
@@ -58,8 +59,8 @@ const ShotPercentageView = (props) => {
     }
 
     function generateShotPercentageView() {
-        let fontSizeTitle = props.isCurrentViewSimple ? "50px" : "35px"
-        let fontSizeSubtitle = props.isCurrentViewSimple ? "20px" : "15px"
+        let fontSizeTitle = props.isCurrentViewSimple ? 30 : 35
+        let fontSizeSubtitle = props.isCurrentViewSimple ? "15px" : "15px"
         let elements = []
         let titles = ["FG", "2P", "3P"]
         let keys = ["fgs", "twos", "threes"]
@@ -71,7 +72,7 @@ const ShotPercentageView = (props) => {
                 percentDisplay = Number(shotCalcs[keys[i]].perc * isLoadDelay.offset).toFixed(2)
             }
             elements.push(<div className="perc-div">
-                <p className="percentage-title" style={{ fontSize: fontSizeTitle }}>{titles[i]}</p>
+                <p className="percentage-title" style={{ fontSize: fontSizeTitle + "px" }}>{titles[i]}</p>
                 <Progress className="dashboard-shot"
                     type="dashboard"
                     strokeColor={{
@@ -82,13 +83,14 @@ const ShotPercentageView = (props) => {
                     format={percent => `${percent}%`}
                     trailColor="#3d3e3e"
                     gapDegree="0"
+                    width={fontSizeTitle * 2.5}
                 />
                 <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{shotCalcs[keys[i]].frac}</p>
                 <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{"eFG: " + shotCalcs[keys[i]].efg}</p>
                 <p className="percentage-content" style={{ fontSize: fontSizeSubtitle }}>{"PPS: " + shotCalcs[keys[i]].pps}</p>
             </div>)
         }
-        if (isLoadDelay.isDelayed && !props.isLoading && shotCalcs.fgs.frac !== "--") {
+        if (isLoadDelay.isDelayed && shotCalcs.fgs.frac !== "--") {
             setTimeout(() => {
                 setIsLoadDelay({ isDelayed: false, offset: 0.0 })
             }, 300);

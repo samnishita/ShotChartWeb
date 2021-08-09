@@ -4,6 +4,7 @@ import SimpleSearchBox from './SimpleSearchBox'
 import ShotView from './ShotView'
 import AdvancedSearchBox from './AdvancedSearchBox';
 import SearchTypeButtons from './SearchTypeButtons';
+import ShotPercentageView from './ShotPercentageView';
 import React, { useEffect, useState, useRef } from 'react';
 import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 import ShootingBezier from './ShootingBezier';
@@ -28,6 +29,7 @@ const App = () => {
     playerfirstname: "Aaron",
     playerlastname: "Gordon"
   });
+  const [shotPercentageData, setShotPercentageData] = useState({})
   const [simpleSelectedSeason, setSimpleSelectedSeason] = useState("Regular Season");
   const [initPlayers, setInitPlayers] = useState([])
   const [initPlayersReverseMap, setInitPlayersReverseMap] = useState([])
@@ -54,6 +56,7 @@ const App = () => {
       textAreaText={textAreaText}
       size={size}
       isMobile={isMobile}
+      setShotPercentageData={setShotPercentageData}
     />
 
   const [whichSearchBox, setWhichSearchBox] = useState(simpleSearchBoxRef.current)
@@ -92,7 +95,8 @@ const App = () => {
     setTextAreaText={setTextAreaText}
     textAreaText={textAreaText}
     size={size}
-    isMobile={isMobile} />
+    isMobile={isMobile}
+    setShotPercentageData={setShotPercentageData} />
 
   const sizeRef = useRef({})
   sizeRef.current = size
@@ -287,6 +291,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("useEffect for App allSearchData")
+    console.log(allSearchData)
     if (allSearchData.shots === null) {
       setIsLoading({ state: true, newShots: true })
     }
@@ -310,17 +315,20 @@ const App = () => {
         allSearchData={allSearchData} allAdvancedSearchData={allAdvancedSearchData} isCurrentViewSimple={isCurrentViewSimple}
         latestAdvancedViewType={latestAdvancedViewType} simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick}
         setAllSearchData={setAllSearchData} setAllAdvancedSearchData={setAllAdvancedSearchData} setIsCurrentViewSimple={setIsCurrentViewSimple}
-        latestSimpleViewType={latestSimpleViewType}
+        latestSimpleViewType={latestSimpleViewType} setShotPercentageData={setShotPercentageData}
       />
-      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block" } : {}}>
-        <div height="100%" id="simple-search-box-wrapper-div">
+      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block", maxWidth: "100vw" } : {}}>
+        <div className="basegrid-grid-item">
           {simpleSearchBoxRef.current}
-        </div>
-        <div className="basegrid-grid-item" id="shotview-grid-item" >
-          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
-            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
           <ShootingBezier size={size} isLoading={isLoading}
             allSearchData={allSearchData} isCurrentViewSimple={true} />
+        </div>
+        <div className="basegrid-grid-item" id="shotview-grid-item">
+          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
+            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
+        </div>
+        <div className="basegrid-grid-item"  >
+          <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={isCurrentViewSimple} isLoading={isLoading} />
         </div>
       </div>
         :
