@@ -53,8 +53,8 @@ const ShootingBezier = (props) => {
     }, [shotTypeAnimated])
 
     function processShotData() {
-        let shotKinds = { jump: 0, dunk: 0, layup: 0, floating: 0, hook: 0, fadeaway: 0, pullup: 0, stepback: 0, turnaround: 0 }
-        let shotKindMap = { jump: "jump", dunk: "dunk", layup: "layup", floating: "floating", hook: "hook", fadeaway: "fadeaway", pullup: "pull", stepback: "step back", turnaround: "around" }
+        let shotKinds = { jump: 0, dunk: 0, layup: 0, floating: 0, hook: 0, fadeaway: 0, pullup: 0, turnaround: 0, stepback: 0 }
+        let shotKindMap = { jump: "jump", dunk: "dunk", layup: "layup", floating: "floating", hook: "hook", fadeaway: "fadeaway", pullup: "pull", turnaround: "around", stepback: "step back" }
         let shots = null
         if (props.isCurrentViewSimple && props.allSearchData.shots) {
             shots = props.allSearchData.shots.simplesearch

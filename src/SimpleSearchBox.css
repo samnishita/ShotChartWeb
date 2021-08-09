@@ -96,6 +96,7 @@ button:hover{
     font-size: 14px;
     background-color: transparent;
     border: none;
+    border-radius: 0;
     text-align: left;
     display: inline-block;
     margin: 4px;
