@@ -318,7 +318,7 @@ const App = () => {
         setAllSearchData={setAllSearchData} setAllAdvancedSearchData={setAllAdvancedSearchData} setIsCurrentViewSimple={setIsCurrentViewSimple}
         latestSimpleViewType={latestSimpleViewType} setShotPercentageData={setShotPercentageData}
       />
-      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block", maxWidth: "100vw" } : {}}>
+      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block", maxWidth: "95vw", } : {}}>
         <div className="basegrid-grid-item">
           {simpleSearchBoxRef.current}
           <ShootingBezier size={size} isLoading={isLoading}
@@ -346,7 +346,9 @@ const App = () => {
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
           </div>
         </div>}
-      <footer><a href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a></footer>
+      <footer>
+        <a href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a>
+      </footer>
     </div >
   );
 }
