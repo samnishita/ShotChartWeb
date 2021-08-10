@@ -337,12 +337,12 @@ const App = () => {
           <div id="advanced-grid-item" height="100%">
             {advancedSearchBoxRef.current}
           </div>
-          <div className="basegrid-grid-item" id="shotview-grid-item" >
+          <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
             <ShotView size={size} title={""} isLoading={isLoading} setIsLoading={setIsLoading}
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
           </div>
-          <div className="basegrid-grid-item" id="shooting-bezier-grid-item">
-            <ShotPercentageView advancedShotData={shotPercentageData} isCurrentViewSimple={false} isLoading={isLoading} />
+          <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">
+            <ShotPercentageView style={{ marginLeft: "0px", marginRight: "0px" }} advancedShotData={shotPercentageData} isCurrentViewSimple={false} isLoading={isLoading} />
             <ShootingBezier size={size} isLoading={isLoading}
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
           </div>

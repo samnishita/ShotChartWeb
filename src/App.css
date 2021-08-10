@@ -43,6 +43,13 @@
   width: 100%;
 }
 
+.basegrid-grid-item-advanced {
+  align-items: center;
+  align-content: flex-start;
+  height: auto;
+  width: 100%;
+}
+
 p:hover{
   cursor: default;
 }
