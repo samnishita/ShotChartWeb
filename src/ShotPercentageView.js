@@ -10,11 +10,14 @@ const ShotPercentageView = (props) => {
 
     useEffect(() => {
         console.log("useEffect for ShotPercentageView")
+        console.log(shotCalcs)
         if (props.isCurrentViewSimple && props.simpleShotData && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
             console.log(props.simpleShotData)
             setShotCalcs(processShotData(props.simpleShotData.simplesearch))
         } else if (!props.isCurrentViewSimple && props.advancedShotData && typeof (props.advancedShotData.advancedsearch) !== 'undefined') {
             setShotCalcs(processShotData(props.advancedShotData.advancedsearch))
+        } else {
+            setShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
         }
         setIsLoadDelay({ isDelayed: true, offset: 0.0 })
     }, [props.isCurrentViewSimple, props.simpleShotData, props.advancedShotData])

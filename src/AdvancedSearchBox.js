@@ -10,7 +10,6 @@ import { Switch } from 'antd';
 const AdvancedSearchBox = (props) => {
     console.log("RERENDER AdvancedSearchBox")
     const [latestAdvancedViewType, setLatestAdvancedViewType] = useState(props.latestAdvancedViewType)
-    const [shotPercentageData, setShotPercentageData] = useState({})
     const [invisibleRows, setInvisibleRows] = useState(1)
     const [displayAdvancedSearchSelections, setDisplayAdvancedSearchSelections] = useState(true)
 
@@ -453,7 +452,7 @@ const AdvancedSearchBox = (props) => {
                             shots: data,
                             view: latestAdvancedViewType
                         })
-                        setShotPercentageData(data)
+                        props.setShotPercentageData(data)
                     })
             }, 750)
         }
@@ -509,7 +508,6 @@ const AdvancedSearchBox = (props) => {
                     </div>
                 </div>
             </div>
-            <ShotPercentageView advancedShotData={shotPercentageData} isCurrentViewSimple={props.isCurrentViewSimple} isLoading={props.isLoading} />
         </div>
     )
 }

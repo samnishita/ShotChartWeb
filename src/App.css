@@ -60,3 +60,14 @@ footer{
   margin-bottom: 10px; 
   flex-direction:column; 
 }
+
+.BaseGridAdvanced{
+  display: grid;
+  grid-template-columns: 60% 40%;
+  height: fit-content;
+  min-height: 100%;
+}
+
+#advanced-grid-item{
+  grid-column: 1/ span 2;
+}
