@@ -198,6 +198,7 @@ const App = () => {
           dropdown.classList.remove('show');
         } else if (dropdown.classList.contains('show') && event.target.classList.contains("text-area") && event.key === "Enter") {
           dropdown.classList.remove('show');
+          event.target.blur()
         } else if (!dropdown.classList.contains('show') && acceptedTargets.includes(type)) {
           console.log("showing")
           document.getElementById(type).classList.toggle("show")
@@ -211,10 +212,14 @@ const App = () => {
     } else if (document.getElementById(`${type}-button`)) {
       document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
       document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
-    } else if (type == "view-selection-adv-dd") {
+    } else if (type == "view-selection-adv-dd" && event.key !== "Enter") {
       console.log(document.getElementById(`${type}`).style)
       document.getElementById(`${type}`).style.borderBottomLeftRadius = "0px"
       document.getElementById(`${type}`).style.borderBottomRightRadius = "0px"
+    } else if (type == "view-selection-adv-dd" && event.key === "Enter") {
+      console.log(document.getElementById(`${type}-button`).style)
+      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
+      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
     }
   };
 

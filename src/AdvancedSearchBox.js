@@ -183,7 +183,7 @@ const AdvancedSearchBox = (props) => {
             newString += event.key
         } else if (event.key === 'Enter') {
             event.preventDefault()
-            props.handleDDButtonClick(event, `${id}-dd`)
+            props.handleDDButtonClick(event, `${id}`)
         }
         //Close drowdown and set search parameter
         if (event.key === 'Enter') {
