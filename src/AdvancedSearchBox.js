@@ -447,7 +447,7 @@ const AdvancedSearchBox = (props) => {
                     method: 'GET'
                 }).then(res => res.json())
                     .then(data => {
-                        console.log(data)
+                        props.setTitle("Custom Search")
                         props.setAllSearchData({
                             shots: data,
                             view: latestAdvancedViewType

@@ -343,7 +343,7 @@ const App = () => {
             {advancedSearchBoxRef.current}
           </div>
           <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
-            <ShotView size={size} title={""} isLoading={isLoading} setIsLoading={setIsLoading}
+            <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
           </div>
           <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">
