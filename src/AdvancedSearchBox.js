@@ -477,12 +477,15 @@ const AdvancedSearchBox = (props) => {
         </div>
     </div>)
 
+    let checked = props.isMobile ? "" : "Show"
+    let unchecked = props.isMobile ? "" : "Hide"
+
     return (
         <div className="AdvancedSearchBox" id="advanced-search-box">
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
                     <h6 className="choose-parameters-label">Search Parameters
-                        <Switch id="show-advanced-parameters" checkedChildren="Show" unCheckedChildren="Hide" defaultChecked onChange={(checked => setDisplayAdvancedSearchSelections(checked))} />
+                        <Switch id="show-advanced-parameters" checkedChildren={checked} unCheckedChildren={unchecked} defaultChecked onChange={(checked => setDisplayAdvancedSearchSelections(checked))} />
                     </h6>
                     {selectionViewerRef.current}
                     <div id="hide-advanced-div" style={displayAdvancedSearchSelections ? {} : { display: "none" }}>
