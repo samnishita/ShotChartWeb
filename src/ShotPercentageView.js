@@ -1,26 +1,37 @@
 import './ShotPercentageView.css'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Switch } from 'antd';
 import { Progress } from 'antd';
 
 const ShotPercentageView = (props) => {
     console.log("RERENDER ShotPercentageView")
     const [shotCalcs, setShotCalcs] = useState({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
+    const [prevShotCalcs, setPrevShotCalcs] = useState({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
     const [isLoadDelay, setIsLoadDelay] = useState({ isDelayed: true, offset: 0.0 })
+
+    const prevShotCalcsRef = useRef({})
+    prevShotCalcsRef.current = prevShotCalcs
+
 
     useEffect(() => {
         console.log("useEffect for ShotPercentageView")
-        console.log(shotCalcs)
+        setPrevShotCalcs(shotCalcs)
+    }, [props.simpleShotData, props.advancedShotData])
+
+    useEffect(() => {
+        setShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
+        setPrevShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
+    }, [props.isCurrentViewSimple])
+
+    useEffect(() => {
         if (props.isCurrentViewSimple && props.simpleShotData && typeof (props.simpleShotData.simplesearch) !== 'undefined') {
-            console.log(props.simpleShotData)
             setShotCalcs(processShotData(props.simpleShotData.simplesearch))
         } else if (!props.isCurrentViewSimple && props.advancedShotData && typeof (props.advancedShotData.advancedsearch) !== 'undefined') {
             setShotCalcs(processShotData(props.advancedShotData.advancedsearch))
-        } else {
-            setShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
         }
         setIsLoadDelay({ isDelayed: true, offset: 0.0 })
-    }, [props.isCurrentViewSimple, props.simpleShotData, props.advancedShotData])
+
+    }, [prevShotCalcs])
 
     function processShotData(inputShotData) {
         let twoPMakes = 0, twoPTotal = 0, threePMakes = 0, threePTotal = 0;
@@ -68,11 +79,10 @@ const ShotPercentageView = (props) => {
         let titles = ["FG", "2P", "3P"]
         let keys = ["fgs", "twos", "threes"]
         for (let i = 0; i < 3; i++) {
-            let percentDisplay
-            if (isLoadDelay.isDelayed && shotCalcs[keys[i]].frac === "--") {
-                percentDisplay = 0
-            } else if (!isLoadDelay.isDelayed && shotCalcs[keys[i]].frac !== "--") {
-                percentDisplay = Number(shotCalcs[keys[i]].perc * isLoadDelay.offset).toFixed(2)
+            let prev = prevShotCalcsRef.current[keys[i]].perc === "--" ? 0 : prevShotCalcsRef.current[keys[i]].perc
+            let percentDisplay = prev
+            if (!isLoadDelay.isDelayed && shotCalcs[keys[i]].frac !== "--") {
+                percentDisplay = Number(prev - (prev - shotCalcs[keys[i]].perc) * isLoadDelay.offset).toFixed(2)
             }
             elements.push(<div className="perc-div">
                 <p className="percentage-title" style={{ fontSize: fontSizeTitle + "px" }}>{titles[i]}</p>
@@ -100,7 +110,11 @@ const ShotPercentageView = (props) => {
         }
         if (!isLoadDelay.isDelayed && isLoadDelay.offset < 1.0) {
             setTimeout(() => {
-                setIsLoadDelay({ isDelayed: false, offset: isLoadDelay.offset + 0.05 })
+                if (isLoadDelay.offset + 0.03 > 1 - 0.03) {
+                    setIsLoadDelay({ isDelayed: false, offset: 1 })
+                } else {
+                    setIsLoadDelay({ isDelayed: false, offset: isLoadDelay.offset + 0.03 })
+                }
             }, 20);
         }
         return elements
