@@ -321,18 +321,18 @@ const SimpleSearchBox = (props) => {
             className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
             value={value}
             style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
-            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{selection}</p>
+            : ""
         let buttonFace = (id === "year" || id === "player") ? < TextareaAutosize spellcheck="false" minRows={id === "player" ? invisibleRows : 1}
             className={`dropdown-button-display ${fullId} text-area `} id={`${fullId}-button-display`} maxRows="3"
             value={whatToShow}
-            style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
+            style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.7)", }}
             onKeyDown={e => { handleKeyPress(e, fullId) }}
             placeholder={placeholder} />
-            : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{selection}</p>
-        return (<button className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }}>
+            : <p className={`dropdown-button-display ${fullId}`} style={{ marginBlockStart: "0em", textAlign: "left", maxWidth: width, minWidth: width, marginBottom: "8px", paddingBottom: "2px", borderBottom: "1px solid rgba(255,255,255,0.7)" }}>{selection}</p>
+        return (<button className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }} style={{}}>
             {buttonFace2}{buttonFace}
-            <Svg className={`arrow-svg ${fullId}`} height={height} width={height}>
-                <Path className={`arrow-path ${fullId}`} d={`m0,${(id === "year" || id === "player") ? 0 : 8} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
+            <Svg className={`arrow-svg ${fullId}`} height={height} width={height} style={{ paddingTop: `${(id === "year" || id === "player") ? 0 : 12}px` }}>
+                <Path className={`arrow-path ${fullId}`} d={`m4,${(id === "year" || id === "player") ? 0 : 0} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
                 </Path>
             </Svg>
             <div className={`dropdown-content ${scrollable}`} id={`${fullId}`}>
