@@ -18,7 +18,7 @@ const ShootingBezier = (props) => {
     useEffect(() => {
         // console.log("useEffect for shotTypeAnimated")
         if (shotTypeAnimatedRef.current.isDelayed) {
-            let diff = 0.05
+            let diff = 0.02
             setTimeout(() => {
                 let temp = []
                 for (let i = 0; i < 9; i++) {
@@ -33,7 +33,7 @@ const ShootingBezier = (props) => {
                         ...shotTypeAnimatedRef.current, currentValues: temp, increment: shotTypeAnimatedRef.current.increment + diff
                     })
                 }
-            }, 30);
+            }, 20);
 
         }
     }, [shotTypeAnimated])
@@ -92,7 +92,7 @@ const ShootingBezier = (props) => {
                 }
             })
             let relativeValues = {}
-            let scaler = document.getElementById("dist-outer-circle") ? document.getElementById("dist-outer-circle").r.animVal.value * 0.7 : 85
+            let scaler = document.getElementById("dist-outer-circle") ? document.getElementById("dist-outer-circle").r.animVal.value * 0.75 : 85
             Object.keys(shotKinds).forEach(eachKey => {
                 relativeValues[eachKey] = shotKinds[eachKey] / max * scaler
             })
@@ -138,8 +138,8 @@ const ShootingBezier = (props) => {
                     fy="50%"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <Stop offset="0" stopColor="#014a48" stopOpacity="0.85" />
-                    <Stop offset="0.3" stopColor="#0de563" stopOpacity="0.9 " />
+                    <Stop offset="0" stopColor="#4f1176" stopOpacity="0.95" />
+                    <Stop offset="0.35" stopColor="#D4E312" stopOpacity="0.9 " />
                 </RadialGradient>
             </Defs>
             <Circle cx={width / 2} cy={height / 2} r={smallerDim / 10} stroke="gray" fill="transparent" strokeDasharray="8, 2" />
@@ -151,19 +151,19 @@ const ShootingBezier = (props) => {
     }
 
     function createLabels() {
-        let shotKindMap = ["Jump Shot", "Dunk", "Layup", "Floater", "Hook Shot", "Fade", "Pull-Up", "Turn-Around", "Step-Back"]
+        let shotKindMap = ["Jump Shot", "Dunk", "Layup", "Floater", "Hook", "Fade", "Pull-Up", "Turn-Around", "Step-Back"]
         let labels = []
         for (let index = 0; index < shotKindMap.length; index++) {
-            let style = { position: "absolute", minWidth: "50px", maxWidth: "50px", textAlign: "center", margin: "0px" }
-            let pWidth = 50
-            let pHeight = 44
+            let style = { position: "absolute", minWidth: "60px", maxWidth: "60px", textAlign: "bottom", margin: "0px" }
+            let pWidth = 60
+            let pHeight = shotKindMap[index].length < 8 ? 44 : 44
             let x, y
             if (document.getElementById("dist-outer-circle")) {
                 let rad = document.getElementById("dist-outer-circle").r.animVal.value
                 let height = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientHeight : 500
                 let width = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientWidth : 500
-                x = (rad * 1.4 * Math.cos(((40 * index) - 90) * Math.PI / 180) + width / 2 - pWidth / 2)
-                y = rad * 1.4 * Math.sin(((40 * index) - 90) * Math.PI / 180) + height / 2 - pHeight / 2
+                x = (rad + shotKindMap[index].length) * 1.35 * Math.cos(((40 * index) - 90) * Math.PI / 180) + width / 2 - pWidth / 2
+                y = (rad + shotKindMap[index].length) * 1.3 * Math.sin(((40 * index) - 90) * Math.PI / 180) + height / 2 - pHeight / 2
                 style.transform = `translate(${x}px,${y}px)`
                 if (rad !== 0) {
                     labels.push(<p style={style} className="shot-kind-dist-label">{shotKindMap[index]}</p>)
@@ -175,7 +175,7 @@ const ShootingBezier = (props) => {
 
     return <div className="ShotBezier">
         <div id="shot-bezier-wrapper">
-            <h6 id="by-type-title">Shot Distribution By Type</h6>
+            <h6 id="by-type-title">Shot Type Distribution</h6>
             <div id="shot-bezier-inner-div">
                 {createLabels()}
                 {processShotData()}
