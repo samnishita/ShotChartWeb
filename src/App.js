@@ -31,6 +31,8 @@ const App = () => {
     playerlastname: "Gordon"
   });
   const [shotPercentageData, setShotPercentageData] = useState({})
+  const [hexAverages, setHexAverages] = useState({})
+  const [zoneAverages, setZoneAverages] = useState({})
   const [simpleSelectedSeason, setSimpleSelectedSeason] = useState("Regular Season");
   const [initPlayers, setInitPlayers] = useState([])
   const [initPlayersReverseMap, setInitPlayersReverseMap] = useState([])
@@ -172,8 +174,10 @@ const App = () => {
           setTextAreaText({ id: null, text: "" })
         }
         if (document.getElementById(`${openDropdown.id}-button`)) {
+          /*
           document.getElementById(`${openDropdown.id}-button`).style.borderBottomLeftRadius = "10px"
           document.getElementById(`${openDropdown.id}-button`).style.borderBottomRightRadius = "10px"
+        */
         }
 
       }
@@ -205,6 +209,7 @@ const App = () => {
         }
       }
     }
+    /*
     if (type !== "view-selection-adv-dd" && document.getElementById(`${type}`) && document.getElementById(`${type}`).classList.contains("show")) {
       console.log(document.getElementById(`${type}-button`).style)
       document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "0px"
@@ -221,6 +226,7 @@ const App = () => {
       document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
       document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
     }
+    */
   };
 
   function determineWhichView() {
@@ -256,11 +262,33 @@ const App = () => {
     }
   }
 
+  async function getHexAverages() {
+    console.log("getHexAverages()")
+    return await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
+      .then(res => {
+        let averageJson = {}
+        res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
+        setHexAverages(averageJson)
+      })
+  }
+
+  async function getZoneAverages() {
+    console.log("getZoneAverages()")
+    return await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
+      .then(res => {
+        let averageJson = {}
+        res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
+        setZoneAverages(averageJson)
+      })
+  }
+
   useEffect(() => {
     console.log("useEffect for App []")
     getInitPlayersData().then(res => {
       determineWhichView()
     })
+    getHexAverages()
+    getZoneAverages()
     getShotTypesData()
     setInterval(() => handleResize(), 100)
   }, [])
@@ -331,7 +359,7 @@ const App = () => {
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item">
           <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
-            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} />
+            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
         </div>
         <div className="basegrid-grid-item"  >
           <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={isCurrentViewSimple} isLoading={isLoading} />
@@ -344,7 +372,7 @@ const App = () => {
           </div>
           <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
             <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
-              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} />
+              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
           </div>
           <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">
             <ShotPercentageView style={{ marginLeft: "0px", marginRight: "0px" }} advancedShotData={shotPercentageData} isCurrentViewSimple={false} isLoading={isLoading} />

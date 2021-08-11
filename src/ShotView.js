@@ -8,12 +8,11 @@ import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
     console.log("RERENDER ShotView")
-    console.log(props.isLoading)
     const [combinedState, setCombinedState] = useState({
         allHexTiles: [],
         allHeatTiles: [],
-        hexAverages: [],
-        zoneAverages: [],
+        hexAverages: props.hexAverages,
+        zoneAverages: props.zoneAverages,
         whatToDisplay: [],
         allShots: [],
         localViewType: { type: "Classic", isOriginal: false },
@@ -39,35 +38,6 @@ const ShotView = (props) => {
     const localViewTypeRef = useRef({})
     localViewTypeRef.current = combinedStateRef.current.localViewType
 
-    async function getHexAverages() {
-        console.log("getHexAverages()")
-        return await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
-            .then(res => {
-                let averageJson = {}
-                res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                return averageJson
-            })
-    }
-
-    async function getZoneAverages() {
-        console.log("getZoneAverages()")
-        return await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
-            .then(res => {
-                let averageJson = {}
-                res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
-                return averageJson
-            })
-    }
-
-    async function getSearchData(url) {
-        console.log(`getSearchData(${url})`)
-        return await fetch(url, {
-            method: 'GET'
-        }).then(res => res.json())
-            .then(data => {
-                return data
-            }).catch(error => console.log('error', error))
-    }
 
     function hideElement(elementId) {
         if (document.getElementById(elementId).classList.contains('show')) {
@@ -1142,16 +1112,16 @@ const ShotView = (props) => {
     }, [combinedState.allHeatTiles])
 
     useEffect(() => {
-        let func = async () => {
-            let hexAvg
-            await getHexAverages().then(res => hexAvg = res)
-            let zoneAvg
-            await getZoneAverages().then(res => zoneAvg = res)
-            setCombinedState({ ...combinedStateRef.current, hexAverages: hexAvg, zoneAverages: zoneAvg })
-        }
-        func()
         chooseCourt(combinedStateRef.current.localViewType.type)
     }, [])
+
+    useEffect(() => {
+        setCombinedState({ ...combinedStateRef.current, hexAverages: props.hexAverages })
+    }, [props.hexAverages])
+
+    useEffect(() => {
+        setCombinedState({ ...combinedStateRef.current, zoneAverages: props.zoneAverages })
+    }, [props.zoneAverages])
 
     useEffect(() => {
         console.log(combinedState)
