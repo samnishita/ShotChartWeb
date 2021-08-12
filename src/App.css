@@ -33,6 +33,7 @@
   grid-template-columns: 30% 45% 20%;
   height: fit-content;
   min-height: 100%;
+  max-width: 2000px;
 }
 
 .basegrid-grid-item {

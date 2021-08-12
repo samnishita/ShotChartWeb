@@ -13,7 +13,7 @@
 
 .AdvancedSearchBox .search-box-inner-body {
     align-items: center;
-    width: 100%;
+    width: 80%;
     height: 100%;
     margin: auto;
 }
@@ -75,32 +75,35 @@
     max-width: 70%;
     min-width: 70%;
     text-align: center;
+    padding-bottom: 5px;
 }
 
-.AdvancedSearchBox .dropdown-button-display{
+.AdvancedSearchBox  p.dropdown-button-display{
     font-size: 14px;
-    max-width: 85%;
-    min-width: 85%;
     text-align: center;
     background-color: transparent;
     font-family: 'MonserratLight';
     border: none;
     text-align: left;
+    margin-bottom: 10px;
 }
 .AdvancedSearchBox .search-box-body .range-button.dropdown-button {
-    max-width: 30%;
-    min-width: 30%;
-    width: 30%;
+    max-width: 45%;
+    min-width: 45%;
+    padding-left:5px;
+    padding-right:5px;
 }
+
 .AdvancedSearchBox .search-box-body .dropdown-button{
     position: relative;
-    max-width: 60%;
-    min-width: 60%;
+    max-width: 100%;
+    min-width: 100%;
     margin-bottom: 0px;
+    padding:0px;
 }
 
 .AdvancedSearchBox .search-box-body .dropdown-button:hover{
-    background-color: rgba(230, 230, 230,0.3);
+    background-color: rgb(68, 68, 68);
     cursor: pointer;
 }
 
@@ -123,20 +126,37 @@
 
 #run-advanced-search-button{
     font-size: 20px;
-    width: auto;
+    font-family: "MontserratSemiBold";
+    min-width: 20%;
     padding:10px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    border:none;
+    background-color:     rgb(187, 104, 231) ;
+    color: rgb(15, 15, 15);
+    border-radius: 30px;
     cursor: pointer;
+}
+
+#run-advanced-search-button:hover{
+    background-color:     rgb(201, 112, 248) ;
+}
+
+#run-advanced-search-button:active{
+    background-color:     rgb(156, 88, 192) ;
 }
 
 #view-selection-adv-button{
     max-width: 200px;
     min-width: 200px;
     text-align: center;
+    margin-bottom: 10px;
 }
 
-.AdvancedSearchBox .view-selection-adv-dd{
+.AdvancedSearchBox p.view-selection-adv-dd{
     text-align: center;
+    width: auto;
+    margin:10px;
+    font-size: 18px;
 }
 
 .choose-parameters-label{
@@ -166,9 +186,18 @@
 .text-area{
     min-width: 70%;
     max-width: 70%;
+    width:70%;
+    overflow:hidden;
 }
 
 .text-area-2{
     min-width: 70%;
     max-width: 70%;
+    width:70%;
+    overflow:hidden;
+}
+
+.advanced-grid-item{
+    width: 75%;
+    margin:auto;
 }

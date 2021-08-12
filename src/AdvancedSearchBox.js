@@ -6,6 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 import TextareaAutosize from 'react-textarea-autosize';
 import 'antd/dist/antd.css';
 import { Switch } from 'antd';
+import { isMobile } from 'react-device-detect';
 
 const AdvancedSearchBox = (props) => {
     console.log("RERENDER AdvancedSearchBox")
@@ -175,21 +176,26 @@ const AdvancedSearchBox = (props) => {
     }
 
     function handleKeyPress(event, id) {
+        console.log(event.target)
         let newString = event.target.value
-        //builds string
+        let max = id.includes("year") || id.includes("distance") ? 7 : 35
         if (event.keyCode === 8) {
             newString = newString.substring(0, newString.length - 1)
-        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32 || event.keyCode === 222 || event.keyCode === 189) {
-            newString += event.key
-        } else if (event.key === 'Enter') {
-            event.preventDefault()
-            props.handleDDButtonClick(event, `${id}`)
+            props.setTextAreaText({ id: id, text: newString })
+        }
+        else if (newString.length < max) {
+            //builds string
+            if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32 || event.keyCode === 222 || event.keyCode === 189) {
+                newString += event.key
+            }
+            props.setTextAreaText({ id: id, text: newString })
         }
         //Close drowdown and set search parameter
         if (event.key === 'Enter') {
+            event.preventDefault()
+            props.handleDDButtonClick(event, `${id}`)
             handleTextInput(id, newString, event.key === 'Enter')
         }
-        props.setTextAreaText({ id: id, text: newString })
     }
 
     function handleTextInput(id, builtString, isKeyEnter) {
@@ -307,18 +313,18 @@ const AdvancedSearchBox = (props) => {
         }*/
         let rangeButtonClass = suffix !== "" ? "range-button" : ""
         let minRows = 1
-        if (document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
+        if (id !== "year-advanced" && document.getElementById(fullId) && document.getElementById(fullId).classList.contains("show")) {
             minRows = invisibleRows
         }
         let willShowTextArea = scrollable && !id.includes("court")
-        let arrowOffset = willShowTextArea ? 0 : 10
+        let arrowOffset = willShowTextArea ? 0 : 12
         let buttonFace2 = willShowTextArea ? <TextareaAutosize spellcheck="false" minRows={minRows}
             className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
-            value={value} style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
+            value={value} style={{ resize: "none", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
             : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{value}</p>
         let buttonFace = willShowTextArea ? < TextareaAutosize spellcheck="false" minRows={minRows}
             className={`dropdown-button-display ${fullId} text-area `} id={`${id}-button-display`} maxRows="3"
-            value={whatToShow} style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
+            value={whatToShow} style={{ resize: "none", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
             onKeyDown={e => { handleKeyPress(e, fullId) }} placeholder={placeholder} />
             : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)" }}>{whatToShow}</p>
 
@@ -326,7 +332,7 @@ const AdvancedSearchBox = (props) => {
             {buttonFace2}{buttonFace}
             <p className={`arrow ${fullId}`}>
                 <Svg className={`arrow-svg ${fullId}`} height="20" width="20">
-                    <Path className={`arrow-path ${fullId}`} d={`m0,${arrowOffset} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
+                    <Path className={`arrow-path ${fullId}`} d={`m5,${arrowOffset} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
                     </Path>
                 </Svg>
             </p>
@@ -484,16 +490,16 @@ const AdvancedSearchBox = (props) => {
         <div className="AdvancedSearchBox" id="advanced-search-box">
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
-                    <h6 className="choose-parameters-label">Search Parameters
-                        <Switch id="show-advanced-parameters" checkedChildren={checked} unCheckedChildren={unchecked} defaultChecked onChange={(checked => setDisplayAdvancedSearchSelections(checked))} />
+                    <h6 className="choose-parameters-label">Parameters
+                        <Switch id="show-advanced-parameters" checkedChildren={checked} unCheckedChildren={unchecked} size={isMobile ? "small" : "default"} defaultChecked onChange={(checked => setDisplayAdvancedSearchSelections(checked))} />
                     </h6>
                     {selectionViewerRef.current}
                     <div id="hide-advanced-div" style={displayAdvancedSearchSelections ? {} : { display: "none" }}>
                         {willDisplayInGrid}
                         <button className="dropdown-button static-button view-selection-adv-dd" id="view-selection-adv-button" onClick={e => props.handleDDButtonClick(e, "view-selection-adv-dd")}>
                             <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
-                            <p className="arrow view-selection-adv-dd" >
-                                <Svg className="arrow-svg view-selection-adv-dd" height="20" width="20">
+                            <p className="arrow view-selection-adv-dd" style={{ position: "absolute" }}>
+                                <Svg className="arrow-svg view-selection-adv-dd" height="30" width="30" >
                                     <Path className="arrow-path view-selection-adv-dd" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
                                     </Path>
                                 </Svg>
