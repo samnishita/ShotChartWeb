@@ -13,7 +13,7 @@
 }
 
 #shotview-wrapper{
-    background-color: #0e0c0c;
+    background-image: linear-gradient(to bottom,#160d1a  10% ,#000000 90%);
     width: 90%;
     border-radius: 15px;
     align-items: center;

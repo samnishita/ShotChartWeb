@@ -1011,15 +1011,17 @@ const ShotView = (props) => {
 
     useEffect(() => {
         console.log(props.isCurrentViewSimple)
-        if (props.isCurrentViewSimple) {
-            setCombinedState({
-                ...combinedStateRef.current, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestSimpleViewType, isOriginal: "false" }
-            })
-        } else {
-            setCombinedState({
-                ...combinedStateRef.current, whatToDisplay: [], legend: [], allShots: [], localViewType: { type: props.latestAdvancedViewType, isOriginal: "false" }
-            })
-        }
+        setCombinedState({
+            allHexTiles: [],
+            allHeatTiles: [],
+            hexAverages: props.hexAverages,
+            zoneAverages: props.zoneAverages,
+            whatToDisplay: [],
+            allShots: [],
+            localViewType: { type: "Classic", isOriginal: false },
+            loadingAnimation: "",
+            legend: [],
+        })
     }, [props.isCurrentViewSimple])
 
     useEffect(() => {

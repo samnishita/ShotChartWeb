@@ -153,12 +153,12 @@ const ShootingBezier = (props) => {
     function createLabels() {
         let shotKindMap = ["Jump Shot", "Dunk", "Layup", "Floater", "Hook", "Fade", "Pull-Up", "Turn-Around", "Step-Back"]
         let labels = []
-        for (let index = 0; index < shotKindMap.length; index++) {
-            let style = { position: "absolute", minWidth: "60px", maxWidth: "60px", textAlign: "bottom", margin: "0px" }
-            let pWidth = 60
-            let pHeight = shotKindMap[index].length < 8 ? 44 : 44
-            let x, y
-            if (document.getElementById("dist-outer-circle")) {
+        if (document.getElementById("dist-outer-circle")) {
+            for (let index = 0; index < shotKindMap.length; index++) {
+                let style = { position: "absolute", minWidth: "60px", maxWidth: "60px", textAlign: "bottom", margin: "0px" }
+                let pWidth = 60
+                let pHeight = 44
+                let x, y
                 let rad = document.getElementById("dist-outer-circle").r.animVal.value
                 let height = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientHeight : 500
                 let width = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientWidth : 500
