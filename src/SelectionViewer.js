@@ -42,14 +42,14 @@ function SelectionViewer(props) {
                 }
             })
         }
-        return displayParams.length === 0 ? <p className="selection-placeholder">No Filters Selected</p> : displayParams
+        return displayParams.length === 0 ? <p className="selection-placeholder">No Parameters Selected</p> : displayParams
     }
 
     function makeDeleteButton(param, value) {
-        let height = document.getElementById("current-selections") ? document.getElementById("current-selections").clientHeight : 25
+        let height = 25
         let center = height * 0.9 / 2, lineLength = height / 5
         return (
-            <Svg className="delete-button" height={height * 0.9} width={height * 0.9} onClick={(event => handleDeleteButtonClick(param, value))}        >
+            <Svg className="delete-button" style={{ height: height * 0.9, minWidth: height * 0.9, width: height * 0.9 }} onClick={(event => handleDeleteButtonClick(param, value))}        >
                 <Line style={{
                     display: 'inline-flex',
                     alignItems: 'center',

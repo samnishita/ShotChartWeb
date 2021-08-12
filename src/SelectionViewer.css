@@ -21,29 +21,42 @@
 .selection-div{
     height: auto;
     text-align: left;
-    padding: 10px;
-    width: fit-content;
+    width: auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin: 10px;
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 10px;
-    background-color: rgba(184, 182, 186, 0.3    );
+    border-radius: 30px;
+    background-color: rgb(29, 162, 196);
 }
 
 .selection-span{
+    width: auto;
     font-size: 15px;
     padding-left: 10px;
     margin: 0px;
+    overflow-wrap: break-word;
+    height: 100%;
+    padding: 10px;
+    padding-right: 15px;
 }
 
 .delete-button{
-    background-color: rgb(98, 98, 98);
+    background-color: rgb(9, 135, 167);
     border-radius: 5px;
+    margin-left: 15px;
 }
 
 .delete-button:hover{
-    background-color: red;
+    background-color: rgb(90, 90, 90);
     cursor:pointer;
+}
+
+.delete-button:active{
+    background-color: rgb(61, 61, 61);
+    cursor:pointer;
+}
+
+.selection-placeholder{
+    color: rgba(255,255,255,0.8);
 }
