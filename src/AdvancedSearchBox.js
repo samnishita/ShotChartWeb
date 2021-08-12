@@ -332,7 +332,7 @@ const AdvancedSearchBox = (props) => {
             {buttonFace2}{buttonFace}
             <p className={`arrow ${fullId}`}>
                 <Svg className={`arrow-svg ${fullId}`} height="20" width="20">
-                    <Path className={`arrow-path ${fullId}`} d={`m5,${arrowOffset} l16 0 l-8 8 l-8 -8`} fill="gray" strokeWidth="2"  >
+                    <Path className={`arrow-path ${fullId}`} d={`m5,${arrowOffset} l7 7 l7 -7`} strokeWidth="1" fill="transparent" stroke="white"  >
                     </Path>
                 </Svg>
             </p>

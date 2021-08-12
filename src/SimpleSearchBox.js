@@ -335,7 +335,7 @@ const SimpleSearchBox = (props) => {
         return (<button className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }} style={{}}>
             {buttonFace2}{buttonFace}
             <Svg className={`arrow-svg ${fullId}`} height={height} width={height} style={{ paddingTop: `${(id === "year" || id === "player") ? 0 : 12}px` }}>
-                <Path className={`arrow-path ${fullId}`} d={`m4,${(id === "year" || id === "player") ? 0 : 0} l16 0 l-8 8 l-8 -8`} fill="white" strokeWidth="2"  >
+                <Path className={`arrow-path ${fullId}`} d={`m4,0 l7 7 l7 -7`} strokeWidth="1" fill="transparent" stroke="white"  >
                 </Path>
             </Svg>
             <div className={`dropdown-content ${scrollable}`} id={`${fullId}`}>
