@@ -261,16 +261,19 @@ const SimpleSearchBox = (props) => {
         let newString = event.target.value
         if (event.keyCode === 8) {
             newString = newString.substring(0, newString.length - 1)
-        } else if (event.keyCode === 222) {
-            newString += "'"
-        } else if (event.keyCode === 189) {
-            newString += "-"
-        } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
-            newString += event.key
-        } else if (event.key === 'Enter') {
-            event.preventDefault()
-            props.handleDDButtonClick(event, id)
+        } else if (newString.length < 25) {
+            if (event.keyCode === 222) {
+                newString += "'"
+            } else if (event.keyCode === 189) {
+                newString += "-"
+            } else if ((event.keyCode >= 48 && event.keyCode <= 90) || event.keyCode === 32) {
+                newString += event.key
+            } else if (event.key === 'Enter') {
+                event.preventDefault()
+                props.handleDDButtonClick(event, id)
+            }
         }
+
         if (id === "year-dd") {
             event.key === 'Enter' ? searchYear(newString, true) : searchYear(newString, false)
         } else if (id === "player-dd") {
