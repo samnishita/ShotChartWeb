@@ -742,7 +742,7 @@ const ShotView = (props) => {
                 let circle = <Circle cx={cx} cy={cy} r={radius} fill={`url(#grad_${eachHeatTile.x}_${eachHeatTile.y})`} stroke="none" strokeWidth="3" />
                 circlesArray[eachHeatTile.circleArray - 1].push(circle)
                 let eachGradient = <RadialGradient id={`grad_${eachHeatTile.x}_${eachHeatTile.y}`} cx={cx} cy={cy} r={radius} fx={cx} fy={cy} gradientUnits="userSpaceOnUse">
-                    <Stop offset="0" stopColor={eachHeatTile.color} stopOpacity="0.4" />
+                    <Stop offset="0" stopColor={eachHeatTile.color} stopOpacity="0.3" />
                     <Stop offset="1" stopColor={eachHeatTile.color} stopOpacity="0" />
                 </RadialGradient>
                 gradients.push(eachGradient)
