@@ -13,7 +13,7 @@
 
 .AdvancedSearchBox .search-box-inner-body {
     align-items: center;
-    width: 80%;
+    width: 90%;
     height: 100%;
     margin: auto;
 }
@@ -90,8 +90,6 @@
 .AdvancedSearchBox .search-box-body .range-button.dropdown-button {
     max-width: 45%;
     min-width: 45%;
-    padding-left:5px;
-    padding-right:5px;
 }
 
 .AdvancedSearchBox .search-box-body .dropdown-button{

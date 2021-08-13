@@ -1015,10 +1015,10 @@ const ShotView = (props) => {
 
     function makeHexagon() {
         let fill = combinedStateRef.current.localViewType.type === "Hex" ? "rgb(187, 104, 231)" : "white"
-        let s = 8
+        let s = 9
         let h = s / Math.cos(30 * Math.PI / 180)
         let tan = Math.tan(30 * Math.PI / 180)
-        return <Path d={`m20 5
+        return <Path d={`m17 5
                         l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
                         l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
             fill={fill} />
