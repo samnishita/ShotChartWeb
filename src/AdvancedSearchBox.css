@@ -126,7 +126,7 @@
 #run-advanced-search-button{
     font-size: 20px;
     font-family: "MontserratSemiBold";
-    width:20%;
+    min-width:20%;
     max-width: 200px;
     padding:10px;
     margin-top: 10px;
