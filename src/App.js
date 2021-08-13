@@ -358,7 +358,7 @@ const App = () => {
             allSearchData={allSearchData} isCurrentViewSimple={true} />
         </div>
         <div className="basegrid-grid-item" id="shotview-grid-item">
-          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
+          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
             allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
         </div>
         <div className="basegrid-grid-item"  >
@@ -371,7 +371,7 @@ const App = () => {
             {advancedSearchBoxRef.current}
           </div>
           <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
-            <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
+            <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
               allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
           </div>
           <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">

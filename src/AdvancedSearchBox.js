@@ -500,7 +500,7 @@ const AdvancedSearchBox = (props) => {
                             <p className="dropdown-button-display view-selection-adv-dd">{latestAdvancedViewType}</p>
                             <p className="arrow view-selection-adv-dd" style={{ position: "absolute" }}>
                                 <Svg className="arrow-svg view-selection-adv-dd" height="30" width="30" >
-                                    <Path className="arrow-path view-selection-adv-dd" d='m0,10 l16 0 l-8 8 l-8 -8' fill="gray" strokeWidth="2"  >
+                                    <Path className="arrow-path view-selection-adv-dd" d='m0,10 l7 7 l7 -7' strokeWidth="1" fill="transparent" stroke="white" >
                                     </Path>
                                 </Svg>
                             </p>
