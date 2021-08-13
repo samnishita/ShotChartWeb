@@ -20,6 +20,7 @@
     align-content: center;
     margin: auto;
     margin-top: 10px;
+    padding-bottom: 1px;
 }
 
 .court-image{
@@ -213,24 +214,56 @@
 }
 
 .ShotView .view-switch-button.ant-btn {
-    margin-left: 5px;
-    margin-right: 5px;
-    width:100px;
-    margin-bottom: 5%;
-    background-color: rgba(219, 219, 219,0.2);
+    width:25%;
+    min-height: 100%;
+    height: 100%;
+    background-color: rgb(22,22,22);
+    border-radius: 0px;
     border:0px;
-    border-bottom:2px solid rgba(165, 80, 212, 1);
-    border-radius: 10px;
-    color: white;
+    /*border-bottom:2px solid rgba(165, 80, 212, 1);*/
+    color: rgb(204, 204, 204);
     font-size: 20px;
     line-height: 1;
+    transition: none;
+    padding-bottom: 10px;
+    --antd-wave-shadow-color:rgba(255, 255, 255,0) !important;
+
 }
 
 .ShotView .view-switch-button.ant-btn:hover{
-    background-color: rgba(230, 230, 230,0.3);
+    background-color: rgb(41, 28, 46);
     cursor: pointer;
 }
 
 html {
     --antd-wave-shadow-color:rgb(255, 255, 255) !important;
+}
+
+#view-switch-buttons-wrapper{
+    border:  2px solid rgb(41, 41, 41);
+    display: inline-block;
+    margin:auto;
+    margin-bottom: 5%;
+    border-radius:6px;
+    width: 90%;
+    height:100%;
+}
+
+#classic-view-switch-button{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#hex-view-switch-button{
+    border-left:  2px solid rgb(41, 41, 41);
+    border-right: 2px solid rgb(41, 41, 41);
+}
+
+#zone-view-switch-button{
+    border-right: 2px solid rgb(41, 41, 41);
+}
+
+#heat-view-switch-button{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }

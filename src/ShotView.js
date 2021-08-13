@@ -1005,6 +1005,50 @@ const ShotView = (props) => {
         return Math.sqrt(Math.pow(tile1.x - tile2.x, 2) + Math.pow(tile1.y - tile2.y, 2));
     }
 
+    function makeClassicIcon() {
+        let fill = combinedStateRef.current.localViewType.type === "Classic" ? "rgb(187, 104, 231)" : "white"
+        return [<Path d={`m5,17 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
+        <Path d={`m7,22 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
+        <Circle cx="28" cy="12" r="6" fill={fill} strokeWidth="2" />
+        ]
+    }
+
+    function makeHexagon() {
+        let fill = combinedStateRef.current.localViewType.type === "Hex" ? "rgb(187, 104, 231)" : "white"
+        let s = 8
+        let h = s / Math.cos(30 * Math.PI / 180)
+        let tan = Math.tan(30 * Math.PI / 180)
+        return <Path d={`m20 5
+                        l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
+                        l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
+            fill={fill} />
+    }
+
+    function makeZoneIcon() {
+        let fill = combinedStateRef.current.localViewType.type === "Zone" ? "rgb(187, 104, 231)" : "white"
+        let height = 9, xStart = 8, yStart = 5, margin = 2
+        return [
+            <Rect x={xStart} y={yStart} height={height} width={height} fill={fill}></Rect>,
+            <Rect x={xStart + height + margin} y={yStart} height={height} width={height} fill={fill}></Rect>,
+            <Rect x={xStart} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
+            <Rect x={xStart + height + margin} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
+            <Circle cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="6" fill="rgb(39, 39, 39)"></Circle>,
+            <Circle cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="4" fill={fill}></Circle>
+        ]
+    }
+
+    function makeHeatIcon() {
+        let fill = combinedStateRef.current.localViewType.type === "Heat" ? "rgb(187, 104, 231)" : "white"
+        let fullHeight = 20, halfHeight = fullHeight / 2, almostHeight = fullHeight * 0.75
+        return [
+            //<Path d={`m15,25 c-${halfHeight / 4},-${halfHeight / 4} ${halfHeight / 4},-${3 * halfHeight / 4} 0,-${halfHeight}`} strokeWidth="1" stroke="white" fill="transparent"></Path>,
+            <Path d={`m10,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
+            <Path d={`m20,25 c-${fullHeight / 3},-${fullHeight / 3} ${fullHeight / 3},-${3 * fullHeight / 4} 0,-${fullHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
+            <Path d={`m30,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
+            // <Path d={`m35,25 c-${halfHeight / 4},-${halfHeight / 4} ${halfHeight / 4},-${3 * halfHeight / 4} 0,-${halfHeight}`} strokeWidth="1" stroke="white" fill="transparent"></Path>,
+        ]
+    }
+
     useEffect(() => {
         setCombinedState({ ...combinedStateRef.current, whatToDisplay: generateWhatToDisplay(localViewTypeRef.current.type, allShotsRef.current.shots), legend: generateLegend(combinedStateRef.current.localViewType.type) })
     }, [props.size])
@@ -1152,22 +1196,36 @@ const ShotView = (props) => {
                         {combinedStateRef.current.loadingAnimation}
                     </div>
                     <br></br>
-                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</Button>
-                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</Button>
-                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</Button>
-                    <Button className="view-switch-button" style={combinedStateRef.current.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</Button>
+                    <div id="view-switch-buttons-wrapper">
+                        <Button className="view-switch-button" id="classic-view-switch-button" style={{ fontSize: props.isMobile ? "14px" : "20px", color: combinedStateRef.current.localViewType.type === "Classic" ? "rgb(187, 104, 231)" : "white" }}
+                            onClick={() => handleViewTypeButtonClick("Classic")} >
+                            <Svg height="30px" width="35px" >
+                                {makeClassicIcon()}
+                            </Svg>
+                            <br></br>Classic</Button>
+                        <Button className="view-switch-button" id="hex-view-switch-button" style={{ fontSize: props.isMobile ? "14px" : "20px", color: combinedStateRef.current.localViewType.type === "Hex" ? "rgb(187, 104, 231)" : "white" }}
+                            onClick={() => handleViewTypeButtonClick("Hex")} >
+                            <Svg height="30px" width="35px" >
+                                {makeHexagon()}
+                            </Svg>
+                            <br></br>Hex</Button>
+                        <Button className="view-switch-button" id="zone-view-switch-button" style={{ fontSize: props.isMobile ? "14px" : "20px", color: combinedStateRef.current.localViewType.type === "Zone" ? "rgb(187, 104, 231)" : "white" }}
+                            onClick={() => handleViewTypeButtonClick("Zone")} >
+                            <Svg height="30px" width="35px" >
+                                {makeZoneIcon()}
+                            </Svg>
+                            <br></br>Zone</Button>
+                        <Button className="view-switch-button" id="heat-view-switch-button" style={{ fontSize: props.isMobile ? "14px" : "20px", color: combinedStateRef.current.localViewType.type === "Heat" ? "rgb(187, 104, 231)" : "white" }}
+                            onClick={() => handleViewTypeButtonClick("Heat")} >
+                            <Svg height="30px" width="35px" >
+                                {makeHeatIcon()}
+                            </Svg>
+                            <br></br>Heat</Button>
+                    </div>
                 </div>
             </div>
         </div>
     )
 }
-/*
-<button className="view-switch-button" style={combinedState.localViewType.type === "Classic" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Classic")} >Classic</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Hex" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Hex")} >Hex</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Zone" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Zone")} >Zone</button>
-            <button className="view-switch-button" style={combinedState.localViewType.type === "Heat" ? { borderBottom: "2px solid rgba(107, 208, 248, 1)" } : {}} onClick={() => handleViewTypeButtonClick("Heat")} >Heat</button>
-        
-*/
-
 
 export default ShotView
