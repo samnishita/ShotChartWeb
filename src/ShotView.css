@@ -95,7 +95,7 @@
     font-size: 20px;
     text-align: center;
     height: fit-content ;
-    min-height: 45px;
+    min-height: 50px;
 }
 
 
@@ -266,4 +266,17 @@ html {
 #heat-view-switch-button{
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+}
+
+#shotview-warning{
+    min-height: 35px;
+    margin: auto;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+#exclam{
+    width:25px;
+    height: auto;
+    margin-right: 5px;
 }

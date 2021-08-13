@@ -1,5 +1,5 @@
 import './ShotView.css'
-import tradCourt from './images/newbackcourt.png'
+import exclam from './images/exclamation.png'
 import transparentCourt from './images/transparent.png'
 import Svg, { Circle, Path, Line, Rect, Defs, LinearGradient, RadialGradient, Stop } from 'react-native-svg';
 import { Popover, Button } from 'antd';
@@ -38,6 +38,7 @@ const ShotView = (props) => {
     const localViewTypeRef = useRef({})
     localViewTypeRef.current = combinedStateRef.current.localViewType
 
+    const maxClassicShots = 2000
 
     function hideElement(elementId) {
         if (document.getElementById(elementId).classList.contains('show')) {
@@ -118,7 +119,7 @@ const ShotView = (props) => {
             const strokeWidth = 2 * height / 470
             let counter = 0;
             allShotsTemp.forEach(each => {
-                if (each.y <= 410 && counter < 2000) {
+                if (each.y <= 410 && counter < maxClassicShots) {
                     let content = `${each.make === 1 ? "Made" : "Missed"} ${each.distance}' ${each.playtype.replace("shot", "Shot")}`
                     if (each.make === 1) {
                         tradArray.push(
@@ -1049,6 +1050,18 @@ const ShotView = (props) => {
         ]
     }
 
+    function checkForTooManyShots() {
+        if (combinedStateRef.current.localViewType.type === "Classic") {
+            if (props.isCurrentViewSimple && combinedStateRef.current.allShots.shots && combinedStateRef.current.allShots.shots.simplesearch && combinedStateRef.current.allShots.shots.simplesearch.length > maxClassicShots) {
+                return <p><img src={exclam} id="exclam"></img>{`Shot limit reached, displaying first ${maxClassicShots} shots`}</p>
+            } else if (!props.isCurrentViewSimple && combinedStateRef.current.allShots.shots && combinedStateRef.current.allShots.shots.advancedsearch && combinedStateRef.current.allShots.shots.advancedsearch.length > maxClassicShots) {
+                return <p><img src={exclam} id="exclam"></img>{`Shot limit reached, displaying first ${maxClassicShots} shots`}</p>
+            }
+        }
+        return ""
+        //&& combinedStateRef.current.allShots.length > maxClassicShots ?  : ""
+    }
+
     useEffect(() => {
         setCombinedState({ ...combinedStateRef.current, whatToDisplay: generateWhatToDisplay(localViewTypeRef.current.type, allShotsRef.current.shots), legend: generateLegend(combinedStateRef.current.localViewType.type) })
     }, [props.size])
@@ -1196,6 +1209,7 @@ const ShotView = (props) => {
                         {combinedStateRef.current.loadingAnimation}
                     </div>
                     <br></br>
+                    <p id="shotview-warning">{checkForTooManyShots()}</p>
                     <div id="view-switch-buttons-wrapper">
                         <Button className="view-switch-button" id="classic-view-switch-button" style={{ fontSize: props.isMobile ? "14px" : "20px", color: combinedStateRef.current.localViewType.type === "Classic" ? "rgb(187, 104, 231)" : "white" }}
                             onClick={() => handleViewTypeButtonClick("Classic")} >
