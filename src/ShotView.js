@@ -268,7 +268,7 @@ const ShotView = (props) => {
                     allNewTiles.push(<Path d={`m${moveX} ${moveY} 
                         l${s} ${s * tan} l0 ${h} l${-s} ${s * tan} 
                         l${-s} ${-s * tan} l0 ${-h} l${s} ${-s * tan} l${s} ${s * tan}`}
-                        fill={eachTile.tileFill} opacity="0.7" />)
+                        fill={eachTile.tileFill} opacity="0.6" />)
                 }
             })
             return (<Svg className="imageview-child Hex-tile" height={height} width={width}>

@@ -13,6 +13,26 @@ function Header(props) {
             }).catch(error => console.log('error', error))
     }
     useEffect(() => { getInitData() }, [])
+
+    if (props.isMobile) {
+        return <header className='Header' style={{ gridTemplateRows: "70% 30%" }}>
+            <div class="header-grid-item" id="title" style={{ fontSize: "30px" }}>Custom NBA Shot Charts
+                <br style={{ fontFamily: "MontserratSemiBold" }}></br>
+            </div>
+            <div class="header-grid-item" id="date-accuracy" style={{ paddingTop: "10px" }}>
+                <div id='accuracy-title' style={{ fontSize: "15px" }}>Accurate Through</div>
+                <div id='accuracy-date' style={{ fontSize: "12px" }}>{initState.length !== 0 ? initState[2].value : ""}</div>
+            </div>
+            <div class="header-grid-item" style={{ gridColumn: " 1/ span 2", paddingTop: "5px" }}  >
+                <SearchTypeButtons isMobile={props.isMobile} setTitle={props.setTitle} whichSearchBox={props.whichSearchBox} title={props.title} isLoading={props.isLoading} setIsLoading={props.setIsLoading}
+                    allSearchData={props.allSearchData} allAdvancedSearchData={props.allAdvancedSearchData} isCurrentViewSimple={props.isCurrentViewSimple}
+                    latestAdvancedViewType={props.latestAdvancedViewType} simpleClickHandler={props.handleSimpleClick} advancedClickHandler={props.handleAdvancedClick}
+                    setAllSearchData={props.setAllSearchData} setAllAdvancedSearchData={props.setAllAdvancedSearchData} setIsCurrentViewSimple={props.setIsCurrentViewSimple}
+                    latestSimpleViewType={props.latestSimpleViewType} setShotPercentageData={props.setShotPercentageData} />
+            </div>
+        </header>
+    }
+
     return (
         <header className='Header'>
             <div class="header-grid-item" id="title">Custom NBA Shot Charts

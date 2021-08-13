@@ -38,8 +38,10 @@ function SearchTypeButtons(props) {
     if (props.isMobile) {
         activeStyle.fontSize = "16px"
         inActiveStyle.fontSize = "16px"
-        activeStyle.marginLeft = "10px"
-        inActiveStyle.marginLeft = "10px"
+        activeStyle.marginLeft = "15px"
+        activeStyle.marginRight = "15px"
+        inActiveStyle.marginLeft = "15px"
+        inActiveStyle.marginRight = "15px"
     }
 
     function handleMouseHover(event) {
