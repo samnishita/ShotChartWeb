@@ -5,7 +5,7 @@ import SearchTypeButtons from './SearchTypeButtons';
 function Header(props) {
     const [initState, setInitState] = useState([])
     async function getInitData() {
-        await fetch("https://customnbashotcharts.com:8443/shots_request?init=true", {
+        await fetch("https://customnbashotcharts.com/shots_request?init=true", {
             method: 'GET'
         }).then(res => res.json())
             .then(data => {

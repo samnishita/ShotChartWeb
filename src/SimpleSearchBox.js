@@ -31,7 +31,7 @@ const SimpleSearchBox = (props) => {
 
     function getActivePlayersData(year) {
         console.log(`getActivePlayersData(${year})`)
-        let response = props.getSearchData(`https://customnbashotcharts.com:8443/shots_request?activeplayers=${year}`)
+        let response = props.getSearchData(`https://customnbashotcharts.com/shots_request?activeplayers=${year}`)
             .then(res => {
                 let activePlayersArray = res.activeplayers.map(eachPlayer => {
                     return {
@@ -56,7 +56,7 @@ const SimpleSearchBox = (props) => {
 
     async function getSeasonsData(year, playerId, playerFirstName, playerLastName) {
         console.log(`getSeasonsData(${year}, ${playerId}, ${playerFirstName}, ${playerLastName})`)
-        let response = await props.getSearchData(`https://customnbashotcharts.com:8443/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
+        let response = await props.getSearchData(`https://customnbashotcharts.com/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
                 let activeSeasonsRes = []
                 if (res.singleseason[0].preseason === 1) {
@@ -137,7 +137,7 @@ const SimpleSearchBox = (props) => {
         if (props.isMobile) {
             document.getElementById("shotview-grid-item").scrollIntoView({ behavior: "smooth" })
         }
-        let url = `https://customnbashotcharts.com:8443/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
+        let url = `https://customnbashotcharts.com/shots_request?year=${selectedYearRef.current}&seasontype=${selectedSeasonRef.current}&simplesearch=true&playerid=${selectedPlayerRef.current.id}&playerlastname=${selectedPlayerRef.current.playerlastname}&playerfirstname=${selectedPlayerRef.current.playerfirstname}`
         console.log(`runSimpleSearch(${url})`)
         const response = await fetch(url, {
             method: 'GET'

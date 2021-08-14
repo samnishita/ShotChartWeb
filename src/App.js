@@ -107,7 +107,7 @@ const App = () => {
   function getInitPlayersData() {
     console.log("getInitPlayersData()")
     let players = {}, playersReverse = {}
-    let response = getSearchData("https://customnbashotcharts.com:8443/shots_request?initallplayers=true")
+    let response = getSearchData("https://customnbashotcharts.com/shots_request?initallplayers=true")
       .then(res => {
         for (let i = 0; i < res.initallplayers.length; i++) {
           let nameArray = [res.initallplayers[i].id, res.initallplayers[i].firstname, res.initallplayers[i].lastname]
@@ -133,7 +133,7 @@ const App = () => {
 
   function getShotTypesData() {
     console.log("getShotTypesData()")
-    getSearchData("https://customnbashotcharts.com:8443/shots_request?shottypes=true")
+    getSearchData("https://customnbashotcharts.com/shots_request?shottypes=true")
       .then(res => {
         setShotTypes(res.shottypes.map(value => value.playtype))
       })
@@ -264,7 +264,7 @@ const App = () => {
 
   async function getHexAverages() {
     console.log("getHexAverages()")
-    return await getSearchData("https://customnbashotcharts.com:8443/shots_request?gridaverages=true")
+    return await getSearchData("https://customnbashotcharts.com/shots_request?gridaverages=true")
       .then(res => {
         let averageJson = {}
         res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
@@ -274,7 +274,7 @@ const App = () => {
 
   async function getZoneAverages() {
     console.log("getZoneAverages()")
-    return await getSearchData("https://customnbashotcharts.com:8443/shots_request?zoneaverages=true")
+    return await getSearchData("https://customnbashotcharts.com/shots_request?zoneaverages=true")
       .then(res => {
         let averageJson = {}
         res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)

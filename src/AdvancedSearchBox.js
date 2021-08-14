@@ -412,7 +412,7 @@ const AdvancedSearchBox = (props) => {
 
     async function runAdvancedSearch() {
         console.log("runAdvancedSearch()")
-        let url = `https://customnbashotcharts.com:8443/shots_request_advanced?`
+        let url = `https://customnbashotcharts.com/shots_request_advanced?`
         let urlBuilder = ""
         let isMoreThanOne = false
         Object.keys(allSearchParametersRef.current).forEach(eachKey => {
