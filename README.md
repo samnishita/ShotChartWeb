@@ -1,6 +1,6 @@
 # Custom NBA Shot Chart Generator (Web Version)
 
-## Go to the app -> <a href="https://samnishita.github.io/ShotChartWeb/">Custom NBA Shot Charts (Web Version)</a>
+## Go to the app -> <a href="https://customnbashotcharts.com/">Custom NBA Shot Charts (Web Version)</a>
 
 ### Shot Data is Up-To-Date Through the End of the 2020-21 Playoffs
 
