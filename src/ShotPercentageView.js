@@ -5,8 +5,8 @@ import { Progress } from 'antd';
 
 const ShotPercentageView = (props) => {
     console.log("RERENDER ShotPercentageView")
-    const [shotCalcs, setShotCalcs] = useState({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
-    const [prevShotCalcs, setPrevShotCalcs] = useState({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
+    const [shotCalcs, setShotCalcs] = useState({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
+    const [prevShotCalcs, setPrevShotCalcs] = useState({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
     const [isLoadDelay, setIsLoadDelay] = useState({ isDelayed: true, offset: 0.0 })
 
     const prevShotCalcsRef = useRef({})
@@ -19,8 +19,8 @@ const ShotPercentageView = (props) => {
     }, [props.simpleShotData, props.advancedShotData])
 
     useEffect(() => {
-        setShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
-        setPrevShotCalcs({ fgs: { frac: "--", perc: "--", efg: "--", pps: "--", }, twos: { frac: "--", perc: "--", efg: "--", pps: "--", }, threes: { frac: "--", perc: "--", efg: "--", pps: "--", } })
+        setShotCalcs({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
+        setPrevShotCalcs({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
     }, [props.isCurrentViewSimple])
 
     useEffect(() => {
@@ -35,9 +35,9 @@ const ShotPercentageView = (props) => {
 
     function processShotData(inputShotData) {
         let twoPMakes = 0, twoPTotal = 0, threePMakes = 0, threePTotal = 0;
-        let twos = { frac: "--", perc: "--", efg: "--", pps: "--", }
-        let threes = { frac: "--", perc: "--", efg: "--", pps: "--", }
-        let fgs = { frac: "--", perc: "--", efg: "--", pps: "--", }
+        let twos = { frac: "--", perc: "0", efg: "--", pps: "--", }
+        let threes = { frac: "--", perc: "0", efg: "--", pps: "--", }
+        let fgs = { frac: "--", perc: "0", efg: "--", pps: "--", }
         inputShotData.forEach(each => {
             if (each.shottype === "2PT Field Goal") {
                 twoPTotal++
@@ -81,7 +81,8 @@ const ShotPercentageView = (props) => {
         for (let i = 0; i < 3; i++) {
             let prev = prevShotCalcsRef.current[keys[i]].perc === "--" ? 0 : prevShotCalcsRef.current[keys[i]].perc
             let percentDisplay = prev
-            if (!isLoadDelay.isDelayed && shotCalcs[keys[i]].frac !== "--") {
+            // if (!isLoadDelay.isDelayed && shotCalcs[keys[i]].frac !== "--") {
+            if (!isLoadDelay.isDelayed) {
                 percentDisplay = Number(prev - (prev - shotCalcs[keys[i]].perc) * isLoadDelay.offset).toFixed(2)
             }
             elements.push(<div className="perc-div">
