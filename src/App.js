@@ -251,7 +251,7 @@ const App = () => {
         setZoneAverages(averageJson)
       }).catch(error => {
         if (tries < maxTries) {
-          getShotTypesData(tries + 1)
+          getZoneAverages(tries + 1)
         }
       })
   }
