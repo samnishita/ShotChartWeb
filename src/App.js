@@ -11,8 +11,6 @@ import ShootingBezier from './ShootingBezier';
 import githubLogo from './images/GitHub-Mark-Light-64px.png'
 
 const App = () => {
-  console.log("RERENDER APP")
-  console.log("isMobile: " + isMobile)
   const currentYear = '2020-21'
   const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Classic")
@@ -22,7 +20,6 @@ const App = () => {
   const [title, setTitle] = useState("")
   const [isLoading, setIsLoading] = useState({ state: false, newShots: true })
   const [isCurrentViewSimple, setIsCurrentViewSimple] = useState(!window.location.href.includes("Advanced"))
-  const [keyPressedBuilder, setKeyPressedBuilder] = useState({ id: null, builder: "" })
   const [textAreaText, setTextAreaText] = useState({ id: null, text: "" })
   const [simpleSelectedYear, setSimpleSelectedYear] = useState(currentYear);
   const [simpleSelectedPlayer, setSimpleSelectedPlayer] = useState({
@@ -38,7 +35,7 @@ const App = () => {
   const [initPlayersReverseMap, setInitPlayersReverseMap] = useState([])
   const simpleSearchBoxRef = useRef({})
   simpleSearchBoxRef.current =
-    <SimpleSearchBox
+    <SimpleSearchBox testid="SimpleSearchBox-test"
       updateLatestSimpleViewType={setLatestSimpleViewType}
       latestSimpleViewType={latestSimpleViewType}
       setTitle={setTitle} setIsLoading={setIsLoading}
@@ -81,7 +78,7 @@ const App = () => {
     "court-sides-dd": []
   })
   const advancedSearchBoxRef = useRef({})
-  advancedSearchBoxRef.current = <AdvancedSearchBox
+  advancedSearchBoxRef.current = <AdvancedSearchBox testid="AdvancedSearchBox-test"
     currentYear={currentYear}
     isCurrentViewSimple={isCurrentViewSimple}
     handleDDButtonClick={handleDDButtonClick}
@@ -101,11 +98,38 @@ const App = () => {
     isMobile={isMobile}
     setShotPercentageData={setShotPercentageData} />
 
+  const shootingBezierSimpleRef = useRef({})
+  shootingBezierSimpleRef.current = <ShootingBezier testid="ShootingBezier-simple-test" size={size} isLoading={isLoading}
+    allSearchData={allSearchData} isCurrentViewSimple={true} />
+  const shootingBezierAdvancedRef = useRef({})
+  shootingBezierAdvancedRef.current = <ShootingBezier testid="ShootingBezier-advanced-test" size={size} isLoading={isLoading}
+    allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
+
+  const shotViewSimpleRef = useRef({})
+  shotViewSimpleRef.current = <ShotView testid="ShotView-simple-test" size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
+    allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
+  const shotViewAdvancedRef = useRef({})
+  shotViewAdvancedRef.current = <ShotView testid="ShotView-advanced-test" size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
+    allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
+
+  const shotPercentageViewSimpleRef = useRef({})
+  shotPercentageViewSimpleRef.current = <ShotPercentageView testid="ShotPercentageView-simple-test" simpleShotData={shotPercentageData} isCurrentViewSimple={isCurrentViewSimple} isLoading={isLoading} />
+  const shotPercentageViewAdvancedRef = useRef({})
+  shotPercentageViewAdvancedRef.current = <ShotPercentageView testid="ShotPercentageView-advanced-test" style={{ marginLeft: "0px", marginRight: "0px" }} advancedShotData={shotPercentageData} isCurrentViewSimple={false} isLoading={isLoading} />
+
+  const headerRef = useRef({})
+  headerRef.current = <Header testid="Header-test" isMobile={isMobile} setTitle={setTitle} whichSearchBox={whichSearchBox} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
+    allSearchData={allSearchData} allAdvancedSearchData={allAdvancedSearchData} isCurrentViewSimple={isCurrentViewSimple}
+    latestAdvancedViewType={latestAdvancedViewType} simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick}
+    setAllSearchData={setAllSearchData} setAllAdvancedSearchData={setAllAdvancedSearchData} setIsCurrentViewSimple={setIsCurrentViewSimple}
+    latestSimpleViewType={latestSimpleViewType} setShotPercentageData={setShotPercentageData}
+  />
   const sizeRef = useRef({})
   sizeRef.current = size
 
-  function getInitPlayersData() {
-    console.log("getInitPlayersData()")
+  const maxTries = 3
+
+  function getInitPlayersData(tries) {
     let players = {}, playersReverse = {}
     let response = getSearchData("https://customnbashotcharts.com/shots_request?initallplayers=true")
       .then(res => {
@@ -117,35 +141,39 @@ const App = () => {
         setInitPlayers(players)
         setInitPlayersReverseMap(playersReverse)
         return res
+      }).catch(error => {
+        if (tries < maxTries) {
+          getInitPlayersData(tries + 1)
+        }
       })
     return response
   }
   async function getSearchData(url) {
-    console.log(`getSearchData(${url})`)
     const response = await fetch(url, {
       method: 'GET'
     }).then(res => res.json())
       .then(data => {
         return data
-      }).catch(error => console.log('error', error))
+      }).catch(error => "")
     return response
   }
 
-  function getShotTypesData() {
-    console.log("getShotTypesData()")
+  function getShotTypesData(tries) {
     getSearchData("https://customnbashotcharts.com/shots_request?shottypes=true")
       .then(res => {
         setShotTypes(res.shottypes.map(value => value.playtype))
+      }).catch(error => {
+        if (tries < maxTries) {
+          getShotTypesData(tries + 1)
+        }
       })
   }
 
   function handleSimpleClick() {
-    console.log("handleSimpleClick()")
     setIsCurrentViewSimple(true)
   }
 
   function handleAdvancedClick() {
-    console.log("handleAdvancedClick()")
     setIsCurrentViewSimple(false)
   }
 
@@ -155,42 +183,28 @@ const App = () => {
     "home-teams-dd", "away-teams-dd", "court-areas-dd", "court-sides-dd", "view-selection-adv-dd"]
 
   function hideDD(event) {
-    console.log(`hideDD(${event})`)
-    console.log(event.target.classList)
     let willPass = true
     acceptedTargets.forEach(eachTarget => {
       if (willPass && event.target.classList.contains(eachTarget)) {
         willPass = false
       }
     });
-    // if (!event.target.classList.contains("year-dd") && !event.target.classList.contains("player-dd") && !event.target.classList.contains("season-type-dd") && !event.target.classList.contains("view-selection-dd") && !event.target.classList.contains("year-advanced-dd-begin")) {
     if (willPass) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       for (let i = 0; i < dropdowns.length; i++) {
         var openDropdown = dropdowns[i];
         if (openDropdown.classList.contains('show')) {
           openDropdown.classList.remove('show');
-          console.log("reseting textarea")
           setTextAreaText({ id: null, text: "" })
         }
-        if (document.getElementById(`${openDropdown.id}-button`)) {
-          /*
-          document.getElementById(`${openDropdown.id}-button`).style.borderBottomLeftRadius = "10px"
-          document.getElementById(`${openDropdown.id}-button`).style.borderBottomRightRadius = "10px"
-        */
-        }
-
       }
     }
   }
   window.onclick = hideDD;
 
   function handleDDButtonClick(event, type) {
-    console.log(`handleDDButtonClick(${event},${type})`)
     hideDD(event);
     var dropdowns = document.getElementsByClassName("dropdown-content");
-    console.log(type)
-    console.log(acceptedTargets.includes(type))
     for (let i = 0; i < dropdowns.length; i++) {
       var dropdown = dropdowns[i];
       if (dropdown.id !== type) {
@@ -204,184 +218,104 @@ const App = () => {
           dropdown.classList.remove('show');
           event.target.blur()
         } else if (!dropdown.classList.contains('show') && acceptedTargets.includes(type)) {
-          console.log("showing")
           document.getElementById(type).classList.toggle("show")
         }
       }
     }
-    /*
-    if (type !== "view-selection-adv-dd" && document.getElementById(`${type}`) && document.getElementById(`${type}`).classList.contains("show")) {
-      console.log(document.getElementById(`${type}-button`).style)
-      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "0px"
-      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "0px"
-    } else if (document.getElementById(`${type}-button`)) {
-      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
-      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
-    } else if (type == "view-selection-adv-dd" && event.key !== "Enter") {
-      console.log(document.getElementById(`${type}`).style)
-      document.getElementById(`${type}`).style.borderBottomLeftRadius = "0px"
-      document.getElementById(`${type}`).style.borderBottomRightRadius = "0px"
-    } else if (type == "view-selection-adv-dd" && event.key === "Enter") {
-      console.log(document.getElementById(`${type}-button`).style)
-      document.getElementById(`${type}-button`).style.borderBottomLeftRadius = "10px"
-      document.getElementById(`${type}-button`).style.borderBottomRightRadius = "10px"
-    }
-    */
   };
-
-  function determineWhichView() {
-    console.log("determineWhichView()")
-    /*
-    console.log(isCurrentViewSimple)
-    if (isCurrentViewSimple) {
-      if (document.getElementById("simple-search-box") && !document.getElementById("simple-search-box").classList.contains("show")) {
-        console.log("Showing simple")
-        document.getElementById("simple-search-box").classList.toggle("show")
-        document.getElementById("advanced-search-box").classList.remove("show")
-      }
-    } else {
-      console.log(document.getElementById("advanced-search-box"))
-      if (document.getElementById("advanced-search-box")) {
-        console.log(document.getElementById("advanced-search-box").classList.contains("show"))
-      }
-      if (document.getElementById("advanced-search-box") && !document.getElementById("advanced-search-box").classList.contains("show")) {
-        console.log("Showing advanced")
-        document.getElementById("simple-search-box").classList.remove("show")
-        document.getElementById("advanced-search-box").classList.toggle("show")
-      }
-    }
-    */
-  }
 
   function handleResize() {
     if (sizeRef.current[0] !== window.innerHeight || sizeRef.current[1] !== window.innerWidth) {
-      console.log("handleResize()")
-      console.log("Size Not Okay")
-      console.log(`${window.innerHeight}!=${sizeRef.current[0]} OR ${window.innerWidth}!=${sizeRef.current[1]}`)
       setWindowSize([window.innerHeight, window.innerWidth])
     }
   }
 
-  async function getHexAverages() {
-    console.log("getHexAverages()")
+  async function getHexAverages(tries) {
     return await getSearchData("https://customnbashotcharts.com/shots_request?gridaverages=true")
       .then(res => {
         let averageJson = {}
         res.gridaverages.forEach(each => averageJson[each.uniqueid] = each.average)
         setHexAverages(averageJson)
+      }).catch(error => {
+        if (tries < maxTries) {
+          getHexAverages(tries + 1)
+        }
       })
   }
 
-  async function getZoneAverages() {
-    console.log("getZoneAverages()")
+  async function getZoneAverages(tries) {
     return await getSearchData("https://customnbashotcharts.com/shots_request?zoneaverages=true")
       .then(res => {
         let averageJson = {}
         res.zoneaverages.forEach(each => averageJson[each.uniqueid] = each.average)
         setZoneAverages(averageJson)
+      }).catch(error => {
+        if (tries < maxTries) {
+          getShotTypesData(tries + 1)
+        }
       })
   }
 
   useEffect(() => {
-    console.log("useEffect for App []")
-    getInitPlayersData().then(res => {
-      determineWhichView()
-    })
-    getHexAverages()
-    getZoneAverages()
-    getShotTypesData()
+    getInitPlayersData(0)
+    getHexAverages(0)
+    getZoneAverages(0)
+    getShotTypesData(0)
     setInterval(() => handleResize(), 100)
   }, [])
 
   useEffect(() => {
-    console.log(`useEffect for App keyPressedBuilder`)
-    determineWhichView()
-  }, [keyPressedBuilder])
-
-  useEffect(() => {
-    console.log("useEffect for App isCurrentViewSimple, simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer")
-    determineWhichView()
-  }, [simpleSelectedYear, simpleSelectedSeason, simpleSelectedPlayer])
-
-  useEffect(() => {
-    console.log(`useEffect for App isCurrentViewSimple`)
-    determineWhichView()
     setAllSearchData({})
     setAllAdvancedSearchData({})
   }, [isCurrentViewSimple])
 
   useEffect(() => {
-    console.log("useEffect for App allAdvancedSearchParameters")
-    determineWhichView()
-  }, [allAdvancedSearchParameters])
-
-  useEffect(() => {
-    console.log(`useEffect for App latestAdvancedViewType = ${latestAdvancedViewType}`)
-  }, [latestAdvancedViewType])
-
-  useEffect(() => {
-    console.log(`useEffect for App latestSimpleViewType = ${latestSimpleViewType}`)
-  }, [latestSimpleViewType])
-
-  useEffect(() => {
-    console.log("useEffect for App allSearchData")
-    console.log(allSearchData)
     if (allSearchData.shots === null) {
       setIsLoading({ state: true, newShots: true })
     }
   }, [allSearchData])
 
   useEffect(() => {
-    console.log("useEffect for App allAdvancedSearchData")
-    console.log(allAdvancedSearchData)
     if (allAdvancedSearchData.shots === null) {
       setIsLoading({ state: true, newShots: true })
     }
   }, [allAdvancedSearchData])
 
-  useEffect(() => {
-    console.log(`useEffect for App isLoading = ${isLoading}`)
-  }, [isLoading])
+  let gridDisplay
+  if (isCurrentViewSimple) {
+    gridDisplay = <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block", maxWidth: "95vw", } : {}}>
+      <div className="basegrid-grid-item">
+        {simpleSearchBoxRef.current}
+        {shootingBezierSimpleRef.current}
+      </div>
+      <div className="basegrid-grid-item" id="shotview-grid-item">
+        {shotViewSimpleRef.current}
+      </div>
+      <div className="basegrid-grid-item"  >
+        {shotPercentageViewSimpleRef.current}
+      </div>
+    </div>
+  } else {
+    gridDisplay = <div className="BaseGridAdvanced" style={(isMobile) ? { display: "block" } : {}}>
+      <div id="advanced-grid-item" height="100%">
+        {advancedSearchBoxRef.current}
+      </div>
+      <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
+        {shotViewAdvancedRef.current}
+      </div>
+      <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">
+        {shotPercentageViewAdvancedRef.current}
+        {shootingBezierAdvancedRef.current}
+      </div>
+    </div>
+  }
 
   return (
-    <div className="App" style={isMobile ? { maxWidth: "100vw", width: "100vw", minWidth: "100vw" } : {}}>
-      <Header isMobile={isMobile} setTitle={setTitle} whichSearchBox={whichSearchBox} title={title} isLoading={isLoading} setIsLoading={setIsLoading}
-        allSearchData={allSearchData} allAdvancedSearchData={allAdvancedSearchData} isCurrentViewSimple={isCurrentViewSimple}
-        latestAdvancedViewType={latestAdvancedViewType} simpleClickHandler={handleSimpleClick} advancedClickHandler={handleAdvancedClick}
-        setAllSearchData={setAllSearchData} setAllAdvancedSearchData={setAllAdvancedSearchData} setIsCurrentViewSimple={setIsCurrentViewSimple}
-        latestSimpleViewType={latestSimpleViewType} setShotPercentageData={setShotPercentageData}
-      />
-      {isCurrentViewSimple ? <div className="BaseGrid" style={(isMobile || !isCurrentViewSimple) ? { display: "block", maxWidth: "95vw", } : {}}>
-        <div className="basegrid-grid-item">
-          {simpleSearchBoxRef.current}
-          <ShootingBezier size={size} isLoading={isLoading}
-            allSearchData={allSearchData} isCurrentViewSimple={true} />
-        </div>
-        <div className="basegrid-grid-item" id="shotview-grid-item">
-          <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
-            allSearchData={allSearchData} isCurrentViewSimple={true} latestSimpleViewType={latestSimpleViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
-        </div>
-        <div className="basegrid-grid-item"  >
-          <ShotPercentageView simpleShotData={shotPercentageData} isCurrentViewSimple={isCurrentViewSimple} isLoading={isLoading} />
-        </div>
-      </div>
-        :
-        <div className="BaseGridAdvanced" style={(isMobile) ? { display: "block" } : {}}>
-          <div id="advanced-grid-item" height="100%">
-            {advancedSearchBoxRef.current}
-          </div>
-          <div className="basegrid-grid-item-advanced" id="shotview-grid-item" >
-            <ShotView size={size} title={title} isLoading={isLoading} setIsLoading={setIsLoading} isMobile={isMobile}
-              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} latestAdvancedViewType={latestAdvancedViewType} hexAverages={hexAverages} zoneAverages={zoneAverages} />
-          </div>
-          <div className="basegrid-grid-item-advanced" id="shooting-bezier-grid-item">
-            <ShotPercentageView style={{ marginLeft: "0px", marginRight: "0px" }} advancedShotData={shotPercentageData} isCurrentViewSimple={false} isLoading={isLoading} />
-            <ShootingBezier size={size} isLoading={isLoading}
-              allSearchData={allAdvancedSearchData} isCurrentViewSimple={false} />
-          </div>
-        </div>}
+    <div className="App" data-testid="App-test" style={isMobile ? { maxWidth: "100vw", width: "100vw", minWidth: "100vw" } : {}}>
+      {headerRef.current}
+      {gridDisplay}
       <footer>
-        <a href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a>
+        <a data-testid="footer-test" href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a>
       </footer>
     </div >
   );
