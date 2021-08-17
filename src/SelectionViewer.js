@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import Svg, { Line } from 'react-native-svg';
 
 function SelectionViewer(props) {
-    console.log("RERENDER SelectionViewer")
     const allSearchParametersRef = useRef({});
     allSearchParametersRef.current = props.allSearchParameters;
     const mapIdToDisplayName = {
@@ -65,10 +64,8 @@ function SelectionViewer(props) {
 
     function handleDeleteButtonClick(param, value) {
         let stateCopy = { ...allSearchParametersRef.current };
-        console.log(stateCopy)
         if (Array.isArray(stateCopy[param])) {
             let paramArray = stateCopy[param]
-            console.log(paramArray)
             let index = paramArray.indexOf(value)
             if (index !== -1) {
                 paramArray.splice(index, 1);
@@ -78,10 +75,6 @@ function SelectionViewer(props) {
         }
         props.setAllSearchParameters(stateCopy)
     }
-
-    useEffect(() => {
-        console.log(allSearchParametersRef.current)
-    }, [allSearchParametersRef.current])
 
     return (
         <div className="SelectionViewer scrollable" id="selections">

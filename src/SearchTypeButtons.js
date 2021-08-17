@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 function SearchTypeButtons(props) {
 
     function displaySimple() {
-        console.log("displaySimple()")
         if (!props.isCurrentViewSimple) {
             props.setAllSearchData([])
             props.setShotPercentageData()
@@ -17,7 +16,6 @@ function SearchTypeButtons(props) {
     }
 
     function displayAdvanced() {
-        console.log("displayAdvanced()")
         if (props.isCurrentViewSimple) {
             props.setAllAdvancedSearchData([])
             props.setShotPercentageData()
@@ -75,8 +73,8 @@ function SearchTypeButtons(props) {
 
     return (
         <div className="SearchTypeButtons">
-            <div className="link" id="simple-link" style={props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displaySimple())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Simple Search</div>
-            <div className="link" id="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displayAdvanced())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Advanced Search</div>
+            <div className="link" id="simple-link" data-testid="simple-link" style={props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displaySimple())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Simple Search</div>
+            <div className="link" id="advanced-link" data-testid="advanced-link" style={!props.isCurrentViewSimple ? activeStyle : inActiveStyle} onClick={(() => displayAdvanced())} onMouseOver={((event) => { handleMouseHover(event) })} onMouseLeave={((event) => { handleMouseExit(event) })}>Advanced Search</div>
         </div>
     );
 }

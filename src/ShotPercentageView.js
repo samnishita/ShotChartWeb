@@ -4,7 +4,6 @@ import { Switch } from 'antd';
 import { Progress } from 'antd';
 
 const ShotPercentageView = (props) => {
-    console.log("RERENDER ShotPercentageView")
     const [shotCalcs, setShotCalcs] = useState({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
     const [prevShotCalcs, setPrevShotCalcs] = useState({ fgs: { frac: "--", perc: "0", efg: "--", pps: "--", }, twos: { frac: "--", perc: "0", efg: "--", pps: "--", }, threes: { frac: "--", perc: "0", efg: "--", pps: "--", } })
     const [isLoadDelay, setIsLoadDelay] = useState({ isDelayed: true, offset: 0.0 })
@@ -12,9 +11,7 @@ const ShotPercentageView = (props) => {
     const prevShotCalcsRef = useRef({})
     prevShotCalcsRef.current = prevShotCalcs
 
-
     useEffect(() => {
-        console.log("useEffect for ShotPercentageView")
         setPrevShotCalcs(shotCalcs)
     }, [props.simpleShotData, props.advancedShotData])
 
@@ -85,7 +82,7 @@ const ShotPercentageView = (props) => {
             if (!isLoadDelay.isDelayed) {
                 percentDisplay = Number(prev - (prev - shotCalcs[keys[i]].perc) * isLoadDelay.offset).toFixed(2)
             }
-            elements.push(<div className="perc-div">
+            elements.push(<div key={`perc-div-${i}`} className="perc-div">
                 <p className="percentage-title" style={{ fontSize: fontSizeTitle + "px" }}>{titles[i]}</p>
                 <Progress className="dashboard-shot"
                     type="dashboard"
@@ -121,7 +118,7 @@ const ShotPercentageView = (props) => {
         return elements
     }
     return (
-        <div className="ShotPercentageView">
+        <div className="ShotPercentageView" data-testid={props.testid}>
             <h6>Shot Breakdown</h6>
             {generateShotPercentageView()}
         </div>

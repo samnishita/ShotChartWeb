@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 
 
 const ShootingBezier = (props) => {
-    console.log("RERENDER ShootingBezier")
     const [shotTypeAnimated, setShotTypeAnimated] = useState({
         prevValues: [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],],
         currentValues: [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],],
@@ -16,7 +15,6 @@ const ShootingBezier = (props) => {
     shotTypeAnimatedRef.current = shotTypeAnimated
 
     useEffect(() => {
-        // console.log("useEffect for shotTypeAnimated")
         if (shotTypeAnimatedRef.current.isDelayed) {
             let diff = 0.02
             setTimeout(() => {
@@ -39,7 +37,6 @@ const ShootingBezier = (props) => {
     }, [shotTypeAnimated])
 
     useEffect(() => {
-        //console.log("useEffect for props.allSearchData")
         setShotTypeAnimated({
             ...shotTypeAnimatedRef.current,
             prevValues: shotTypeAnimatedRef.current.currentValues,
@@ -47,10 +44,6 @@ const ShootingBezier = (props) => {
             isDelayed: false
         })
     }, [props.allSearchData])
-
-    useEffect(() => {
-        //console.log(shotTypeAnimated)
-    }, [shotTypeAnimated])
 
     function processShotData() {
         let shotKinds = { jump: 0, dunk: 0, layup: 0, floating: 0, hook: 0, fadeaway: 0, pullup: 0, turnaround: 0, stepback: 0 }
@@ -62,7 +55,7 @@ const ShootingBezier = (props) => {
             shots = props.allSearchData.shots.advancedsearch
         }
         let pointsOnly = "", angles = ""
-        let angleDist = document.getElementById("dist-outer-circle") ? document.getElementById("dist-outer-circle").r.animVal.value : 180
+        let angleDist = document.getElementById("dist-outer-circle") && document.getElementById("dist-outer-circle").r ? document.getElementById("dist-outer-circle").r.animVal.value : 180
         for (let i = 0; i < 9; i++) {
             let angleX = angleDist * Math.cos(((40 * i) - 90) * Math.PI / 180)
             let angleY = angleDist * Math.sin(((40 * i) - 90) * Math.PI / 180)
@@ -92,7 +85,7 @@ const ShootingBezier = (props) => {
                 }
             })
             let relativeValues = {}
-            let scaler = document.getElementById("dist-outer-circle") ? document.getElementById("dist-outer-circle").r.animVal.value * 0.75 : 85
+            let scaler = document.getElementById("dist-outer-circle") && document.getElementById("dist-outer-circle").r ? document.getElementById("dist-outer-circle").r.animVal.value * 0.75 : 85
             Object.keys(shotKinds).forEach(eachKey => {
                 relativeValues[eachKey] = shotKinds[eachKey] / max * scaler
             })
@@ -153,27 +146,31 @@ const ShootingBezier = (props) => {
     function createLabels() {
         let shotKindMap = ["Jump Shot", "Dunk", "Layup", "Floater", "Hook", "Fade", "Pull-Up", "Turn-Around", "Step-Back"]
         let labels = []
-        if (document.getElementById("dist-outer-circle")) {
-            for (let index = 0; index < shotKindMap.length; index++) {
-                let style = { position: "absolute", minWidth: "60px", maxWidth: "60px", textAlign: "bottom", margin: "0px" }
-                let pWidth = 60
-                let pHeight = 44
-                let x, y
-                let rad = document.getElementById("dist-outer-circle").r.animVal.value
-                let height = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientHeight : 500
-                let width = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientWidth : 500
-                x = (rad + shotKindMap[index].length) * 1.35 * Math.cos(((40 * index) - 90) * Math.PI / 180) + width / 2 - pWidth / 2
-                y = (rad + shotKindMap[index].length) * 1.3 * Math.sin(((40 * index) - 90) * Math.PI / 180) + height / 2 - pHeight / 2
-                style.transform = `translate(${x}px,${y}px)`
-                if (rad !== 0) {
-                    labels.push(<p style={style} className="shot-kind-dist-label">{shotKindMap[index]}</p>)
+        try {
+            if (document.getElementById("dist-outer-circle")) {
+                for (let index = 0; index < shotKindMap.length; index++) {
+                    let style = { position: "absolute", minWidth: "60px", maxWidth: "60px", textAlign: "bottom", margin: "0px" }
+                    let pWidth = 60
+                    let pHeight = 44
+                    let x, y
+                    let rad = document.getElementById("dist-outer-circle").r.animVal.value
+                    let height = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientHeight : 500
+                    let width = document.getElementById("shot-bezier-inner-div") ? document.getElementById("shot-bezier-inner-div").clientWidth : 500
+                    x = (rad + shotKindMap[index].length) * 1.35 * Math.cos(((40 * index) - 90) * Math.PI / 180) + width / 2 - pWidth / 2
+                    y = (rad + shotKindMap[index].length) * 1.3 * Math.sin(((40 * index) - 90) * Math.PI / 180) + height / 2 - pHeight / 2
+                    style.transform = `translate(${x}px,${y}px)`
+                    if (rad !== 0) {
+                        labels.push(<p key={shotKindMap[index]} style={style} className="shot-kind-dist-label">{shotKindMap[index]}</p>)
+                    }
                 }
             }
+        } catch (error) {
+
         }
         return labels
     }
 
-    return <div className="ShotBezier">
+    return <div className="ShotBezier" data-testid={props.testid}>
         <div id="shot-bezier-wrapper">
             <h6 id="by-type-title">Shot Type Distribution</h6>
             <div id="shot-bezier-inner-div">

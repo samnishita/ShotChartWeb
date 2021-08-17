@@ -7,7 +7,6 @@ import { Popover, Button } from 'antd';
 import { useEffect, useState, useRef } from "react";
 
 const ShotView = (props) => {
-    console.log("RERENDER ShotView")
     const [combinedState, setCombinedState] = useState({
         allHexTiles: [],
         allHeatTiles: [],
@@ -53,23 +52,18 @@ const ShotView = (props) => {
     }
 
     function chooseCourt(view) {
-        console.log(`chooseCourt(${view})`)
         if (view === "Zone") {
             showElement("transparent-court-on-top")
             hideElement("gray-background")
             hideElement("transparent-court")
-            console.log("Showing transparent-court-on-top")
         } else {
             showElement("transparent-court")
             showElement("gray-background")
             hideElement("transparent-court-on-top")
-            console.log("Showing transparent-court & gray-background")
         }
     }
 
     function generateWhatToDisplay(viewType, shots) {
-        console.log("generateWhatToDisplay()")
-        console.log(viewType)
         let buffer = []
         buffer.push(determineView(viewType, shots))
         let zoneLabels = generateZoneLabels(viewType, shots)
@@ -80,26 +74,21 @@ const ShotView = (props) => {
     }
 
     function determineView(viewType, shots) {
-        console.log("Determining viewtype: " + viewType)
         switch (viewType) {
             case "Classic":
                 chooseCourt(viewType)
-                console.log("Displaying Classic")
                 return displayClassic(shots)
             case "Hex":
                 chooseCourt(viewType)
                 if (combinedStateRef.current.allHexTiles.length === 0) {
-                    console.log("Displaying Hex")
                     displayHex(shots)
                 }
                 return resizeHex()
             case "Zone":
                 chooseCourt(viewType)
-                console.log("Displaying Zone")
                 return displayZone(shots)
             case "Heat":
                 if (combinedStateRef.current.allHeatTiles.length === 0) {
-                    console.log("Displaying Heat")
                     displayHeat(shots)
                 }
                 return resizeHeat()
@@ -108,7 +97,6 @@ const ShotView = (props) => {
     }
 
     function displayClassic(inputShots) {
-        console.log("displayClassic()")
         let tradArray = []
         if (inputShots && inputShots.length !== 0) {
             let searchType = Object.keys(inputShots)[0]
@@ -156,7 +144,6 @@ const ShotView = (props) => {
     const squareSizeOrig = 12
 
     function displayHex(inputShots) {
-        console.log("displayHex()")
         if (inputShots && inputShots.length !== 0) {
             let allShotsTemp = inputShots.simplesearch ? inputShots.simplesearch : inputShots.advancedsearch
             let allTiles = {}
@@ -247,7 +234,6 @@ const ShotView = (props) => {
     }
 
     function resizeHex() {
-        console.log("resizeHex()")
         if (allHexTilesRef.current.length > 0) {
             const height = document.getElementById('transparent-court').clientHeight
             const width = document.getElementById('transparent-court').clientWidth
@@ -278,7 +264,6 @@ const ShotView = (props) => {
     }
 
     function mapShotsToZones(inputShots) {
-        console.log("mapShotsToZones()")
         if (inputShots) {
             let allZones = []
             for (let i = 0; i < 16; i++) {
@@ -417,7 +402,6 @@ const ShotView = (props) => {
     }
 
     function displayZone(inputShots) {
-        console.log("displayZone()")
         if (inputShots) {
             let allZones = mapShotsToZones(inputShots)
             let coloredZones = []
@@ -529,7 +513,6 @@ const ShotView = (props) => {
     }
 
     function generateZoneLabels(view, inputShots) {
-        console.log(`generateZoneLabels(${view})`)
         if (inputShots && view === "Zone") {
             let allZones = mapShotsToZones(inputShots)
             let zoneLabels = []
@@ -615,7 +598,6 @@ const ShotView = (props) => {
     }
 
     function displayHeat(inputShots) {
-        console.log("displayHeat()")
         if (inputShots && inputShots.length !== 0) {
             let allShotsTemp = inputShots.simplesearch ? inputShots.simplesearch : inputShots.advancedsearch
             let allTiles = {}
@@ -669,10 +651,7 @@ const ShotView = (props) => {
                 idw()
                 counter++;
             }
-
-            console.log("HERE")
             const waitHere = async () => {
-                console.log("Waiting........")
                 await delay(100)
                 let maxValue = 0.0
                 Object.values(tileValues).forEach(eachValue => {
@@ -728,7 +707,6 @@ const ShotView = (props) => {
     }
 
     function resizeHeat() {
-        console.log("resizeHeat()")
         if (combinedStateRef.current.allHeatTiles.length > 0) {
             chooseCourt("Heat")
             let circlesArray = [[], [], [], [], [], [], []]
@@ -763,7 +741,6 @@ const ShotView = (props) => {
     }
 
     function generateLegend(view) {
-        console.log(`generateLegend(${view})`)
         if (view === "Classic") {
             return <span></span>
         } else {
@@ -802,7 +779,6 @@ const ShotView = (props) => {
                         hexArrayPlain.push(<Path d={`m${sModSum} ${s / 2 + (s - sMod)} l${sMod} ${sMod * tan} l0 ${modifiedHeight} l${-sMod} ${sMod * tan}
                             l${-sMod} ${-sMod * tan} l0 ${-modifiedHeight} l${sMod} ${-sMod * tan} l${sMod} ${sMod * tan}`} fill="white" opacity="0.7" />)
                     }
-                    console.log("Returning Hex")
                     return [(< div id="color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
                         <div width="100%" style={wrapperStyle}>
@@ -826,7 +802,6 @@ const ShotView = (props) => {
                             </div>
                         </div >)]
                 case "Zone":
-                    console.log("Returning Zone")
                     return (< div id="color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shooting Percentage</p>
                         <div width="100%" style={wrapperStyle}>
@@ -835,7 +810,6 @@ const ShotView = (props) => {
                         <div id="color-legend-gradient"></div>
                     </div >)
                 case "Heat":
-                    console.log("Returning Heat")
                     return (< div id="heat-color-legend" style={legendStyle} >
                         <p className="legend-top-label" style={topLabelStyle} >Shot Frequency</p>
                         <div width="100%" style={wrapperStyle}>
@@ -883,8 +857,6 @@ const ShotView = (props) => {
     }
 
     function makeLoadingAnimation(isLoading, viewType) {
-        console.log("makeLoadingAnimation()")
-        console.log(`${isLoading}, ${viewType}`)
         //if (true) {
         if (isLoading) {
             let dimensions = getDimensions()
@@ -912,7 +884,6 @@ const ShotView = (props) => {
                     animationIterationCount: "infinite",
                     animationDelay: `${(i / 30 + 6) / factor}s`
                 }
-                console.log(style)
                 circles.push(<Circle style={style} cx={calcCoord(centerX, rLarge, i, false)} cy={calcCoord(centerY, rLarge, i, true)} r={rEach} ></Circle>)
             }
      
@@ -997,7 +968,6 @@ const ShotView = (props) => {
 
     function handleViewTypeButtonClick(viewType) {
         if (!props.isLoading && combinedStateRef.current.localViewType.type !== viewType && !Array.isArray(allShotsRef.current)) {
-            console.log(`${viewType} Button Clicked`)
             setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(true, viewType), localViewType: { type: viewType, isOriginal: false } })
         }
     }
@@ -1008,9 +978,9 @@ const ShotView = (props) => {
 
     function makeClassicIcon() {
         let fill = combinedStateRef.current.localViewType.type === "Classic" ? "rgb(187, 104, 231)" : "white"
-        return [<Path d={`m5,17 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
-        <Path d={`m7,22 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
-        <Circle cx="28" cy="12" r="6" fill={fill} strokeWidth="2" />
+        return [<Path key="p1icon" d={`m5,17 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
+        <Path key="p2icon" d={`m7,22 a30,30 0 0,1 10,-5`} stroke={fill} strokeWidth="1" />,
+        <Circle key="circleicon" cx="28" cy="12" r="6" fill={fill} strokeWidth="2" />
         ]
     }
 
@@ -1029,12 +999,12 @@ const ShotView = (props) => {
         let fill = combinedStateRef.current.localViewType.type === "Zone" ? "rgb(187, 104, 231)" : "white"
         let height = 9, xStart = 8, yStart = 5, margin = 2
         return [
-            <Rect x={xStart} y={yStart} height={height} width={height} fill={fill}></Rect>,
-            <Rect x={xStart + height + margin} y={yStart} height={height} width={height} fill={fill}></Rect>,
-            <Rect x={xStart} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
-            <Rect x={xStart + height + margin} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
-            <Circle cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="6" fill="rgb(39, 39, 39)"></Circle>,
-            <Circle cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="4" fill={fill}></Circle>
+            <Rect key="tl-rect" x={xStart} y={yStart} height={height} width={height} fill={fill}></Rect>,
+            <Rect key="tr-rect" x={xStart + height + margin} y={yStart} height={height} width={height} fill={fill}></Rect>,
+            <Rect key="bl-rect" x={xStart} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
+            <Rect key="br-rect" x={xStart + height + margin} y={yStart + height + margin} height={height} width={height} fill={fill}></Rect>,
+            <Circle key="outer-circle-icon" cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="6" fill="rgb(39, 39, 39)"></Circle>,
+            <Circle key="inner-circle-icon" cx={xStart + height + margin / 2} cy={yStart + height + margin / 2} r="4" fill={fill}></Circle>
         ]
     }
 
@@ -1042,11 +1012,9 @@ const ShotView = (props) => {
         let fill = combinedStateRef.current.localViewType.type === "Heat" ? "rgb(187, 104, 231)" : "white"
         let fullHeight = 20, halfHeight = fullHeight / 2, almostHeight = fullHeight * 0.75
         return [
-            //<Path d={`m15,25 c-${halfHeight / 4},-${halfHeight / 4} ${halfHeight / 4},-${3 * halfHeight / 4} 0,-${halfHeight}`} strokeWidth="1" stroke="white" fill="transparent"></Path>,
-            <Path d={`m10,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
-            <Path d={`m20,25 c-${fullHeight / 3},-${fullHeight / 3} ${fullHeight / 3},-${3 * fullHeight / 4} 0,-${fullHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
-            <Path d={`m30,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
-            // <Path d={`m35,25 c-${halfHeight / 4},-${halfHeight / 4} ${halfHeight / 4},-${3 * halfHeight / 4} 0,-${halfHeight}`} strokeWidth="1" stroke="white" fill="transparent"></Path>,
+            <Path key="left-flame" d={`m10,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
+            <Path key="center-flame" d={`m20,25 c-${fullHeight / 3},-${fullHeight / 3} ${fullHeight / 3},-${3 * fullHeight / 4} 0,-${fullHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
+            <Path key="right-flame" d={`m30,25 c-${almostHeight / 3},-${almostHeight / 3} ${almostHeight / 3},-${2 * almostHeight / 3} 0,-${almostHeight}`} strokeWidth="2" stroke={fill} fill="transparent"></Path>,
         ]
     }
 
@@ -1067,7 +1035,6 @@ const ShotView = (props) => {
     }, [props.size])
 
     useEffect(() => {
-        console.log(props.isCurrentViewSimple)
         setCombinedState({
             allHexTiles: [],
             allHeatTiles: [],
@@ -1082,10 +1049,8 @@ const ShotView = (props) => {
     }, [props.isCurrentViewSimple])
 
     useEffect(() => {
-        console.log(`useEffect for localViewType`)
         if (!combinedStateRef.current.localViewType.isOriginal) {
             setTimeout(() => {
-                console.log(combinedStateRef.current)
                 let display = generateWhatToDisplay(combinedStateRef.current.localViewType.type, allShotsRef.current.shots)
                 if (typeof (display[0]) !== "undefined") {
                     setCombinedState({
@@ -1098,7 +1063,6 @@ const ShotView = (props) => {
     }, [combinedState.localViewType])
 
     useEffect(() => {
-        console.log("useEffect for props.allSearchData")
         if (Object.keys(props.allSearchData).length !== 0 || props.allSearchData.shots === null) {
             if (Object.keys(props.allSearchData).length !== 0 && props.allSearchData.shots) {
                 setCombinedState({
@@ -1116,8 +1080,6 @@ const ShotView = (props) => {
                 setCombinedState({ ...combinedStateRef.current, allHexTiles: [], allHeatTiles: [] })
             }
         } else {
-            console.log(combinedStateRef.current)
-            console.log(`Switch: ${combinedStateRef.current.localViewType.type}`)
             if (combinedStateRef.current.whatToDisplay.length !== 0) {
                 setCombinedState({ ...combinedStateRef.current, allShots: [], whatToDisplay: [], legend: [], localViewType: { type: "Classic", isOriginal: false }, })
                 chooseCourt("Classic")
@@ -1126,7 +1088,6 @@ const ShotView = (props) => {
     }, [props.allSearchData])
 
     useEffect(() => {
-        console.log("useEffect for props.isLoading")
         if (props.isLoading.state && props.isLoading.newShots && props.isCurrentViewSimple) {
             setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(props.isLoading.state, props.latestSimpleViewType) })
         } else if (props.isLoading.state && props.isLoading.newShots && !props.isCurrentViewSimple) {
@@ -1137,16 +1098,6 @@ const ShotView = (props) => {
     }, [props.isLoading])
 
     useEffect(() => {
-        console.log("useEffect for loadingAnimation")
-        //props.setIsLoading({ state: true, newShots: false })
-    }, [combinedState.loadingAnimation])
-
-    useEffect(() => {
-        console.log("useEffect for props.latestAdvancedViewType")
-    }, [props.latestAdvancedViewType])
-
-    useEffect(() => {
-        console.log("useEffect for whatToDisplay")
         if (typeof (combinedState.whatToDisplay[0]) !== "undefined" && combinedStateRef.current.whatToDisplay.length !== 0) {
             props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, loadingAnimation: makeLoadingAnimation(false) })
@@ -1155,7 +1106,6 @@ const ShotView = (props) => {
     }, [combinedState.whatToDisplay])
 
     useEffect(() => {
-        console.log("useEffect for allHexTiles")
         if (combinedStateRef.current.allHexTiles.length !== 0) {
             props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHex(), loadingAnimation: makeLoadingAnimation(false) })
@@ -1163,7 +1113,6 @@ const ShotView = (props) => {
     }, [combinedState.allHexTiles])
 
     useEffect(() => {
-        console.log("useEffect for allHeatTiles")
         if (combinedStateRef.current.allHeatTiles.length !== 0) {
             props.setIsLoading(false)
             setCombinedState({ ...combinedStateRef.current, whatToDisplay: resizeHeat(), loadingAnimation: makeLoadingAnimation(false) })
@@ -1182,17 +1131,8 @@ const ShotView = (props) => {
         setCombinedState({ ...combinedStateRef.current, zoneAverages: props.zoneAverages })
     }, [props.zoneAverages])
 
-    useEffect(() => {
-        console.log(combinedState)
-    }, [combinedState])
-
-    useEffect(() => {
-        console.log("useEffect for combinedState.allShots")
-        console.log(combinedState.allShots)
-    }, [combinedState.allShots])
-
     return (
-        <div className='ShotView'>
+        <div className='ShotView' data-testid={props.testid}>
             <div id="shotview-wrapper">
                 <p id="view-title">{props.title}</p>
                 <div id="hideable-imageview-div">
