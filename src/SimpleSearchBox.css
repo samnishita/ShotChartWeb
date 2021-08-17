@@ -28,6 +28,10 @@
     margin: 4px; 
     position: relative;
     margin-bottom: 10px;
+    min-height: 45px;
+}
+#player-invisible-button{
+    min-height: 0px;
 }
 
 ::placeholder{
