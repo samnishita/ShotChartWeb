@@ -9,23 +9,9 @@ import { Switch } from 'antd';
 import { isMobile } from 'react-device-detect';
 
 const AdvancedSearchBox = (props) => {
-    console.log("RERENDER AdvancedSearchBox")
     const [latestAdvancedViewType, setLatestAdvancedViewType] = useState(props.latestAdvancedViewType)
     const [invisibleRows, setInvisibleRows] = useState(1)
     const [displayAdvancedSearchSelections, setDisplayAdvancedSearchSelections] = useState(true)
-
-    useEffect(() => {
-        console.log("useEffect for props.allSearchParameters")
-    }, [props.allSearchParameters])
-
-    useEffect(() => {
-        window.addEventListener('keydown', function (event) {
-            if (event.keyCode == 32) {
-                console.log("SPACEBAR")
-                event.preventDefault();
-            }
-        });
-    }, [])
 
     const relevantTeams = {
         "Atlanta Hawks": 1610612737,
@@ -117,7 +103,7 @@ const AdvancedSearchBox = (props) => {
             case "player-advanced-dd":
                 return createPlayerDropDown(className)
             case "season-advanced-dd":
-                return [createMultipleSelectionDD(className, "Preseason"), createMultipleSelectionDD(className, "Regular Season"), createMultipleSelectionDD(className, "Playoffs")]
+                return [createMultipleSelectionDD(className, "Preseason", "Preseason"), createMultipleSelectionDD(className, "Regular Season", "Regular Season"), createMultipleSelectionDD(className, "Playoffs", "Playoffs")]
             case "distance-dd-begin":
             case "distance-dd-end":
                 let distances = []
@@ -126,9 +112,9 @@ const AdvancedSearchBox = (props) => {
                 }
                 return distances
             case "success-dd":
-                return [createSingleSelectionDD(className, "Makes"), createSingleSelectionDD(className, "Misses")]
+                return [createSingleSelectionDD(className, "Makes", "Makes"), createSingleSelectionDD(className, "Misses", "Misses")]
             case "shot-value-dd":
-                return [createSingleSelectionDD(className, "2PT"), createSingleSelectionDD(className, "3PT")]
+                return [createSingleSelectionDD(className, "2PT", "2PT"), createSingleSelectionDD(className, "3PT", "3PT")]
             case "shot-types-dd":
                 return props.shotTypes.map(shotType => createMultipleSelectionDD(className, shotType, shotType.replace(/ /g, "-").toLowerCase()))
             case "shooting-teams-dd":
@@ -136,18 +122,18 @@ const AdvancedSearchBox = (props) => {
             case "away-teams-dd":
                 return Object.keys(relevantTeams).map(key => createMultipleSelectionDD(className, key, className.replace("teams-dd", "") + key.replace(/ /g, "-").toLowerCase()))
             case "court-areas-dd":
-                return courtAreas.map(courtArea => createMultipleSelectionDD(className, courtArea))
+                return courtAreas.map(courtArea => createMultipleSelectionDD(className, courtArea, courtArea))
             case "court-sides-dd":
-                return courtSides.map(courtSide => createMultipleSelectionDD(className, courtSide))
+                return courtSides.map(courtSide => createMultipleSelectionDD(className, courtSide, courtSide))
         }
     }
 
     function createSingleSelectionDD(className, display, id) {
-        return <p className={`dropdown-item ${className}`} id={id} onClick={event => props.setAllSearchParameters({ ...props.allSearchParameters, [className]: event.target.textContent })}>{display}</p>
+        return <p className={`dropdown-item ${className}`} key={id} id={id} onClick={event => props.setAllSearchParameters({ ...props.allSearchParameters, [className]: event.target.textContent })}>{display}</p>
     }
 
     function createMultipleSelectionDD(className, display, id) {
-        return <p className={`dropdown-item ${className}`} id={id} onClick={event => checkIfExistsInArray(className, display)}>{display}</p>
+        return <p className={`dropdown-item ${className}`} key={id} id={id} onClick={event => checkIfExistsInArray(className, display)}>{display}</p>
     }
 
     function checkIfExistsInArray(key, value) {
@@ -157,12 +143,10 @@ const AdvancedSearchBox = (props) => {
     }
 
     function createYearDropDown(inputClassName) {
-        console.log(`createYearDropDown(${inputClassName})`)
         return generateYears(props.currentYear).map(eachYear => createSingleSelectionDD(inputClassName, eachYear, eachYear))
     }
 
     function createPlayerDropDown(inputClassName) {
-        console.log(`createPlayerDropDown(${inputClassName})`)
         return Object.values(initPlayersRef.current).map(value =>
             <p className='dropdown-item player-display'
                 id={`${value[1]} ${value[2]}`.trim().toUpperCase()
@@ -176,7 +160,6 @@ const AdvancedSearchBox = (props) => {
     }
 
     function handleKeyPress(event, id) {
-        console.log(event.target)
         let newString = event.target.value
         let max = id.includes("year") || id.includes("distance") ? 7 : 35
         if (event.keyCode === 8) {
@@ -281,7 +264,6 @@ const AdvancedSearchBox = (props) => {
 
     useEffect(() => {
         if (document.getElementById("player-button-display-invisible") && Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20) !== invisibleRows) {
-            console.log(invisibleRows)
             setInvisibleRows(Number.parseInt(document.getElementById("player-button-display-invisible").clientHeight / 20))
         }
     })
@@ -318,11 +300,11 @@ const AdvancedSearchBox = (props) => {
         }
         let willShowTextArea = scrollable && !id.includes("court")
         let arrowOffset = willShowTextArea ? 0 : 12
-        let buttonFace2 = willShowTextArea ? <TextareaAutosize spellcheck="false" minRows={minRows}
+        let buttonFace2 = willShowTextArea ? <TextareaAutosize spellCheck="false" minRows={minRows}
             className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
             value={value} style={{ resize: "none", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
             : <p className={`dropdown-button-display ${fullId}`} style={{ textAlign: "left", maxWidth: width, minWidth: width, position: "absolute" }}>{value}</p>
-        let buttonFace = willShowTextArea ? < TextareaAutosize spellcheck="false" minRows={minRows}
+        let buttonFace = willShowTextArea ? < TextareaAutosize spellCheck="false" minRows={minRows}
             className={`dropdown-button-display ${fullId} text-area `} id={`${id}-button-display`} maxRows="3"
             value={whatToShow} style={{ resize: "none", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.3)", }}
             onKeyDown={e => { handleKeyPress(e, fullId) }} placeholder={placeholder} />
@@ -343,37 +325,37 @@ const AdvancedSearchBox = (props) => {
     }
 
     function createLeftButtons() {
-        console.log(props.allSearchParameters)
-        let allLeftButtons = [<p className="param-title">Seasons: </p>,
-        <p className="param-content">{makeButton("year-advanced", "begin", "scrollable", "Start")} - {makeButton("year-advanced", "end", "scrollable", "End")}</p>,
-        <p className="param-title">Players: </p >,
-        <p className="param-content">{makeButton("player-advanced", "", "scrollable", "Player")}</p>,
-        <p className="param-title">Season Types: </p>,
-        <p className="param-content">{makeButton("season-advanced", "", "", "Season Type")}</p>,
-        <p className="param-title">Shot Distance (ft.): </p >,
-        <p className="param-content"> {makeButton("distance", "begin", "scrollable", "Start")} - {makeButton("distance", "end", "scrollable", "End")}</p >,
-        <p className="param-title">Shot Success: </p>,
-        <p className="param-content">{makeButton("success", "", "", "Makes or Misses")}</p>,
-        <p className="param-title">Shot Value: </p>,
-        <p className="param-content">{makeButton("shot-value", "", "", "2PT or 3PT")}</p>
+        let allLeftButtons = [
+            <p className="param-title" key="year-advanced-title">Seasons: </p>,
+            <p className="param-content" key="year-advanced-content">{makeButton("year-advanced", "begin", "scrollable", "Start")} - {makeButton("year-advanced", "end", "scrollable", "End")}</p>,
+            <p className="param-title" key="player-advanced-title">Players: </p >,
+            <p className="param-content" key="player-advanced-content">{makeButton("player-advanced", "", "scrollable", "Player")}</p>,
+            <p className="param-title" key="season-advanced-title">Season Types: </p>,
+            <p className="param-content" key="season-advanced-content">{makeButton("season-advanced", "", "", "Season Type")}</p>,
+            <p className="param-title" key="distance-title">Shot Distance (ft.): </p >,
+            <p className="param-content" key="distance-content"> {makeButton("distance", "begin", "scrollable", "Start")} - {makeButton("distance", "end", "scrollable", "End")}</p >,
+            <p className="param-title" key="success-title">Shot Success: </p>,
+            <p className="param-content" key="success-content">{makeButton("success", "", "", "Makes or Misses")}</p>,
+            <p className="param-title" key="shot-value-title">Shot Value: </p>,
+            <p className="param-content" key="shot-value-content">{makeButton("shot-value", "", "", "2PT or 3PT")}</p>
         ]
         return allLeftButtons;
     }
 
     function createRightButtons() {
         let allRightButtons = [
-            <p className="param-title">Shot Types: </p>,
-            <p className="param-content">{makeButton("shot-types", "", "scrollable", "Shot Type")}</p>,
-            <p className="param-title">Shooting Teams: </p>,
-            <p className="param-content">{makeButton("shooting-teams", "", "scrollable", "Shooting Team")}</p>,
-            <p className="param-title">Home Teams: </p>,
-            <p className="param-content">{makeButton("home-teams", "", "scrollable", "Home Team")}</p>,
-            <p className="param-title">Away Teams: </p>,
-            <p className="param-content">{makeButton("away-teams", "", "scrollable", "Away Team")}</p>,
-            <p className="param-title">Court Areas: </p>,
-            <p className="param-content">{makeButton("court-areas", "", "scrollable", "Court Area")}</p>,
-            <p className="param-title">Sides of Court: </p>,
-            <p className="param-content"> {makeButton("court-sides", "", "scrollable", "Court Side")}</p>
+            <p className="param-title" key="shot-types-title">Shot Types: </p>,
+            <p className="param-content" key="shot-types-content">{makeButton("shot-types", "", "scrollable", "Shot Type")}</p>,
+            <p className="param-title" key="shooting-teams-title">Shooting Teams: </p>,
+            <p className="param-content" key="shooting-teams-content">{makeButton("shooting-teams", "", "scrollable", "Shooting Team")}</p>,
+            <p className="param-title" key="home-teams-title">Home Teams: </p>,
+            <p className="param-content" key="home-teams-content">{makeButton("home-teams", "", "scrollable", "Home Team")}</p>,
+            <p className="param-title" key="away-teams-title">Away Teams: </p>,
+            <p className="param-content" key="away-teams-content">{makeButton("away-teams", "", "scrollable", "Away Team")}</p>,
+            <p className="param-title" key="court-areas-title">Court Areas: </p>,
+            <p className="param-content" key="court-areas-content">{makeButton("court-areas", "", "scrollable", "Court Area")}</p>,
+            <p className="param-title" key="court-sides-title">Sides of Court: </p>,
+            <p className="param-content" key="court-sides-content"> {makeButton("court-sides", "", "scrollable", "Court Side")}</p>
         ]
         return allRightButtons
     }
@@ -411,7 +393,6 @@ const AdvancedSearchBox = (props) => {
     }
 
     async function runAdvancedSearch() {
-        console.log("runAdvancedSearch()")
         let url = `https://customnbashotcharts.com/shots_request_advanced?`
         let urlBuilder = ""
         let isMoreThanOne = false
@@ -443,7 +424,6 @@ const AdvancedSearchBox = (props) => {
         if (urlBuilder !== "") {
             props.setTitle("Custom Search")
             url = url + urlBuilder
-            console.log(url)
             document.getElementById("shotview-grid-item").scrollIntoView({ behavior: "smooth" })
             props.setIsLoading({ state: true, newShots: true })
             props.setAllSearchData({ shots: null, view: latestAdvancedViewType })
@@ -487,7 +467,7 @@ const AdvancedSearchBox = (props) => {
     let unchecked = props.isMobile ? "" : "Hide"
 
     return (
-        <div className="AdvancedSearchBox" id="advanced-search-box">
+        <div className="AdvancedSearchBox" id="advanced-search-box" data-testid={props.testid}>
             <div className="search-box-body">
                 <div className='search-box-inner-body'>
                     <h6 className="choose-parameters-label">Parameters
