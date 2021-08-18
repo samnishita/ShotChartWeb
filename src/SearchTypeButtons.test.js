@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import UserEvent from '@testing-library/user-event';
 import App from './App';
-
-beforeEach(() => {
-    const app = render(<App />);
-});
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import SearchTypeButtons from './SearchTypeButtons';
+configure({ adapter: new Adapter() })
 
 test("Renders advanced view", () => {
+    render(<App />)
     UserEvent.click(screen.getByTestId("advanced-link"))
     expect(screen.queryByTestId("SimpleSearchBox-test")).toBeNull()
     expect(screen.queryByTestId("ShootingBezier-simple-test")).toBeNull()
@@ -16,21 +17,4 @@ test("Renders advanced view", () => {
     expect(screen.queryByTestId("ShootingBezier-advanced-test")).toBeInTheDocument()
     expect(screen.queryByTestId("ShotView-advanced-test")).toBeInTheDocument()
     expect(screen.queryByTestId("ShotPercentageView-advanced-test")).toBeInTheDocument()
-})
-
-test("Renders simple view after advanced view", () => {
-    UserEvent.click(screen.getByTestId("advanced-link"))
-    jest.useFakeTimers();
-    setTimeout(() => {
-        UserEvent.click(screen.getByTestId("simple-link"))
-        expect(screen.queryByTestId("SimpleSearchBox-test")).toBeInTheDocument()
-        expect(screen.queryByTestId("ShootingBezier-simple-test")).toBeInTheDocument()
-        expect(screen.queryByTestId("ShotView-simple-test")).toBeInTheDocument()
-        expect(screen.queryByTestId("ShotPercentageView-simple-test")).toBeInTheDocument()
-        expect(screen.queryByTestId("AdvancedSearchBox-test")).toBeNull()
-        expect(screen.queryByTestId("ShootingBezier-advanced-test")).toBeNull()
-        expect(screen.queryByTestId("ShotView-advanced-test")).toBeNull()
-        expect(screen.queryByTestId("ShotPercentageView-advanced-test")).toBeNull()
-    }, 200);
-
 })

@@ -283,12 +283,12 @@ const SimpleSearchBox = (props) => {
             if (document.getElementById(`${fullId}-button`) && document.getElementById(`${fullId}-button`).clientWidth) {
                 width = document.getElementById(`${fullId}-button`).clientWidth * 0.7
             }
-            let buttonFace2 = (id === "year" || id === "player") ? <TextareaAutosize spellCheck="false" minRows={id === "player" ? invisibleRows : 1}
+            let buttonFace2 = (id === "year" || id === "player") ? <TextareaAutosize data-testid={`${fullId}-textarea2`} spellCheck="false" minRows={id === "player" ? invisibleRows : 1}
                 className={`dropdown-button-display ${fullId} text-area-2`} id={`${fullId}-button-display-2`} maxRows="3"
                 value={value}
                 style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, position: "absolute", color: "rgba(255,255,255,0.5)", }} />
                 : ""
-            let buttonFace = (id === "year" || id === "player") ? < TextareaAutosize spellCheck="false" minRows={id === "player" ? invisibleRows : 1}
+            let buttonFace = (id === "year" || id === "player") ? < TextareaAutosize data-testid={`${fullId}-textarea`} spellCheck="false" minRows={id === "player" ? invisibleRows : 1}
                 className={`dropdown-button-display ${fullId} text-area `} id={`${fullId}-button-display`} maxRows="3"
                 value={whatToShow}
                 style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.7)", }}
@@ -303,10 +303,10 @@ const SimpleSearchBox = (props) => {
                 buttonFace.props.style.display = "none"
                 arrow.props.style.display = "none"
             }
-            return (<button className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }} style={{}}>
+            return (<button data-testid={`${fullId}-button`} className={`dropdown-button ${fullId}`} id={`${fullId}-button`} onClick={(e) => { handleButtonClick(e, fullId) }} style={{}}>
                 {buttonFace2}{buttonFace}
                 {arrow}
-                <div className={`dropdown-content ${scrollable}`} id={`${fullId}`}>
+                <div data-testid={`${fullId}`} className={`dropdown-content ${scrollable}`} id={`${fullId}`}>
                     {displayState}
                 </div>
             </button>)
@@ -328,6 +328,15 @@ const SimpleSearchBox = (props) => {
             {buttonFace2}
         </button>
     }
+    /*
+        console.log(initPlayersRef.current)
+        console.log(initPlayersReverseMapRef.current)
+        console.log(props.selectedPlayer)
+        console.log(props.selectedSeason)
+        console.log(props.selectedYear)
+        console.log(props.textAreaText)
+        console.log(props.size)
+    */
 
     return (
         <div className="SimpleSearchBox" id="simple-search-box" data-testid={props.testid}>
