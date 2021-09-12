@@ -16,8 +16,8 @@ Heavily inspired by <a href="https://twitter.com/kirkgoldsberry?s=20">Kirk Golds
 <!div>
 
 ### Features
-* Over 2,300 past and current NBA players to choose from
-* Access to more than 5.3 million shots taken from the 1996-97 season to the 2020-21 season
+* Over 2,400 past and current NBA players to choose from
+* Access to more than 5.4 million shots taken from the 1996-97 season to the 2020-21 season
 * Search for shots taken in any Regular Season as well as Preseason and/or Playoffs, when applicable
 * Four types of data visualizations: Classic, Hex, Zone, and Heat
 * Advanced Search: filter shots based seasons, players, season types, shot distances, shot success, shot values, shot types, teams 
