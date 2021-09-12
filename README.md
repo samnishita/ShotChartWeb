@@ -29,7 +29,7 @@ All shot data is sourced from stats.nba.com via a web scraping algorithm I desig
 <br><h4>*Classic View*</h4>
 Each individual shot is plotted. Makes and misses are indicated by green circles and red X's, respectively. 
 Hovering over any shot with the cursor will display the details of that shot.
-<br>Limited to 1,000 shots on screen at once.
+<br>Limited to 2,000 shots on screen at once.
 <br><h4>*Hex View*</h4>
 Shots are grouped into uniformly spaced regions across the court. For each region, the color indicates how the FG% of shots in that region
 compares to the all-time NBA FG% of shots in that same region, and the size of each hexagon shows the volume of shots taken from that area. 
