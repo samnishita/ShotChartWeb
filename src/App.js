@@ -11,7 +11,7 @@ import ShootingBezier from './ShootingBezier';
 import githubLogo from './images/GitHub-Mark-Light-64px.png'
 
 const App = () => {
-  const currentYear = '2020-21'
+  const currentYear = '2021-22'
   const [size, setWindowSize] = useState([window.innerHeight, window.innerWidth])
   const [latestSimpleViewType, setLatestSimpleViewType] = useState("Classic")
   const [latestAdvancedViewType, setLatestAdvancedViewType] = useState("Classic")
