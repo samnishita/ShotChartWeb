@@ -2,7 +2,7 @@
 
 ## Go to the app -> <a href="https://customnbashotcharts.com/">Custom NBA Shot Charts (Web Version)</a>
 
-### Shot Data is Up-To-Date Through the End of the 2020-21 Playoffs
+### Shot Data is updated daily throughout the 2021-22 Regular Season
 
 Same data, four ways to view it.<br><br>
 Heavily inspired by <a href="https://twitter.com/kirkgoldsberry?s=20">Kirk Goldsberry</a> and his work.
