@@ -25,10 +25,12 @@ function SearchTypeButtons(props) {
         }
     }
 
+    //Styling to show which view type is currently shown
     const activeStyle = {
         borderBottom: "5px solid rgba(165, 80, 212, 0.8)",
         fontWeight: "bold",
     }
+    //Styling to show which view type is not being shown
     const inActiveStyle = {
         fontWeight: "bold",
     }
@@ -42,12 +44,20 @@ function SearchTypeButtons(props) {
         inActiveStyle.marginRight = "15px"
     }
 
+    /**
+     * Changes button styling on mouse over if clicking the button will change the view
+     * @param {Event} event mouse over event
+     */
     function handleMouseHover(event) {
         if ((props.isCurrentViewSimple && event.target.id === "advanced-link") || (!props.isCurrentViewSimple && event.target.id === "simple-link")) {
             event.target.style.borderBottom = "5px solid white"
         }
     }
 
+    /**
+     * Changes button styling on mouse exit if the styling had been changed by a mouse over event
+     * @param {Event} event mouse exit event
+     */
     function handleMouseExit(event) {
         if ((props.isCurrentViewSimple && event.target.id === "advanced-link") || (!props.isCurrentViewSimple && event.target.id === "simple-link")) {
             event.target.style.borderBottom = ""

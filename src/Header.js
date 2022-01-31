@@ -4,6 +4,10 @@ import SearchTypeButtons from './SearchTypeButtons';
 
 function Header(props) {
     const [initState, setInitState] = useState([])
+
+    /**
+     * Fetches initialization data and sets the initial state
+     */
     async function getInitData() {
         await fetch("https://customnbashotcharts.com/shots_request?init=true", {
             method: 'GET'

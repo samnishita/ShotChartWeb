@@ -28,6 +28,11 @@ const SimpleSearchBox = (props) => {
     const initPlayersReverseMapRef = useRef({});
     initPlayersReverseMapRef.current = props.initPlayersReverseMap;
 
+    /**
+     * Retrieves all players who were listed as active at least once in the given year
+     * @param {string} year year as YYYY-YY
+     * @returns array of all active players
+     */
     function getActivePlayersData(year) {
         let response = props.getSearchData(`https://customnbashotcharts.com/shots_request?activeplayers=${year}`)
             .then(res => {
@@ -52,6 +57,14 @@ const SimpleSearchBox = (props) => {
         return response;
     }
 
+    /**
+     * Retrieves all season types where the given player has been active in the given year
+     * @param {string} year year as YYYY-YY
+     * @param {number} playerId player ID
+     * @param {string} playerFirstName player first name
+     * @param {string} playerLastName player last name
+     * @returns array of active season types
+     */
     async function getSeasonsData(year, playerId, playerFirstName, playerLastName) {
         let response = await props.getSearchData(`https://customnbashotcharts.com/shots_request?singleseasonactivity=true&playerlastname=${playerLastName}&playerfirstname=${playerFirstName}&playerid=${playerId}&year=${year}`)
             .then(res => {
