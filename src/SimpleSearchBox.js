@@ -307,7 +307,7 @@ const SimpleSearchBox = (props) => {
                 style={{ resize: "none", overflowWrap: "break-word", outline: "none", maxWidth: width, minWidth: width, borderBottom: "1px solid rgba(255,255,255,0.7)", }}
                 onKeyDown={e => { handleKeyPress(e, fullId) }}
                 placeholder={placeholder} />
-                : <p className={`dropdown-button-display ${fullId}`} style={{ marginBlockStart: "0em", textAlign: "left", maxWidth: width, minWidth: width, marginBottom: "8px", paddingBottom: "2px", borderBottom: "1px solid rgba(255,255,255,0.7)" }}>{selection}</p>
+                : <p className={`dropdown-button-display ${fullId}`} id={`${fullId}-button-display`} style={{ marginBlockStart: "0em", textAlign: "left", maxWidth: width, minWidth: width, marginBottom: "8px", paddingBottom: "2px", borderBottom: "1px solid rgba(255,255,255,0.7)" }}>{selection}</p>
             let arrow = <Svg className={`arrow-svg ${fullId}`} height={height} width={height} style={{ paddingTop: `${(id === "year" || id === "player") ? 0 : 12}px` }}>
                 <Path className={`arrow-path ${fullId}`} d={`m4,0 l7 7 l7 -7`} strokeWidth="1" fill="transparent" stroke="white"  >
                 </Path>
@@ -341,15 +341,6 @@ const SimpleSearchBox = (props) => {
             {buttonFace2}
         </button>
     }
-    /*
-        console.log(initPlayersRef.current)
-        console.log(initPlayersReverseMapRef.current)
-        console.log(props.selectedPlayer)
-        console.log(props.selectedSeason)
-        console.log(props.selectedYear)
-        console.log(props.textAreaText)
-        console.log(props.size)
-    */
 
     return (
         <div className="SimpleSearchBox" id="simple-search-box" data-testid={props.testid}>
