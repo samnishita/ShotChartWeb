@@ -1,46 +1,50 @@
-# Custom NBA Shot Chart Generator (Web Version)
+# React + TypeScript + Vite
 
-## Go to the app -> <a href="https://customnbashotcharts.com/">Custom NBA Shot Charts (Web Version)</a>
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### Shot Data is updated daily throughout the 2021-22 Regular Season
+Currently, two official plugins are available:
 
-Same data, four ways to view it.<br><br>
-Heavily inspired by <a href="https://twitter.com/kirkgoldsberry?s=20">Kirk Goldsberry</a> and his work.
-<div>
-<img src="https://github.com/samnishita/ShotChartWeb/blob/main/src/images/SimpleClassicExample.png" height="350" width="350">
-<img src="https://github.com/samnishita/ShotChartWeb/blob/main/src/images/SimpleHexExample.png" height="350" width="350">
-<!div>
-<div>
-<img src="https://github.com/samnishita/ShotChartWeb/blob/main/src/images/SimpleZoneExample.png" height="350" width="350">
-<img src="https://github.com/samnishita/ShotChartWeb/blob/main/src/images/SimpleHeatExample.png" height="350" width="350">
-<!div>
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### Features
-* Over 2,400 past and current NBA players to choose from
-* Access to more than 5.4 million shots taken from the 1996-97 season to the 2021-22 season
-* Search for shots taken in any Regular Season, Preseason, and/or Playoffs
-* Four types of data visualizations: Classic, Hex, Zone, and Heat
-* Advanced Search: filter shots based seasons, players, season types, shot distances, shot success, shot values, shot types, teams 
-(home and/or away), and locations on the court
+## Expanding the ESLint configuration
 
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-### Details
-All shot data is sourced from stats.nba.com via a web scraping algorithm I designed.
-<br><h4>*Classic View*</h4>
-Each individual shot is plotted. Makes and misses are indicated by green circles and red X's, respectively. 
-Hovering over any shot with the cursor will display the details of that shot.
-<br>Limited to 2,000 shots on screen at once.
-<br><h4>*Hex View*</h4>
-Shots are grouped into uniformly spaced regions across the court. For each region, the color indicates how the FG% of shots in that region
-compares to the all-time NBA FG% of shots in that same region, and the size of each hexagon shows the volume of shots taken from that area. 
-Higher volume (larger hexagons) combined with high FG% (more red) indicate more efficient scoring. Uses inverse distance weighting interpolations to produce the map.
-<br>Limited to 50,000 shots per search.
-<br><h4>*Zone View*</h4>
-Shots are grouped shots into various regions of the court. For each region, the total number of made field goals are displayed with the total field goal attempts in each specific region, along with 
-that region's calculated FG%. The color of the region shows how its FG% compares to the all-time NBA FG% of that region.
-<br>Limited to 50,000 shots per search.
-<br><h4>*Heat View*</h4>
-Displays the most common shot locations, with more blue indicating high frequency shot locations. Uses inverse distance weighting interpolations to produce the map.
-<br>Limited to 50,000 shots per search.
+- Configure the top-level `parserOptions` property like this:
 
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
