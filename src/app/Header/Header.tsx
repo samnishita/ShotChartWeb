@@ -20,43 +20,51 @@ const menuItems = [{
   display: 'Advanced', path: 'advanced', id: 'advanced-tab', displayOrder: 2
 }];
 
+const checkPath = (path: string) => {
+  if (path === '/' || path === '') {
+    return 0;
+  } else {
+    return menuItems.findIndex(item => item.path === path.split("/")?.pop());
+  }
+}
+
 const Header: FC<HeaderProps> = () => {
   const { pathname } = useLocation();
-  const foundIndex: number = menuItems.findIndex(item => item.path === pathname.split("/")?.pop());
-
-  const [navTabsValue, setNavTabsValue] = useState(foundIndex);
-  const maxWidthToShowMenuIcon: number = 1000;
+  const [navTabsValue, setNavTabsValue] = useState(checkPath(pathname));
+  const maxWidthToShowMenuIcon: number = 800;
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    console.log(event)
-    console.log(newValue)
     setNavTabsValue(newValue)
   };
 
-  const createNavTabs: JSX.Element[] = menuItems.map(eachMenuItem =>
-    <NavTab key={eachMenuItem.id} id={eachMenuItem.id} display={eachMenuItem.display} path={eachMenuItem.path}
-      selected={false} onChange={handleTabChange} displayorder={eachMenuItem.displayOrder} />
-  );
-
+  const createNavTabs = () => {
+    let elements = [];
+    for (let i = 0; i < menuItems.length; i++) {
+      let eachMenuItem = menuItems[i];
+      elements.push(<NavTab key={eachMenuItem.id} id={eachMenuItem.id} display={eachMenuItem.display} path={eachMenuItem.path}
+        selected={i === checkPath(eachMenuItem.path)} onChange={handleTabChange} displayorder={eachMenuItem.displayOrder} />)
+    }
+    return elements;
+  }
   return (
     <>
-      <div className="Header">
-        <div id="titles-container">
-          <h1 className='main-header'>customnbashotcharts.com</h1>
-          <h4 className='sub-header'>NBA Shooting Data Analytics</h4>
-        </div>
-        <div id="header-right-container">
+      <div id="header-wrapper">
+        <div className="Header">
+          <div id="titles-container">
+            <h1>CNSC</h1>
+          </div>
           <div id="nav-tab-container" hidden={useScreenWidth() < maxWidthToShowMenuIcon}>
             <ThemeProvider theme={navTabTheme}>
-              <Tabs value={navTabsValue > -1 ? navTabsValue : false} onChange={handleTabChange} textColor='secondary' indicatorColor='secondary'>
-                {createNavTabs}
+              <Tabs value={navTabsValue > -1 ? navTabsValue : false} onChange={handleTabChange} textColor='secondary' indicatorColor='secondary' >
+                {createNavTabs()}
               </Tabs>
             </ThemeProvider>
           </div>
           <div hidden={useScreenWidth() >= maxWidthToShowMenuIcon}>
             <MenuIcon id="menu-button" />
           </div>
-          <a id="github-icon" target="_blank" href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository"></img></a>
+          <a id="github-icon" target="_blank" href="https://github.com/samnishita/ShotChartWeb"><img src={githubLogo} alt="link to github repository" width="64px" height="64px"></img></a>
         </div>
+        <div id='bottom-border'></div>
       </div>
     </>
   )

@@ -10,18 +10,20 @@ import {
 import PageNotFound from './app/PageNotFound/PageNotFound.tsx';
 import HomeComponent from './app/HomeComponent/HomeComponent.tsx';
 import BodyComponent from './app/BodyComponent/BodyComponent.tsx';
+import SearchComponent from './app/SearchComponent/SearchComponent.tsx';
 
 const router = createBrowserRouter([
   {
     element: <App />,
     children: [
       {
+        index: true,
         path: "home",
         element: <HomeComponent />,
       },
       {
         path: "search",
-        element: <BodyComponent />,
+        element: <SearchComponent />,
       },
       {
         path: "advanced",
@@ -49,8 +51,6 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* <App /> */}
     <RouterProvider router={router} />
-
   </StrictMode>,
 )

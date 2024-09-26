@@ -13,11 +13,9 @@ const StyledTab = styled(Tab)({
   textTransform: 'none',
   color: navTabTheme.palette.primary.main,
   height: '100%',
-  fontSize: '1.2rem',
+  fontSize: '1rem',
   fontFamily: 'inherit',
   fontWeight: '300',
-  padding: '1.2rem',
-  margin: '0.25rem 0.75rem',
 });
 
 const NavTab: FC<NavTabProps> = (props: NavTabProps) => {

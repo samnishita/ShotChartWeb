@@ -1,0 +1,44 @@
+.CourtDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    background-color: green;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#court-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 95%;
+    min-height: 4.5rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+.court-container {
+    margin: 0 auto;
+    padding: 1rem;
+    background-color: pink;
+    border: 1px solid;
+    width: 90%;
+    height: 95%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.court-image {
+    max-width: inherit;
+    max-height: inherit;
+    height: inherit;
+    width: inherit;
+    object-fit: contain;
+}
