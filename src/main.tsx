@@ -52,7 +52,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-async function deferRender() {
+const deferRender = async () => {
   if (process.env.NODE_ENV === 'dev') {
     console.log("DEV")
     let mockServiceWorker = setupWorker(...handlers);

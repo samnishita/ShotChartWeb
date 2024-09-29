@@ -1,4 +1,4 @@
-export function generateYearsFromCurrentYearNumber(currentYearNumber: number): string[] {
+export const generateYearsFromCurrentYearNumber = (currentYearNumber: number): string[] => {
     let seasons: string[] = [];
     for (let i = 1996; i < currentYearNumber; i++) {
         seasons.push(buildYearString(i));
@@ -6,7 +6,7 @@ export function generateYearsFromCurrentYearNumber(currentYearNumber: number): s
     return seasons;
 }
 
-export function buildYearString(yearNumber: number): string {
+export const buildYearString = (yearNumber: number): string => {
     let first: string = yearNumber.toString();
     let last: string | undefined = (yearNumber + 1).toString().match(/.{2}$/)?.toString();
     let second: string = last ? last : "";

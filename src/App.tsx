@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 import './App.scss'
 import Header from './app/Header/Header'
 
-function App() {
+const App = () => {
   return (
     <>
       <Header />

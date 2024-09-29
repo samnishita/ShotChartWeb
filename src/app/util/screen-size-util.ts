@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 
-export function useScreenDimensions() {
+export const useScreenDimensions = () => {
     const [screenDimensions, setScreenDimensions] = useState(
         getScreenDimensions()
     );
 
     useEffect(() => {
-        function handleResize() {
+        const handleResize = () => {
             setScreenDimensions(getScreenDimensions());
         }
 
@@ -24,13 +24,13 @@ const getScreenDimensions = () => {
     };
 }
 
-export function useScreenWidth() {
+export const useScreenWidth = () => {
     const [screenWidth, setScreenWidth] = useState(
         getScreenWidth()
     );
 
     useEffect(() => {
-        function handleResize() {
+        const handleResize = () => {
             setScreenWidth(getScreenWidth());
         }
 

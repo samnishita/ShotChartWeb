@@ -3,7 +3,7 @@ export interface AutocompleteMenuItem {
     label: string;
 }
 
-export function generateYearsArray(yearStrings: string[]): AutocompleteMenuItem[] {
+export const generateYearsArray = (yearStrings: string[]): AutocompleteMenuItem[] => {
     let menuItems: AutocompleteMenuItem[] = yearStrings.map(year => ({
         id: year + "-menu-item",
         label: year
