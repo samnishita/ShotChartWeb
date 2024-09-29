@@ -5,6 +5,9 @@ import { Button, Paper, styled } from '@mui/material';
 import CourtDisplay from '../CourtDisplay/CourtDisplay';
 import SelectMenu from '../SelectMenu/SelectMenu';
 import AutocompleteMenu from '../AutocompleteMenu/AutocompleteMenu';
+import { generateYearsFromCurrentYearNumber } from '../util/shared-util';
+import { CURRENT_YEAR_NUMBER } from '../util/constants';
+import { generateYearsArray } from '../model/AutocompleteMenuItem';
 
 interface SearchComponentProps { }
 const Item = styled(Paper)(({ theme }) => ({
@@ -27,11 +30,10 @@ const SearchComponent: FC<SearchComponentProps> = () => {
         <Grid size={{ sm: 12, md: 4 }}>
           <div className='grid-item-container'>
             <div id='search-menu-container'>
-              <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={[]} />
+              <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER))} />
               <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={[]} />
               <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={''} setSelectedValue={setSeasonType} menuItems={[]} />
               <Button variant="contained">Search</Button>
-
             </div>
           </div>
         </Grid>

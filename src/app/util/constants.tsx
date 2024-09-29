@@ -1,0 +1,1 @@
+export const CURRENT_YEAR_NUMBER = 2024;
