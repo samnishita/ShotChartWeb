@@ -1,5 +1,5 @@
 export interface Year {
-    yearStart:number;
-    yearEnd:number;
+    yearStart: number;
+    yearEnd: number;
     yearDisplay: string;
 }
