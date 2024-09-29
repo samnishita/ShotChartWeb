@@ -11,6 +11,8 @@ import PageNotFound from './app/PageNotFound/PageNotFound.tsx';
 import HomeComponent from './app/HomeComponent/HomeComponent.tsx';
 import BodyComponent from './app/BodyComponent/BodyComponent.tsx';
 import SearchComponent from './app/SearchComponent/SearchComponent.tsx';
+import { setupWorker } from 'msw/browser'
+import { handlers } from './mocks/handlers.ts';
 
 const router = createBrowserRouter([
   {
@@ -49,8 +51,19 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-)
+
+async function deferRender() {
+  if (process.env.NODE_ENV === 'dev') {
+    console.log("DEV")
+    let mockServiceWorker = setupWorker(...handlers);
+    return mockServiceWorker.start();
+  }
+}
+
+deferRender().then(() => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  )
+})

@@ -8,6 +8,7 @@ import AutocompleteMenu from '../AutocompleteMenu/AutocompleteMenu';
 import { generateYearsFromCurrentYearNumber } from '../util/shared-util';
 import { CURRENT_YEAR_NUMBER } from '../util/constants';
 import { generateYearsArray } from '../model/AutocompleteMenuItem';
+import { getAllPlayers } from '../service/player-service';
 
 interface SearchComponentProps { }
 const Item = styled(Paper)(({ theme }) => ({
@@ -31,7 +32,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
           <div className='grid-item-container'>
             <div id='search-menu-container'>
               <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER))} />
-              <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={[]} />
+              <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={getAllPlayers()} />
               <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={''} setSelectedValue={setSeasonType} menuItems={[]} />
               <Button variant="contained">Search</Button>
             </div>

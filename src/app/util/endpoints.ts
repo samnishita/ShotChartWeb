@@ -1,0 +1,1 @@
+export const PLAYER_ALL_ENDPOINT = "/players"
