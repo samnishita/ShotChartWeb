@@ -1,1 +1,1 @@
-export const PLAYER_ALL_ENDPOINT = "/players"
+export const PLAYER_ALL_ENDPOINT = "/players";
