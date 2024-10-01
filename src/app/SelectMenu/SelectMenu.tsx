@@ -1,23 +1,28 @@
 import React, { FC } from 'react';
 import './SelectMenu.scss';
-import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+import { InputLabel, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
+import { SelectMenuItem } from '../model/SelectMenuItem';
 
 interface SelectMenuProps {
   id: string,
   labelText: string,
-  value: string;
+  value: SelectMenuItem | null,
   setSelectedValue: Function,
-  menuItems: string[]
+  menuItems: SelectMenuItem[]
 }
 
 const SelectMenu: FC<SelectMenuProps> = (props: SelectMenuProps) => {
   const createMenuItems = () => {
     let menuItems = [];
     for (let i = 0; i < props.menuItems?.length; i++) {
-      menuItems.push(<MenuItem value={props.value}>Twenty</MenuItem>)
+      let eachMenuItem: SelectMenuItem = props.menuItems[i];
+      menuItems.push(<MenuItem value={eachMenuItem.value}>{eachMenuItem.label}</MenuItem>)
     }
     return menuItems;
   }
+  const handleChange = (event: SelectChangeEvent) => {
+    props.setSelectedValue(event.target.value as string);
+  };
   return (
     <div className="SelectMenu">
       <FormControl fullWidth>
@@ -25,7 +30,9 @@ const SelectMenu: FC<SelectMenuProps> = (props: SelectMenuProps) => {
         <Select
           labelId={props.id + "-label"}
           id={props.id}
-          value={props.value}
+          value={props.value?.value}
+          label={props.labelText}
+          onChange={handleChange}
         >
           {createMenuItems()}
         </Select>

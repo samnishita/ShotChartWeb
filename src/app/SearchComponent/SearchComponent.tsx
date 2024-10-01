@@ -7,9 +7,10 @@ import SelectMenu from '../SelectMenu/SelectMenu';
 import AutocompleteMenu from '../AutocompleteMenu/AutocompleteMenu';
 import { generateYearsFromCurrentYearNumber } from '../util/shared-util';
 import { CURRENT_YEAR_NUMBER } from '../util/constants';
-import { generateYearsArray } from '../model/AutocompleteMenuItem';
+import { AutocompleteMenuItem, generateYearsArray } from '../model/AutocompleteMenuItem';
 import { getAllPlayers } from '../service/player-service';
 import { Player } from '../model/Player';
+import { ALL_SEASON_TYPES, SeasonType } from '../model/SeasonType';
 
 interface SearchComponentProps { }
 const Item = styled(Paper)(({ theme }) => ({
@@ -25,9 +26,11 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const SearchComponent: FC<SearchComponentProps> = () => {
   const [year, setYear] = useState<string | null>(null);
+  const [yearList, setYearList] = useState<AutocompleteMenuItem[]>(generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER)).reverse());
   const [player, setPlayer] = useState<Player | null>(null);
   const [playerList, setPlayerList] = useState<Player[]>([]);
-  const [seasonType, setSeasonType] = useState<string | null>(null);
+  const [seasonType, setSeasonType] = useState<SeasonType | null>(null);
+  const [seasonTypeList, setSeasonTypeList] = useState<SeasonType[]>(ALL_SEASON_TYPES);
   useEffect(() => {
     getAllPlayers().then(data => {
       setPlayerList(data.map(player => {
@@ -45,9 +48,9 @@ const SearchComponent: FC<SearchComponentProps> = () => {
         <Grid size={{ sm: 12, md: 4 }}>
           <div className='grid-item-container'>
             <div id='search-menu-container'>
-              <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER))} />
+              <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
               <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
-              <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={''} setSelectedValue={setSeasonType} menuItems={[]} />
+              <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
               <Button variant="contained">Search</Button>
             </div>
           </div>
