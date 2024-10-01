@@ -1,10 +1,12 @@
 import { Player } from "../model/Player";
 import { PLAYER_ALL_ENDPOINT } from "../util/endpoints";
 
-export const getAllPlayers = (): Player[] => {
-    let allPlayers: Player[] = [];
-    fetch(PLAYER_ALL_ENDPOINT, {
+export const getAllPlayers = (): Promise<Player[]> => {
+    return fetch(PLAYER_ALL_ENDPOINT, {
         method: 'GET'
-    }).then(response => console.log(response));
-    return allPlayers;
+    })
+        .then(response => response.json())
+        .then(data => {
+            return data.data;
+        })
 }

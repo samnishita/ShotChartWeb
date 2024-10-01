@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import './SearchComponent.scss';
 import Grid from '@mui/material/Grid2';
 import { Button, Paper, styled } from '@mui/material';
@@ -9,6 +9,7 @@ import { generateYearsFromCurrentYearNumber } from '../util/shared-util';
 import { CURRENT_YEAR_NUMBER } from '../util/constants';
 import { generateYearsArray } from '../model/AutocompleteMenuItem';
 import { getAllPlayers } from '../service/player-service';
+import { Player } from '../model/Player';
 
 interface SearchComponentProps { }
 const Item = styled(Paper)(({ theme }) => ({
@@ -21,10 +22,23 @@ const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#1A2027',
   }),
 }));
+
 const SearchComponent: FC<SearchComponentProps> = () => {
-  const [year, setYear] = useState(null);
-  const [player, setPlayer] = useState(null);
-  const [seasonType, setSeasonType] = useState(null);
+  const [year, setYear] = useState<string | null>(null);
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [playerList, setPlayerList] = useState<Player[]>([]);
+  const [seasonType, setSeasonType] = useState<string | null>(null);
+  useEffect(() => {
+    getAllPlayers().then(data => {
+      setPlayerList(data.map(player => {
+        return {
+          ...player,
+          id: player.playerId,
+          label: (player.playerFirstName + " " + player.playerLastName).trim()
+        }
+      }));
+    })
+  }, [])
   return (
     <div className="SearchComponent">
       <Grid container spacing={3}  >
@@ -32,7 +46,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
           <div className='grid-item-container'>
             <div id='search-menu-container'>
               <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER))} />
-              <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={getAllPlayers()} />
+              <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
               <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={''} setSelectedValue={setSeasonType} menuItems={[]} />
               <Button variant="contained">Search</Button>
             </div>
