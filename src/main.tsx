@@ -56,7 +56,9 @@ const deferRender = async () => {
   if (process.env.NODE_ENV === 'dev') {
     console.log("DEV")
     let mockServiceWorker = setupWorker(...handlers);
-    return mockServiceWorker.start();
+    return mockServiceWorker.start({
+      onUnhandledRequest: 'bypass'
+    });
   }
 }
 
