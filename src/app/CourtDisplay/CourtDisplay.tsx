@@ -15,7 +15,9 @@ const CourtDisplay: FC<CourtDisplayProps> = () => {
         <h3>The Search Title Goes Here BUT IT'S EXTRA EXTRA LONG</h3>
       </div>
       <div className='court-container'>
-        <img className='court-image' src={transparentCourt} ></img>
+        <div className='court-background'>
+          <img className='court-image' src={transparentCourt} ></img>
+        </div>
       </div>
       <DisplayOptions currentDisplayOption={currentDisplayOption} setCurrentDisplayOption={setCurrentDisplayOption} />
     </div>

@@ -23,21 +23,24 @@ h3 {
 .court-container {
     margin: 0 auto;
     padding: 1rem;
-    background-color: pink;
-    border: 1px solid;
-    width: 90%;
-    height: 95%;
+    max-width: 100%;
+    height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    align-content: center;
+}
+
+.court-background {
+    height: inherit;
+    width: inherit;
+    display: inline-block; 
+    background-color: rgb(80, 85, 91);
 }
 
 .court-image {
-    max-width: inherit;
-    max-height: inherit;
-    height: inherit;
-    width: inherit;
-    object-fit: contain;
+    height: 100%;
+    width: 100%;
 }
