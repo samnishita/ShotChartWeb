@@ -49,7 +49,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
                 <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
                 <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
                 <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
-                <Button variant="contained" onClick={handleSearchButtonClick}>Search</Button>
+                <Button variant="contained" className={(year && player && seasonType) ? "active-button" : "disabled-button"} disabled={!(year && player && seasonType)} onClick={handleSearchButtonClick}>Search</Button>
               </ThemeProvider>
             </div>
           </div>

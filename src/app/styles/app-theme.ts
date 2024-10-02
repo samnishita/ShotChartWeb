@@ -65,7 +65,6 @@ export const appTheme = createTheme({
             },
         },
         MuiButton: {
-            
             styleOverrides: {
                 root: {
                     color: primaryFontColor,
@@ -77,7 +76,11 @@ export const appTheme = createTheme({
                     },
                     '&:hover':{
                         backgroundColor: "rgba(144, 144, 255, 0.2)"
-                    }
+                    },
+                    '&.disabled-button': {
+                        backgroundColor: "gray",
+                        color: "#2f2f2f"
+                    },
 
                 }
             }
