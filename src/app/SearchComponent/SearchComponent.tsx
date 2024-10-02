@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import './SearchComponent.scss';
 import Grid from '@mui/material/Grid2';
-import { Button, Paper, styled } from '@mui/material';
+import { Button, Paper, styled, ThemeProvider } from '@mui/material';
 import CourtDisplay from '../CourtDisplay/CourtDisplay';
 import SelectMenu from '../SelectMenu/SelectMenu';
 import AutocompleteMenu from '../AutocompleteMenu/AutocompleteMenu';
@@ -11,6 +11,7 @@ import { AutocompleteMenuItem, generateYearsArray } from '../model/AutocompleteM
 import { getAllPlayers } from '../service/player-service';
 import { Player } from '../model/Player';
 import { ALL_SEASON_TYPES, SeasonType } from '../model/SeasonType';
+import { appTheme } from '../styles/app-theme';
 
 interface SearchComponentProps { }
 const Item = styled(Paper)(({ theme }) => ({
@@ -48,10 +49,12 @@ const SearchComponent: FC<SearchComponentProps> = () => {
         <Grid size={{ sm: 12, md: 4 }}>
           <div className='grid-item-container'>
             <div id='search-menu-container'>
-              <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
-              <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
-              <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
-              <Button variant="contained">Search</Button>
+              <ThemeProvider theme={appTheme}>
+                <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
+                <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
+                <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
+                <Button variant="contained">Search</Button>
+              </ThemeProvider>
             </div>
           </div>
         </Grid>

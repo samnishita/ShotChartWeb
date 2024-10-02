@@ -17,10 +17,8 @@ const AutocompleteMenu: FC<AutocompleteMenuProps> = (props: AutocompleteMenuProp
       <Autocomplete
         disablePortal
         options={props.menuItems}
-        // sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label={props.labelText} />}
       />
-      
     </div>)
 };
 

@@ -1,8 +1,8 @@
 import { FC, KeyboardEvent } from 'react';
 import './NavTab.scss';
 import { styled, Tab } from '@mui/material';
-import { navTabTheme } from '../styles/nav-tab-theme';
 import { Link } from 'react-router-dom';
+import { appTheme } from '../styles/app-theme';
 
 interface NavTabProps {
   id: string, display: string, path: string,
@@ -11,7 +11,7 @@ interface NavTabProps {
 }
 const StyledTab = styled(Tab)({
   textTransform: 'none',
-  color: navTabTheme.palette.primary.main,
+  color: appTheme.palette.primary.contrastText,
   height: '100%',
   fontSize: '1rem',
   fontFamily: 'inherit',

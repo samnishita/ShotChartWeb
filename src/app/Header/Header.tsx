@@ -4,9 +4,9 @@ import githubLogo from '/src/images/GitHub-Mark-Light-64px.png'
 import { Tabs, ThemeProvider } from '@mui/material';
 import { useScreenWidth } from '../util/screen-size-util';
 import MenuIcon from '@mui/icons-material/Menu';
-import { navTabTheme } from '../styles/nav-tab-theme';
 import { useLocation } from 'react-router-dom';
 import NavTab from '../NavTab/NavTab';
+import { appTheme } from '../styles/app-theme';
 
 interface HeaderProps {
 
@@ -53,8 +53,8 @@ const Header: FC<HeaderProps> = () => {
             <h1>CNSC</h1>
           </div>
           <div id="nav-tab-container" hidden={useScreenWidth() < maxWidthToShowMenuIcon}>
-            <ThemeProvider theme={navTabTheme}>
-              <Tabs value={navTabsValue > -1 ? navTabsValue : false} onChange={handleTabChange} textColor='secondary' indicatorColor='secondary' >
+            <ThemeProvider theme={appTheme}>
+              <Tabs value={navTabsValue > -1 ? navTabsValue : false} onChange={handleTabChange} textColor="primary" indicatorColor='primary' >
                 {createNavTabs()}
               </Tabs>
             </ThemeProvider>
