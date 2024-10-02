@@ -7,31 +7,27 @@ import SelectMenu from '../SelectMenu/SelectMenu';
 import AutocompleteMenu from '../AutocompleteMenu/AutocompleteMenu';
 import { generateYearsFromCurrentYearNumber } from '../util/shared-util';
 import { CURRENT_YEAR_NUMBER } from '../util/constants';
-import { AutocompleteMenuItem, generateYearsArray } from '../model/AutocompleteMenuItem';
 import { getAllPlayers } from '../service/player-service';
 import { Player } from '../model/Player';
 import { ALL_SEASON_TYPES, SeasonType } from '../model/SeasonType';
 import { appTheme } from '../styles/app-theme';
+import { Shot } from '../model/Shot';
+import { getBasicShots } from '../service/shot-service';
+import { generateYearsArray, Year } from '../model/Year';
 
 interface SearchComponentProps { }
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#1A2027',
-  }),
-}));
 
 const SearchComponent: FC<SearchComponentProps> = () => {
-  const [year, setYear] = useState<string | null>(null);
-  const [yearList, setYearList] = useState<AutocompleteMenuItem[]>(generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER)).reverse());
-  const [player, setPlayer] = useState<Player | null>(null);
+  const [yearList, setYearList] = useState<Year[]>(generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER)).reverse());
+  const [year, setYear] = useState<Year>(yearList[0]);
   const [playerList, setPlayerList] = useState<Player[]>([]);
-  const [seasonType, setSeasonType] = useState<SeasonType | null>(null);
+  const [player, setPlayer] = useState<Player>(playerList[0]);
   const [seasonTypeList, setSeasonTypeList] = useState<SeasonType[]>(ALL_SEASON_TYPES);
+  const [seasonType, setSeasonType] = useState<SeasonType>(seasonTypeList[1]);
+  const [currentShots, setCurrentShots] = useState<Shot[]>([]);
+  const handleSearchButtonClick = async () => {
+    setCurrentShots(await getBasicShots(year, player, seasonType));
+  }
   useEffect(() => {
     getAllPlayers().then(data => {
       setPlayerList(data.map(player => {
@@ -53,7 +49,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
                 <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
                 <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
                 <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
-                <Button variant="contained">Search</Button>
+                <Button variant="contained" onClick={handleSearchButtonClick}>Search</Button>
               </ThemeProvider>
             </div>
           </div>

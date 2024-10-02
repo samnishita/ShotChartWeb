@@ -16,12 +16,12 @@ const SelectMenu: FC<SelectMenuProps> = (props: SelectMenuProps) => {
     let menuItems = [];
     for (let i = 0; i < props.menuItems?.length; i++) {
       let eachMenuItem: SelectMenuItem = props.menuItems[i];
-      menuItems.push(<MenuItem value={eachMenuItem.value}>{eachMenuItem.label}</MenuItem>)
+      menuItems.push(<MenuItem key={eachMenuItem.id} value={eachMenuItem.value}>{eachMenuItem.label}</MenuItem>)
     }
     return menuItems;
   }
   const handleChange = (event: SelectChangeEvent) => {
-    props.setSelectedValue(event.target.value as string);
+    props.setSelectedValue(event.target);
   };
   return (
     <div className="SelectMenu">
