@@ -64,6 +64,23 @@ export const appTheme = createTheme({
                 },
             },
         },
+        MuiButton: {
+            
+            styleOverrides: {
+                root: {
+                    color: primaryFontColor,
+                    '&.active-button': {
+                        backgroundColor: "rgba(144, 144, 255, 0.6)",
+                        '&:hover': {
+                            backgroundColor: "rgba(144, 144, 255, 0.4)"
+                        }
+                    },
+                    '&:hover':{
+                        backgroundColor: "rgba(144, 144, 255, 0.2)"
+                    }
 
+                }
+            }
+        }
     },
 });
