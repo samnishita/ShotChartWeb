@@ -18,9 +18,11 @@
 
 h3 {
     font-size: 1.5rem;
+    text-align: center;
 }
 
 .court-container {
+    position: relative;
     margin: 0 auto;
     padding: 1rem;
     max-width: 100%;
@@ -41,6 +43,18 @@ h3 {
 }
 
 .court-image {
-    height: 100%;
+    height: auto;
     width: 100%;
+}
+
+.classic-shot {
+    position: absolute;
+}
+
+.make {
+    color: rgb(22, 199, 22);
+}
+
+.miss {
+    color: red;
 }

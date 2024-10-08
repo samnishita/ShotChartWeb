@@ -31,5 +31,6 @@ export interface Shot {
     homeTeamAbbr: string,
     homeTeamId: number,
     homeTeamName: string,
-    atHome: boolean
+    atHome: boolean,
+    sx: {}
 }

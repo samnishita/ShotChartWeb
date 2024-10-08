@@ -20,23 +20,29 @@ interface SearchComponentProps { }
 const SearchComponent: FC<SearchComponentProps> = () => {
   const [yearList, setYearList] = useState<Year[]>(generateYearsArray(generateYearsFromCurrentYearNumber(CURRENT_YEAR_NUMBER)).reverse());
   const [year, setYear] = useState<Year>(yearList[0]);
-  const [playerList, setPlayerList] = useState<Player[]>([]);
-  const [player, setPlayer] = useState<Player>(playerList[0]);
+  const [playerList, setPlayerList] = useState<Player[] | null>(null);
+  const [player, setPlayer] = useState<Player | null>(null);
   const [seasonTypeList, setSeasonTypeList] = useState<SeasonType[]>(ALL_SEASON_TYPES);
   const [seasonType, setSeasonType] = useState<SeasonType>(seasonTypeList[1]);
-  const [currentShots, setCurrentShots] = useState<Shot[]>([]);
+  const [currentShots, setCurrentShots] = useState<Shot[] | null>(null);
   const handleSearchButtonClick = async () => {
-    setCurrentShots(await getBasicShots(year, player, seasonType));
+    if (player != null) {
+      setCurrentShots(await getBasicShots(year, player, seasonType));
+    } else {
+      //ALERT
+    }
   }
   useEffect(() => {
     getAllPlayers().then(data => {
-      setPlayerList(data.map(player => {
+      let list: Player[] = data.map(player => {
         return {
           ...player,
           id: player.playerId,
           label: (player.playerFirstName + " " + player.playerLastName).trim()
         }
-      }));
+      });
+      setPlayerList(list);
+      setPlayer(list[0]);
     })
   }, [])
   return (
@@ -46,8 +52,8 @@ const SearchComponent: FC<SearchComponentProps> = () => {
           <div className='grid-item-container'>
             <div id='search-menu-container'>
               <ThemeProvider theme={appTheme}>
-                <AutocompleteMenu id={'year-selection'} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
-                <AutocompleteMenu id={'player-selection'} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
+                <AutocompleteMenu id={'year-selection'} value={year} labelText='Year' setSelectedValue={setYear} menuItems={yearList} />
+                <AutocompleteMenu id={'player-selection'} value={player} labelText={'Player'} setSelectedValue={setPlayer} menuItems={playerList} />
                 <SelectMenu id={'season-type-selection'} labelText={'Season Type'} value={seasonType} setSelectedValue={setSeasonType} menuItems={seasonTypeList} />
                 <Button variant="contained" className={(year && player && seasonType) ? "active-button" : "disabled-button"} disabled={!(year && player && seasonType)} onClick={handleSearchButtonClick}>Search</Button>
               </ThemeProvider>
@@ -56,7 +62,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
         </Grid>
         <Grid size={{ sm: 12, md: 6 }}>
           <div className='grid-item-container'>
-            <CourtDisplay />
+            <CourtDisplay shots={currentShots} year={year} player={player} seasonType={seasonType} />
           </div>
         </Grid>
         <Grid size={{ sm: 12, md: 2 }}>

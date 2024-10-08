@@ -5,9 +5,10 @@ import { AutocompleteMenuItem } from '../model/AutocompleteMenuItem';
 
 interface AutocompleteMenuProps {
   id: string,
+  value: AutocompleteMenuItem | null
   labelText: string,
   setSelectedValue: Function,
-  menuItems: AutocompleteMenuItem[];
+  menuItems: AutocompleteMenuItem[] | null;
 }
 
 const AutocompleteMenu: FC<AutocompleteMenuProps> = (props: AutocompleteMenuProps) => {
@@ -18,7 +19,8 @@ const AutocompleteMenu: FC<AutocompleteMenuProps> = (props: AutocompleteMenuProp
     <div className="AutocompleteMenu">
       <Autocomplete
         disablePortal
-        options={props.menuItems}
+        value={props.value}
+        options={props.menuItems == null ? [] : props.menuItems}
         renderInput={(params) => <TextField {...params} label={props.labelText} />}
         onChange={handleChange}
       />
