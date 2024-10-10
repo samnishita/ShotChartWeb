@@ -9,7 +9,7 @@ import { Player } from '../model/Player';
 import { Year } from '../model/Year';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { ALL_GRIDS } from '../model/GridZone';
+import { ALL_ZONES, determineShotZones, GridZone } from '../model/GridZone';
 interface CourtDisplayProps {
   year: Year,
   player: Player | null,
@@ -28,7 +28,8 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(GRID_DISPLAY);
   const [classicShots, setClassicShots] = useState<Shot[] | null>(null);
   const [classicShotsDisplayNodes, setClassicShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
-  const [gridShots, setGridShots] = useState<Shot[] | null>(null);
+  // const [gridShots, setGridShots] = useState<Shot[] | null>(null);
+  const [gridZones, setGridZones] = useState<GridZone[] | null>(null);
   const [gridShotsDisplayNodes, setGridShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
 
   const processNewShotsClassic = (shots: Shot[]): void => {
@@ -47,22 +48,6 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     });
     setClassicShots(shots);
   }
-  const processNewShotsGrid = (shots: Shot[]): void => {
-    shots.forEach((eachShot) => {
-      // let currentImageWidth: number = (imageWidth ? imageWidth : 1);
-      // //Scale font size with image size
-      // let fontSize: number = fontRatioOrig * currentImageWidth;
-      // //Move shot to hoop origin
-      // let translateYToHoopOrigin: number = hoopTranslateYToWidthRatio * currentImageWidth;
-      // //Move shot using shot coordinates
-      // let shotXTranslate: number = (eachShot.x) / 500 * currentImageWidth;
-      // let shotYTranslate: number = -(eachShot.y - 5) / 500 * currentImageWidth;
-      // //Convert to px styling
-      // let sxStyle = {}
-      // eachShot.sx = sxStyle;
-    });
-    setGridShots(shots);
-  }
 
   const processExistingShotsClassic = (): void => {
     if (currentDisplayOption == CLASSIC_DISPLAY && classicShots != null) {
@@ -76,18 +61,44 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     }
   }
 
+  const processNewShotsGrid = (shots: Shot[]): void => {
+    let zones = determineShotZones(shots);
+    setGridZones(zones);
+  }
   const processExistingShotsGrid = () => {
-    if (currentDisplayOption == GRID_DISPLAY && gridShots != null) {
+    if (currentDisplayOption == GRID_DISPLAY && gridZones != null) {
       let icons: React.ReactNode[] = [];
-      ALL_GRIDS.forEach((eachGrid) => {
+      gridZones.forEach((eachZone) => {
         if (imageWidth) {
+
+          // eachZone.madeShots = eachZone.madeShots * 1000;
+          // eachZone.totalShots = eachZone.totalShots * 1000;
+
           let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
-          let style = { transform: `translate( ${eachGrid.translateX * widthRatio}px, ${eachGrid.translateY * widthRatio}px )` };
-          let pathTransform: string = `scale(${widthRatio})`
+          // console.log(widthRatio)
+          let style = { transform: `translate( ${eachZone.translateX * widthRatio}px, ${eachZone.translateY * widthRatio}px )` };
+          let pathTransform: string = `scale(${widthRatio})`;
+          let labelStyle = {
+            transform: `translate( ${eachZone.labelX * widthRatio}px, ${eachZone.labelY * widthRatio}px ) scale(${widthRatio})`,
+          };
+          let showSplitCount: boolean = eachZone.madeShots.toString().length + eachZone.totalShots.toString().length > eachZone.maxLabelLength;
           let icon: React.ReactNode =
-            <svg viewBox={`0 0 ${eachGrid.width * widthRatio} ${eachGrid.height * widthRatio}`} className='grid-zone' key={eachGrid.id} width={eachGrid.width * widthRatio} height={eachGrid.height * widthRatio} style={style}>
-              <path strokeWidth={eachGrid.strokeWidth} stroke={eachGrid.stroke} d={eachGrid.d} fill={eachGrid.fill} transform={pathTransform} />
-            </svg>
+            <div className='grid-zone-object-wrapper' key={eachZone.id.toString() + "-wrapper"}>
+              <svg viewBox={`0 0 ${eachZone.width * widthRatio} ${eachZone.height * widthRatio}`} className='grid-zone' key={eachZone.id} width={eachZone.width * widthRatio} height={eachZone.height * widthRatio} style={style}>
+                <path strokeWidth={eachZone.strokeWidth} stroke={eachZone.stroke} d={eachZone.d} fill={eachZone.fill} transform={pathTransform} />
+              </svg>
+              <div className='grid-zone-label-container' style={labelStyle}>
+                {showSplitCount ? (<>
+                  <div className='grid-zone-label'>{eachZone.madeShots}</div>
+                  <div className='grid-zone-label'>/</div>
+                  <div className='grid-zone-label'>{eachZone.totalShots}</div>
+                </>) : (<>
+                  <div className='grid-zone-label invisible'>/</div>
+                  <div className='grid-zone-label'>{eachZone.madeShots}/{eachZone.totalShots}</div>
+                </>)}
+                <div className='grid-zone-label'>{eachZone.totalShots > 0 ? `${(eachZone.madeShots * 100 / eachZone.totalShots).toFixed(2)}%` : '-'}</div>
+              </div>
+            </div>
           icons.push(icon);
         }
       })
@@ -134,6 +145,8 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   }, [imageWidth])
 
   useEffect(() => {
+    setClassicShots([]);
+    setGridZones([]);
     if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
     } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
@@ -151,7 +164,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
       processExistingShotsGrid();
     }
-  }, [gridShots]);
+  }, [gridZones]);
 
   useEffect(() => {
     listenForResize();

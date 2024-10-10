@@ -1,3 +1,5 @@
+import { Shot } from "./Shot";
+
 export interface GridZone {
     id: number;
     description: string;
@@ -12,13 +14,16 @@ export interface GridZone {
     sx: {},
     translateX: number,
     translateY: number,
+    labelX: number,
+    labelY: number,
+    maxLabelLength: number
 }
 
 const STROKE_WIDTH: number = 3;
-const STROKE: string = "white";
+const STROKE: string = "black";
 const FILL_DEFAULT: string = "rgba(0,0,0,0.3)";
 
-export const GRID_1: GridZone = {
+export const ZONE_1: GridZone = {
     id: 1,
     description: "Restricted Area",
     madeShots: 0,
@@ -31,10 +36,14 @@ export const GRID_1: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 370
+    translateY: 370,
+    labelX: 0,
+    labelY: 385,
+    // maxLabelLength: 7
+    maxLabelLength: 100
 }
 
-export const GRID_2: GridZone = {
+export const ZONE_2: GridZone = {
     id: 2,
     description: "Near basket",
     madeShots: 0,
@@ -47,10 +56,13 @@ export const GRID_2: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 325
+    translateY: 325,
+    labelX: 0,
+    labelY: 320,
+    maxLabelLength: 100
 }
 
-export const GRID_3: GridZone = {
+export const ZONE_3: GridZone = {
     id: 3,
     description: "Left side short mid-range",
     madeShots: 0,
@@ -63,11 +75,14 @@ export const GRID_3: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 101,
-    translateY: 267
+    translateY: 267,
+    labelX: 115,
+    labelY: 345,
+    maxLabelLength: 100
 }
 
 
-export const GRID_4: GridZone = {
+export const ZONE_4: GridZone = {
     id: 4,
     description: "Center short mid-range",
     madeShots: 0,
@@ -81,11 +96,14 @@ export const GRID_4: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 239
+    translateY: 239,
+    labelX: 0,
+    labelY: 255,
+    maxLabelLength: 100
 }
 
 
-export const GRID_5: GridZone = {
+export const ZONE_5: GridZone = {
     id: 5,
     description: "Right side short mid-range",
     madeShots: 0,
@@ -98,10 +116,13 @@ export const GRID_5: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -102,
-    translateY: 267
+    translateY: 267,
+    labelX: -115,
+    labelY: 345,
+    maxLabelLength: 100
 }
 
-export const GRID_6: GridZone = {
+export const ZONE_6: GridZone = {
     id: 6,
     description: "Left side long mid-range",
     madeShots: 0,
@@ -114,10 +135,13 @@ export const GRID_6: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 177,
-    translateY: 270
+    translateY: 270,
+    labelX: 184,
+    labelY: 305,
+    maxLabelLength: 100
 }
 
-export const GRID_7: GridZone = {
+export const ZONE_7: GridZone = {
     id: 7,
     description: "Left-center side long mid-range",
     madeShots: 0,
@@ -130,10 +154,13 @@ export const GRID_7: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 125,
-    translateY: 184
+    translateY: 184,
+    labelX: 125,
+    labelY: 220,
+    maxLabelLength: 100
 }
 
-export const GRID_8: GridZone = {
+export const ZONE_8: GridZone = {
     id: 8,
     description: "Center long mid-range",
     madeShots: 0,
@@ -146,10 +173,13 @@ export const GRID_8: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 175
+    translateY: 175,
+    labelX: 0,
+    labelY: 177,
+    maxLabelLength: 100
 }
 
-export const GRID_9: GridZone = {
+export const ZONE_9: GridZone = {
     id: 9,
     description: "Right-center side long mid-range",
     madeShots: 0,
@@ -162,10 +192,13 @@ export const GRID_9: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -125,
-    translateY: 184
+    translateY: 184,
+    labelX: -125,
+    labelY: 220,
+    maxLabelLength: 100
 }
 
-export const GRID_10: GridZone = {
+export const ZONE_10: GridZone = {
     id: 10,
     description: "Right side long mid-range",
     madeShots: 0,
@@ -178,10 +211,13 @@ export const GRID_10: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -177,
-    translateY: 270
+    translateY: 270,
+    labelX: -184,
+    labelY: 305,
+    maxLabelLength: 100
 }
 
-export const GRID_11: GridZone = {
+export const ZONE_11: GridZone = {
     id: 11,
     description: "Left side corner 3",
     madeShots: 0,
@@ -194,10 +230,13 @@ export const GRID_11: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 233,
-    translateY: 328
+    translateY: 328,
+    labelX: 215,
+    labelY: 390,
+    maxLabelLength: 100
 }
 
-export const GRID_12: GridZone = {
+export const ZONE_12: GridZone = {
     id: 12,
     description: "Left center 3",
     madeShots: 0,
@@ -210,10 +249,13 @@ export const GRID_12: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 170,
-    translateY: 2
+    translateY: 2,
+    labelX: 175,
+    labelY: 140,
+    maxLabelLength: 100
 }
 
-export const GRID_13: GridZone = {
+export const ZONE_13: GridZone = {
     id: 13,
     description: "Center 3",
     madeShots: 0,
@@ -226,10 +268,13 @@ export const GRID_13: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 1,
-    translateY: -5
+    translateY: -5,
+    labelX: 0,
+    labelY: 90,
+    maxLabelLength: 100
 }
 
-export const GRID_14: GridZone = {
+export const ZONE_14: GridZone = {
     id: 14,
     description: "Right center 3",
     madeShots: 0,
@@ -242,10 +287,13 @@ export const GRID_14: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -166,
-    translateY: -7
+    translateY: -7,
+    labelX: -175,
+    labelY: 140,
+    maxLabelLength: 100
 }
 
-export const GRID_15: GridZone = {
+export const ZONE_15: GridZone = {
     id: 15,
     description: "Right side corner 3",
     madeShots: 0,
@@ -258,23 +306,158 @@ export const GRID_15: GridZone = {
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -232,
-    translateY: 327.5
+    translateY: 327.5,
+    labelX: -215,
+    labelY: 390,
+    maxLabelLength: 100
 }
 
-export const ALL_GRIDS: GridZone[] = [
-    GRID_1,
-    GRID_2,
-    GRID_3,
-    GRID_4,
-    GRID_5,
-    GRID_6,
-    GRID_7,
-    GRID_8,
-    GRID_9,
-    GRID_10,
-    GRID_11,
-    GRID_12,
-    GRID_13,
-    GRID_14,
-    GRID_15
+export const ALL_ZONES: GridZone[] = [
+    ZONE_1,
+    ZONE_2,
+    ZONE_3,
+    ZONE_4,
+    ZONE_5,
+    ZONE_6,
+    ZONE_7,
+    ZONE_8,
+    ZONE_9,
+    ZONE_10,
+    ZONE_11,
+    ZONE_12,
+    ZONE_13,
+    ZONE_14,
+    ZONE_15
 ]
+
+export const determineShotZones = (shots: Shot[]): GridZone[] => {
+    let zones: GridZone[] = structuredClone(ALL_ZONES);
+    shots.forEach((eachShot) => {
+        const make: boolean = eachShot.shotMade;
+        switch (eachShot.shotZoneBasic) {
+            case "Backcourt":
+                //No backcourt
+                break;
+            case "Restricted Area":
+                //Add to zone 1
+                addShot(zones[0], make);
+                break;
+            case "In The Paint (Non-RA)":
+                switch (eachShot.shotZoneArea) {
+                    case "Left Side(L)":
+                        switch (eachShot.shotZoneRange) {
+                            case "8-16 ft.":
+                                addShot(zones[2], make);
+                                break;
+                        }
+                        break;
+                    case "Center(C)":
+                        switch (eachShot.shotZoneRange) {
+                            case "Less Than 8 ft.":
+                                addShot(zones[1], make);
+                                break;
+                            case "8-16 ft.":
+                                addShot(zones[3], make);
+                                break;
+                        }
+                        break;
+                    case "Right Side(R)":
+                        switch (eachShot.shotZoneRange) {
+                            case "8-16 ft.":
+                                addShot(zones[4], make);
+                                break;
+                        }
+                        break;
+                }
+                break;
+            case "Mid-Range":
+                switch (eachShot.shotZoneArea) {
+                    case "Left Side(L)":
+                        switch (eachShot.shotZoneRange) {
+                            case "8-16 ft.":
+                                addShot(zones[2], make);
+                                break;
+                            case "16-24 ft.":
+                                addShot(zones[5], make);
+                                break;
+                        }
+                        break;
+                    case "Left Side Center(LC)":
+                        switch (eachShot.shotZoneRange) {
+                            case "16-24 ft.":
+                                addShot(zones[6], make);
+                                break;
+                        }
+                        break;
+                    case "Center(C)":
+                        switch (eachShot.shotZoneRange) {
+                            case "8-16 ft.":
+                                addShot(zones[3], make);
+                                break;
+                            case "16-24 ft.":
+                                addShot(zones[7], make);
+                                break;
+                        }
+                        break;
+                    case "Right Side Center(RC)":
+                        switch (eachShot.shotZoneRange) {
+                            case "16-24 ft.":
+                                addShot(zones[8], make);
+                                break;
+                        }
+                        break;
+                    case "Right Side(R)":
+                        switch (eachShot.shotZoneRange) {
+                            case "8-16 ft.":
+                                addShot(zones[4], make);
+                                break;
+                            case "16-24 ft.":
+                                addShot(zones[9], make);
+                                break;
+                        }
+                        break;
+                }
+                break;
+            case "Left Corner 3":
+                addShot(zones[10], make);
+                break;
+            case "Right Corner 3":
+                addShot(zones[14], make);
+                break;
+            case "Above the Break 3":
+                switch (eachShot.shotZoneArea) {
+                    case "Left Side Center(LC)":
+                        switch (eachShot.shotZoneRange) {
+                            case "24+ ft.":
+                                addShot(zones[11], make);
+                                break;
+                        }
+                        break;
+                    case "Center(C)":
+                        switch (eachShot.shotZoneRange) {
+                            case "24+ ft.":
+                                addShot(zones[12], make);
+                                break;
+                        }
+                        break;
+                    case "Right Side Center(RC)":
+                        switch (eachShot.shotZoneRange) {
+                            case "24+ ft.":
+                                addShot(zones[13], make);
+                                break;
+                            default:
+                        }
+                        break;
+                }
+                break;
+        }
+    });
+    return zones;
+}
+
+const addShot = (zone: GridZone, make: boolean): void => {
+    if (make) {
+        zone.madeShots++;
+    }
+    zone.totalShots++;
+}
