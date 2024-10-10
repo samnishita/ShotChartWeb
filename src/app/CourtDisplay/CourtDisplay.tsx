@@ -9,6 +9,7 @@ import { Player } from '../model/Player';
 import { Year } from '../model/Year';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import { ALL_GRIDS } from '../model/GridZone';
 interface CourtDisplayProps {
   year: Year,
   player: Player | null,
@@ -24,9 +25,11 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   const [isLoaded, setIsLoaded] = useState(false);  // State to track if the image is loaded
   const [imageWidth, setImageWidth] = useState<number | null>(null);  // State to store image width
   const imageRef = useRef<HTMLImageElement>(null);  // Ref to access the image element
-  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(CLASSIC_DISPLAY);
+  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(GRID_DISPLAY);
   const [classicShots, setClassicShots] = useState<Shot[] | null>(null);
-  const [classicShotsDisplayNodes, setClassicShotDisplayNodes] = useState<React.ReactNode[] | null>(null);
+  const [classicShotsDisplayNodes, setClassicShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
+  const [gridShots, setGridShots] = useState<Shot[] | null>(null);
+  const [gridShotsDisplayNodes, setGridShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
 
   const processNewShotsClassic = (shots: Shot[]): void => {
     shots.forEach((eachShot) => {
@@ -39,10 +42,26 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       let shotXTranslate: number = (eachShot.x) / 500 * currentImageWidth;
       let shotYTranslate: number = -(eachShot.y - 5) / 500 * currentImageWidth;
       //Convert to px styling
-      let sxStyle = { fontSize: fontSize, transform: "translateX(" + shotXTranslate + "px) translateY(" + (translateYToHoopOrigin + shotYTranslate) + "px)" }      // let tY = "411";
+      let sxStyle = { fontSize: fontSize, transform: "translateX(" + shotXTranslate + "px) translateY(" + (translateYToHoopOrigin + shotYTranslate) + "px)" };
       eachShot.sx = sxStyle;
     });
     setClassicShots(shots);
+  }
+  const processNewShotsGrid = (shots: Shot[]): void => {
+    shots.forEach((eachShot) => {
+      // let currentImageWidth: number = (imageWidth ? imageWidth : 1);
+      // //Scale font size with image size
+      // let fontSize: number = fontRatioOrig * currentImageWidth;
+      // //Move shot to hoop origin
+      // let translateYToHoopOrigin: number = hoopTranslateYToWidthRatio * currentImageWidth;
+      // //Move shot using shot coordinates
+      // let shotXTranslate: number = (eachShot.x) / 500 * currentImageWidth;
+      // let shotYTranslate: number = -(eachShot.y - 5) / 500 * currentImageWidth;
+      // //Convert to px styling
+      // let sxStyle = {}
+      // eachShot.sx = sxStyle;
+    });
+    setGridShots(shots);
   }
 
   const processExistingShotsClassic = (): void => {
@@ -53,7 +72,26 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
           sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot make' /> : <CloseIcon sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot miss' />
         icons.push(icon);
       })
-      setClassicShotDisplayNodes(icons);
+      setClassicShotsDisplayNodes(icons);
+    }
+  }
+
+  const processExistingShotsGrid = () => {
+    if (currentDisplayOption == GRID_DISPLAY && gridShots != null) {
+      let icons: React.ReactNode[] = [];
+      ALL_GRIDS.forEach((eachGrid) => {
+        if (imageWidth) {
+          let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
+          let style = { transform: `translate( ${eachGrid.translateX * widthRatio}px, ${eachGrid.translateY * widthRatio}px )` };
+          let pathTransform: string = `scale(${widthRatio})`
+          let icon: React.ReactNode =
+            <svg viewBox={`0 0 ${eachGrid.width * widthRatio} ${eachGrid.height * widthRatio}`} className='grid-zone' key={eachGrid.id} width={eachGrid.width * widthRatio} height={eachGrid.height * widthRatio} style={style}>
+              <path strokeWidth={eachGrid.strokeWidth} stroke={eachGrid.stroke} d={eachGrid.d} fill={eachGrid.fill} transform={pathTransform} />
+            </svg>
+          icons.push(icon);
+        }
+      })
+      setGridShotsDisplayNodes(icons);
     }
   }
 
@@ -76,21 +114,30 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
 
   useEffect(() => {
     if (currentDisplayOption != CLASSIC_DISPLAY) {
-      setClassicShotDisplayNodes([]);
+      setClassicShotsDisplayNodes([]);
     } else {
       processExistingShotsClassic();
+    }
+    if (currentDisplayOption != GRID_DISPLAY) {
+      setGridShotsDisplayNodes([]);
+    } else {
+      processExistingShotsGrid();
     }
   }, [currentDisplayOption])
 
   useEffect(() => {
     if (currentDisplayOption == CLASSIC_DISPLAY && props.shots) {
       processExistingShotsClassic();
+    } else if (currentDisplayOption == GRID_DISPLAY && props.shots) {
+      processExistingShotsGrid();
     }
   }, [imageWidth])
 
   useEffect(() => {
     if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
+    } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
+      processNewShotsGrid(props.shots);
     }
   }, [props.shots]);
 
@@ -99,6 +146,12 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       processExistingShotsClassic();
     }
   }, [classicShots]);
+
+  useEffect(() => {
+    if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
+      processExistingShotsGrid();
+    }
+  }, [gridShots]);
 
   useEffect(() => {
     listenForResize();
@@ -122,6 +175,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
           <img onLoad={handleImageLoad} ref={imageRef} className='court-image' src={transparentCourt} ></img>
         </div>
         {classicShotsDisplayNodes}
+        {gridShotsDisplayNodes}
         {/* <div id='grid-shots-container' className={currentDisplayOption == GRID_DISPLAY ? "" : "hide"}>B</div>
         <div id='hex-shots-container' className={currentDisplayOption == HEX_DISPLAY ? "" : "hide"}>C</div>
         <div id='heat-shots-container' className={currentDisplayOption == HEAT_DISPLAY ? "" : "hide"}>D</div> */}

@@ -38,7 +38,7 @@ h3 {
 .court-background {
     height: inherit;
     width: inherit;
-    display: inline-block; 
+    display: inline-block;
     background-color: rgb(80, 85, 91);
 }
 
@@ -57,4 +57,8 @@ h3 {
 
 .miss {
     color: red;
+}
+
+.grid-zone {
+    position: absolute;
 }
