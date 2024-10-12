@@ -9,7 +9,9 @@ import { Player } from '../model/Player';
 import { Year } from '../model/Year';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { ALL_ZONES, determineShotZones, GridZone } from '../model/GridZone';
+import { ALL_ZONES, determineShotZones, FILL_ABOVE_AVERAGE, FILL_AVERAGE, FILL_BELOW_AVERAGE, FILL_DEFAULT, FILL_FAR_ABOVE_AVERAGE, FILL_FAR_BELOW_AVERAGE, FILL_SLIGHTLY_ABOVE_AVERAGE, FILL_SLIGHTLY_BELOW_AVERAGE, GridZone } from '../model/GridZone';
+import { ZoneAverage } from '../model/ZoneAverage';
+import { getGridAveragesAllTimeAllSeason } from '../service/average-service';
 interface CourtDisplayProps {
   year: Year,
   player: Player | null,
@@ -31,7 +33,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   // const [gridShots, setGridShots] = useState<Shot[] | null>(null);
   const [gridZones, setGridZones] = useState<GridZone[] | null>(null);
   const [gridShotsDisplayNodes, setGridShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
-
+  const [zoneAverages, setZoneAverages] = useState<Map<number, ZoneAverage> | null>(null);
   const processNewShotsClassic = (shots: Shot[]): void => {
     shots.forEach((eachShot) => {
       let currentImageWidth: number = (imageWidth ? imageWidth : 1);
@@ -66,7 +68,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     setGridZones(zones);
   }
   const processExistingShotsGrid = () => {
-    if (currentDisplayOption == GRID_DISPLAY && gridZones != null) {
+    if (currentDisplayOption == GRID_DISPLAY && gridZones != null && zoneAverages != null) {
       let icons: React.ReactNode[] = [];
       gridZones.forEach((eachZone) => {
         if (imageWidth) {
@@ -82,10 +84,37 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
             transform: `translate( ${eachZone.labelX * widthRatio}px, ${eachZone.labelY * widthRatio}px ) scale(${widthRatio})`,
           };
           let showSplitCount: boolean = eachZone.madeShots.toString().length + eachZone.totalShots.toString().length > eachZone.maxLabelLength;
+          let zoneAverage: ZoneAverage | undefined = zoneAverages.get(eachZone.id);
+          let fill: string = FILL_AVERAGE;
+          if (zoneAverage) {
+            let averageDiff: number = (eachZone.madeShots / eachZone.totalShots) - zoneAverage.average;
+            if (averageDiff > 0.06) {
+              fill = FILL_FAR_ABOVE_AVERAGE;
+            } else if (averageDiff < 0.06 && averageDiff >= 0.04) {
+              fill = FILL_ABOVE_AVERAGE;
+            } else if (averageDiff < 0.04 && averageDiff >= 0.02) {
+              fill = FILL_SLIGHTLY_ABOVE_AVERAGE;
+            } else if (averageDiff < 0.02 && averageDiff >= -0.02) {
+              fill = FILL_AVERAGE;
+            } else if (averageDiff < -0.02 && averageDiff >= -0.04) {
+              fill = FILL_SLIGHTLY_BELOW_AVERAGE;
+            } else if (averageDiff < -0.04 && averageDiff >= -0.06) {
+              fill = FILL_BELOW_AVERAGE;
+            } else if (averageDiff < -0.06) {
+              fill = FILL_FAR_BELOW_AVERAGE;
+            }
+          }
+
           let icon: React.ReactNode =
-            <div className='grid-zone-object-wrapper' key={eachZone.id.toString() + "-wrapper"}>
+            <div className='grid-zone-object-wrapper' key={eachZone.id.toString() + "-wrapper"} 
+            // style={{
+            //   width:`${eachZone.width * widthRatio}px`,
+            //   height:`${eachZone.height * widthRatio}px`,
+            //   transform: `translate( ${eachZone.translateX * widthRatio}px, ${eachZone.translateY * widthRatio}px )`
+            // }}
+            >
               <svg viewBox={`0 0 ${eachZone.width * widthRatio} ${eachZone.height * widthRatio}`} className='grid-zone' key={eachZone.id} width={eachZone.width * widthRatio} height={eachZone.height * widthRatio} style={style}>
-                <path strokeWidth={eachZone.strokeWidth} stroke={eachZone.stroke} d={eachZone.d} fill={eachZone.fill} transform={pathTransform} />
+                <path strokeWidth={eachZone.strokeWidth} stroke={eachZone.stroke} d={eachZone.d} fill={fill} transform={pathTransform} />
               </svg>
               <div className='grid-zone-label-container' style={labelStyle}>
                 {showSplitCount ? (<>
@@ -93,7 +122,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
                   <div className='grid-zone-label'>/</div>
                   <div className='grid-zone-label'>{eachZone.totalShots}</div>
                 </>) : (<>
-                  <div className='grid-zone-label invisible'>/</div>
+                  {/* <div className='grid-zone-label invisible'>/</div> */}
                   <div className='grid-zone-label'>{eachZone.madeShots}/{eachZone.totalShots}</div>
                 </>)}
                 <div className='grid-zone-label'>{eachZone.totalShots > 0 ? `${(eachZone.madeShots * 100 / eachZone.totalShots).toFixed(2)}%` : '-'}</div>
@@ -101,7 +130,38 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
             </div>
           icons.push(icon);
         }
-      })
+      });
+      if (imageWidth) {
+        let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
+        console.log(widthRatio)
+        let legendStyle = {
+          transform: `translate( -${152 * widthRatio}px, ${8 * widthRatio}px )`,
+        };
+        let legendTitleStyle = {
+          fontSize: `${widthRatio * 0.8}rem`
+        }
+        icons.push(<div key={"grid-legend"} className='grid-legend' style={legendStyle}>
+          <span className='grid-legend-title' style={legendTitleStyle}>Shooting Percentage</span>
+          <div className='grid-legend-gradient-container'>
+            <div className='grid-legend-gradient-label-container'>
+              <div>Below Avg.</div>
+              <div>Above Avg.</div>
+            </div>
+            <div className='grid-legend-gradient' style={{
+              background: `linear-gradient(to right,
+              ${FILL_FAR_BELOW_AVERAGE},
+              ${FILL_BELOW_AVERAGE},
+              ${FILL_SLIGHTLY_BELOW_AVERAGE},
+              ${FILL_AVERAGE},
+              ${FILL_SLIGHTLY_ABOVE_AVERAGE},
+              ${FILL_ABOVE_AVERAGE},
+              ${FILL_FAR_ABOVE_AVERAGE}
+              )`}}></div>
+          </div>
+        </div>)
+      }
+
+
       setGridShotsDisplayNodes(icons);
     }
   }
@@ -125,14 +185,22 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
 
   useEffect(() => {
     if (currentDisplayOption != CLASSIC_DISPLAY) {
-      setClassicShotsDisplayNodes([]);
+      setClassicShotsDisplayNodes(null);
     } else {
-      processExistingShotsClassic();
+      if (classicShots == null && props.shots != null) {
+        processNewShotsClassic(props.shots);
+      } else {
+        processExistingShotsClassic();
+      }
     }
     if (currentDisplayOption != GRID_DISPLAY) {
-      setGridShotsDisplayNodes([]);
+      setGridShotsDisplayNodes(null);
     } else {
-      processExistingShotsGrid();
+      if (gridZones == null && props.shots != null) {
+        processNewShotsGrid(props.shots);
+      } else {
+        processExistingShotsGrid();
+      }
     }
   }, [currentDisplayOption])
 
@@ -145,8 +213,8 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   }, [imageWidth])
 
   useEffect(() => {
-    setClassicShots([]);
-    setGridZones([]);
+    setClassicShots(null);
+    setGridZones(null);
     if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
     } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
@@ -172,6 +240,13 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
 
   useEffect(() => {
     listenForResize();
+    getGridAveragesAllTimeAllSeason().then(data => {
+      let map: Map<number, ZoneAverage> = new Map();
+      data.forEach(eachData => {
+        map.set(eachData.zoneId, eachData);
+      })
+      setZoneAverages(map);
+    });
   }, []);
 
   return (
@@ -184,7 +259,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         </h3>
       </div>
       <div className='court-container'>
-        <div className='court-background'>
+        <div className='court-background' style={{ zIndex: currentDisplayOption === GRID_DISPLAY ? 3 : 0, backgroundColor: currentDisplayOption === GRID_DISPLAY && gridShotsDisplayNodes != null ? "transparent" : "rgb(80, 85, 91)", opacity: currentDisplayOption === GRID_DISPLAY && gridShotsDisplayNodes != null ? 0.7 : 1 }}>
           <img onLoad={handleImageLoad} ref={imageRef} className='court-image' src={transparentCourt} ></img>
         </div>
         {classicShotsDisplayNodes}

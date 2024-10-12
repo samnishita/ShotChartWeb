@@ -1,1 +1,1 @@
-export const CURRENT_YEAR_NUMBER = 2024;
+export const CURRENT_YEAR_NUMBER: number = 2024;

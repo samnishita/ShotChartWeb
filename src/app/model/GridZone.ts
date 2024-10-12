@@ -21,7 +21,15 @@ export interface GridZone {
 
 const STROKE_WIDTH: number = 3;
 const STROKE: string = "black";
-const FILL_DEFAULT: string = "rgba(0,0,0,0.3)";
+export const FILL_DEFAULT: string = "rgba(0,0,0,0.3)";
+
+export const FILL_FAR_BELOW_AVERAGE: string = "#092beb";
+export const FILL_BELOW_AVERAGE: string = "#1f75fe";
+export const FILL_SLIGHTLY_BELOW_AVERAGE: string = "#0596f7";
+export const FILL_AVERAGE:string = "#919090";
+export const FILL_SLIGHTLY_ABOVE_AVERAGE: string = "#fa8989";
+export const FILL_ABOVE_AVERAGE: string = "#e05353";
+export const FILL_FAR_ABOVE_AVERAGE: string = "#fa0202";
 
 export const ZONE_1: GridZone = {
     id: 1,
@@ -38,7 +46,7 @@ export const ZONE_1: GridZone = {
     translateX: 0,
     translateY: 370,
     labelX: 0,
-    labelY: 385,
+    labelY: 415,
     // maxLabelLength: 7
     maxLabelLength: 100
 }
@@ -58,7 +66,7 @@ export const ZONE_2: GridZone = {
     translateX: 0,
     translateY: 325,
     labelX: 0,
-    labelY: 320,
+    labelY: 340,
     maxLabelLength: 100
 }
 
@@ -89,7 +97,6 @@ export const ZONE_4: GridZone = {
     totalShots: 0,
     height: 100,
     width: 170,
-    //d = ` l${scaleNumber(41)} ${scaleNumber(-73)}`
     d: "m 45 100  a85,85 0 0,1 80 0 l41 -71.8 a160,160 0 0,0 -162 0 l41 73",
     sx: {},
     fill: FILL_DEFAULT,
@@ -98,7 +105,7 @@ export const ZONE_4: GridZone = {
     translateX: 0,
     translateY: 239,
     labelX: 0,
-    labelY: 255,
+    labelY: 275,
     maxLabelLength: 100
 }
 

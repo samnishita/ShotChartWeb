@@ -1,0 +1,139 @@
+{
+    "data": [
+        {
+            "uniqueId": "1_AllTime_AllSeasonTypes",
+            "zoneId": 1,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 1122221,
+            "shotCount": 1848593,
+            "average": 0.6071
+        },
+        {
+            "uniqueId": "2_AllTime_AllSeasonTypes",
+            "zoneId": 2,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 211391,
+            "shotCount": 537787,
+            "average": 0.3931
+        },
+        {
+            "uniqueId": "3_AllTime_AllSeasonTypes",
+            "zoneId": 3,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 128587,
+            "shotCount": 332922,
+            "average": 0.3862
+        },
+        {
+            "uniqueId": "4_AllTime_AllSeasonTypes",
+            "zoneId": 4,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 110404,
+            "shotCount": 263422,
+            "average": 0.4191
+        },
+        {
+            "uniqueId": "5_AllTime_AllSeasonTypes",
+            "zoneId": 5,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 120534,
+            "shotCount": 311842,
+            "average": 0.3865
+        },
+        {
+            "uniqueId": "6_AllTime_AllSeasonTypes",
+            "zoneId": 6,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 82996,
+            "shotCount": 208130,
+            "average": 0.3988
+        },
+        {
+            "uniqueId": "7_AllTime_AllSeasonTypes",
+            "zoneId": 7,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 91456,
+            "shotCount": 229541,
+            "average": 0.3984
+        },
+        {
+            "uniqueId": "8_AllTime_AllSeasonTypes",
+            "zoneId": 8,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 75840,
+            "shotCount": 189027,
+            "average": 0.4012
+        },
+        {
+            "uniqueId": "9_AllTime_AllSeasonTypes",
+            "zoneId": 9,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 98749,
+            "shotCount": 247956,
+            "average": 0.3983
+        },
+        {
+            "uniqueId": "10_AllTime_AllSeasonTypes",
+            "zoneId": 10,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 74407,
+            "shotCount": 187426,
+            "average": 0.397
+        },
+        {
+            "uniqueId": "11_AllTime_AllSeasonTypes",
+            "zoneId": 11,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 73895,
+            "shotCount": 191816,
+            "average": 0.3852
+        },
+        {
+            "uniqueId": "12_AllTime_AllSeasonTypes",
+            "zoneId": 12,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 146465,
+            "shotCount": 419250,
+            "average": 0.3494
+        },
+        {
+            "uniqueId": "13_AllTime_AllSeasonTypes",
+            "zoneId": 13,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 88208,
+            "shotCount": 257215,
+            "average": 0.3429
+        },
+        {
+            "uniqueId": "14_AllTime_AllSeasonTypes",
+            "zoneId": 14,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 143850,
+            "shotCount": 407684,
+            "average": 0.3528
+        },
+        {
+            "uniqueId": "15_AllTime_AllSeasonTypes",
+            "zoneId": 15,
+            "year": "All Time",
+            "seasonType": "All Season Types",
+            "makeCount": 68665,
+            "shotCount": 177896,
+            "average": 0.386
+        }
+    ]
+}
