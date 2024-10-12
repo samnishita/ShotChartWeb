@@ -107,11 +107,6 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
 
           let icon: React.ReactNode =
             <div className='grid-zone-object-wrapper' key={eachZone.id.toString() + "-wrapper"} 
-            // style={{
-            //   width:`${eachZone.width * widthRatio}px`,
-            //   height:`${eachZone.height * widthRatio}px`,
-            //   transform: `translate( ${eachZone.translateX * widthRatio}px, ${eachZone.translateY * widthRatio}px )`
-            // }}
             >
               <svg viewBox={`0 0 ${eachZone.width * widthRatio} ${eachZone.height * widthRatio}`} className='grid-zone' key={eachZone.id} width={eachZone.width * widthRatio} height={eachZone.height * widthRatio} style={style}>
                 <path strokeWidth={eachZone.strokeWidth} stroke={eachZone.stroke} d={eachZone.d} fill={fill} transform={pathTransform} />
@@ -122,7 +117,6 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
                   <div className='grid-zone-label'>/</div>
                   <div className='grid-zone-label'>{eachZone.totalShots}</div>
                 </>) : (<>
-                  {/* <div className='grid-zone-label invisible'>/</div> */}
                   <div className='grid-zone-label'>{eachZone.madeShots}/{eachZone.totalShots}</div>
                 </>)}
                 <div className='grid-zone-label'>{eachZone.totalShots > 0 ? `${(eachZone.madeShots * 100 / eachZone.totalShots).toFixed(2)}%` : '-'}</div>

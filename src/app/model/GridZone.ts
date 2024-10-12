@@ -38,15 +38,15 @@ export const ZONE_1: GridZone = {
     totalShots: 0,
     height: 100,
     width: 100,
-    d: "m 11 97  l 78 0 l0 -56 a4,3.7 0 0,0 -77,0 l0 56",
+    d: "m 11 97 l 77.6 0 l0 -56 a4,3.7 0 0,0 -77,0 l0 56",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 370,
+    translateY: 420.8,
     labelX: 0,
-    labelY: 415,
+    labelY: 430,
     // maxLabelLength: 7
     maxLabelLength: 100
 }
@@ -58,15 +58,15 @@ export const ZONE_2: GridZone = {
     totalShots: 0,
     height: 145,
     width: 170,
-    d: "m 6 142 l 41 0 l0 -56 a4,3.7 0 0,1 77,0 l0 56 l40 0 l0 -56 a5,5.25 0 1,0 -157,0 l0 56",
+    d: "m 5 142 l 41.2 0 l0 -56 a4,3.7 0 0,1 77,0 l0 56 l40 0 l0 -56 a5,5.25 0 1,0 -157,0 l0 56",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 325,
+    translateY: 398.65,
     labelX: 0,
-    labelY: 340,
+    labelY: 355,
     maxLabelLength: 100
 }
 
@@ -75,20 +75,19 @@ export const ZONE_3: GridZone = {
     description: "Left side short mid-range",
     madeShots: 0,
     totalShots: 0,
-    height: 205,
+    height: 210,
     width: 125,
-    d: "m 40,200 l 81 0 l0 -56 a170,170 0 0,0 -78.6,-145 l-41 73 a85,85 0 0,1 38.7,71.2  l0 56",
+    d: "m 40,202 l 81 0 l0 -56 a170,170 0 0,0 -78.6,-145 l-41 73 a85,85 0 0,1 38.7,71.2  l0 56",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 101,
-    translateY: 267,
+    translateY: 371.4,
     labelX: 115,
-    labelY: 345,
+    labelY: 395,
     maxLabelLength: 100
 }
-
 
 export const ZONE_4: GridZone = {
     id: 4,
@@ -97,35 +96,34 @@ export const ZONE_4: GridZone = {
     totalShots: 0,
     height: 100,
     width: 170,
-    d: "m 45 100  a85,85 0 0,1 80 0 l41 -71.8 a160,160 0 0,0 -162 0 l41 73",
+    d: "m 45 100  a85,85 0 0,1 80 0 l41 -74 a160,160 0 0,0 -162 0 l41 73",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 239,
+    translateY: 291,
     labelX: 0,
-    labelY: 275,
+    labelY: 290,
     maxLabelLength: 100
 }
-
 
 export const ZONE_5: GridZone = {
     id: 5,
     description: "Right side short mid-range",
     madeShots: 0,
     totalShots: 0,
-    height: 205,
+    height: 210,
     width: 125,
-    d: "m 5,200  l 81 0 l0 -56 a85,85 0 0,1 38.7,-71.2 l-41 -73 a170,170 0 0,0 -78.6,145  l0 56",
+    d: "m 5,202  l 81 0 l0 -56 a85,85 0 0,1 38.7,-71.2 l-41 -73.5 a170,170 0 0,0 -78.6,145  l0 56",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: -102,
-    translateY: 267,
+    translateY: 371.2,
     labelX: -115,
-    labelY: 345,
+    labelY: 395,
     maxLabelLength: 100
 }
 
@@ -136,15 +134,15 @@ export const ZONE_6: GridZone = {
     totalShots: 0,
     height: 200,
     width: 90,
-    d: "m 27 197 l59 0 l0 -135 a200,200 0 0,0 -22.75,-48 l-60,40 a200,200 0 0,1 24,88.5 l0 56",
+    d: "m 27 197 l59.2 0 l0 -138 a200,200 0 0,0 -22.75,-48 l-60,40 a200,200 0 0,1 24,88.5 l0 58",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 177,
-    translateY: 270,
+    translateY: 370.8,
     labelX: 184,
-    labelY: 305,
+    labelY: 345,
     maxLabelLength: 100
 }
 
@@ -155,15 +153,15 @@ export const ZONE_7: GridZone = {
     totalShots: 0,
     height: 140,
     width: 150,
-    d: "m 85,140 a150,150 0 0,0 -80 -68 l22 -65 a230,230 0 0,1 118 92.5 l-60 40",
+    d: "m 85,137.5 a150,150 0 0,0 -80 -67 l22 -65 a230,230 0 0,1 119.5 93 l-62 40",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 125,
-    translateY: 184,
+    translateY: 255,
     labelX: 125,
-    labelY: 220,
+    labelY: 255,
     maxLabelLength: 100
 }
 
@@ -172,17 +170,17 @@ export const ZONE_8: GridZone = {
     description: "Center long mid-range",
     madeShots: 0,
     totalShots: 0,
-    height: 90,
-    width: 165,
-    d: "m 25,80 a150,150 0 0,1 113 0 l 21.5 -65 a230,230 0 0,0 -155.5 0 l22 65",
+    height: 100,
+    width: 165, 
+    d: "m 20,84.5 a165,165 0 0,1 118 -2 l 21.5 -65 a230,230 0 0,0 -155 0 l22 65",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 0,
-    translateY: 175,
+    translateY: 223,
     labelX: 0,
-    labelY: 177,
+    labelY: 212,
     maxLabelLength: 100
 }
 
@@ -193,15 +191,15 @@ export const ZONE_9: GridZone = {
     totalShots: 0,
     height: 140,
     width: 150,
-    d: "m 3 99 l60 40 a150,150 0 0,1 80 -68 l-22 -65 a230,230 0 0,0 -118 92.5",
+    d: "m 1.3 98 l61.5 40 a150,150 0 0,1 80 -69.5 l-22 -64.3 a230,230 0 0,0 -119 93",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
-    translateX: -125,
-    translateY: 184,
+    translateX: -124,
+    translateY: 257,
     labelX: -125,
-    labelY: 220,
+    labelY: 255,
     maxLabelLength: 100
 }
 
@@ -212,15 +210,15 @@ export const ZONE_10: GridZone = {
     totalShots: 0,
     height: 200,
     width: 90,
-    d: "m 61 198.5 l0 -56 a200,200 0 0,1 24,-88.5 l-60,-40 a200,200 0 0,0 -22.75,48  l0 135 l59 0  ",
+    d: "m 61 198.5 l0 -56 a200,200 0 0,1 24,-88.5 l-60,-40 a200,200 0 0,0 -22.75,48  l0 135.6 l59 0  ",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
-    translateX: -177,
-    translateY: 270,
+    translateX: -176,
+    translateY: 370,
     labelX: -184,
-    labelY: 305,
+    labelY: 345,
     maxLabelLength: 100
 }
 
@@ -231,15 +229,15 @@ export const ZONE_11: GridZone = {
     totalShots: 0,
     height: 145,
     width: 35,
-    d: "m 3 2 l27 0 l0 137 l-27 0 l0 -137",
+    d: "m 3 2 l29 0 l0 137 l-29 0 l0 -137",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 233,
-    translateY: 328,
-    labelX: 215,
-    labelY: 390,
+    translateY: 401.7,
+    labelX: 210,
+    labelY: 440,
     maxLabelLength: 100
 }
 
@@ -250,15 +248,15 @@ export const ZONE_12: GridZone = {
     totalShots: 0,
     height: 340,
     width: 165,
-    d: "m 132 327 l27 0 l0 -325 l-80 0 l-75 193 a220,220 0 0,1 128,134",
+    d: "m 134 327 l27 0 l0 -328 l-80 0 l-75 193.3 a220,220 0 0,1 127,134",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
-    translateX: 170,
-    translateY: 2,
+    translateX: 169,
+    translateY: 174,
     labelX: 175,
-    labelY: 140,
+    labelY: 170,
     maxLabelLength: 100
 }
 
@@ -267,17 +265,17 @@ export const ZONE_13: GridZone = {
     description: "Center 3",
     madeShots: 0,
     totalShots: 0,
-    height: 200,
+    height: 210,
     width: 340,
-    d: "m 80 200 a245,245 0 0,1 179,0 l77 -192 l-333 0 l77 192",
+    d: "m 75 202.5 a245,245 0 0,1 187.5, 0 l73.5 -193.5 l-334 0 l73 193",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
     translateX: 1,
-    translateY: -5,
+    translateY: 99,
     labelX: 0,
-    labelY: 90,
+    labelY: 120,
     maxLabelLength: 100
 }
 
@@ -288,15 +286,15 @@ export const ZONE_14: GridZone = {
     totalShots: 0,
     height: 340,
     width: 165,
-    d: "m 3 335 l27 0 a220,220 0 0,1 128,-134 l-75 -191  l-80 0 l0 325  ",
+    d: "m 3 335 l28.4 0 a220,220 0 0,1 128,-135 l-75 -194 l-81.7 0 l0 329",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
-    translateX: -166,
-    translateY: -7,
+    translateX: -168.6,
+    translateY: 166,
     labelX: -175,
-    labelY: 140,
+    labelY: 170,
     maxLabelLength: 100
 }
 
@@ -307,15 +305,15 @@ export const ZONE_15: GridZone = {
     totalShots: 0,
     height: 145,
     width: 35,
-    d: "m 3 2 l27 0 l0 137 l-27 0 l0 -137",
+    d: "m 3 2 l29 0 l0 137 l-29 0 l0 -137",
     sx: {},
     fill: FILL_DEFAULT,
     stroke: STROKE,
     strokeWidth: STROKE_WIDTH,
-    translateX: -232,
-    translateY: 327.5,
-    labelX: -215,
-    labelY: 390,
+    translateX: -233.7,
+    translateY: 401.7,
+    labelX: -210,
+    labelY: 440,
     maxLabelLength: 100
 }
 
