@@ -13,7 +13,7 @@ interface AutocompleteMenuProps {
 
 const AutocompleteMenu: FC<AutocompleteMenuProps> = (props: AutocompleteMenuProps) => {
   const handleChange = (event: React.SyntheticEvent, value: AutocompleteMenuItem | null) => {
-    props.setSelectedValue(event.target);
+    props.setSelectedValue(value);
   };
   return (
     <div className="AutocompleteMenu">

@@ -1,3 +1,7 @@
 .AutocompleteMenu {
     margin: 1rem;
 }
+
+.MuiButtonBase-root.MuiAutocomplete-clearIndicator {
+    display: none;
+}
