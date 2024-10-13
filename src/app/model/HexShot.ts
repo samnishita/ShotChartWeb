@@ -1,4 +1,4 @@
-import { generateHexMapKey } from "../CourtDisplay/CourtDisplay";
+import { generateMapKey } from "../CourtDisplay/CourtDisplay";
 
 export interface HexShot {
     x: number;
@@ -169,17 +169,17 @@ export const axialDistance = (a: Hex, b: Hex): number => {
 export const analyzeNeighbors = (originalHex: HexShot, hexMap: Map<string, HexShot>): void => {
     for (let i = 0; i < 6; i++) {
         let directNeighbor: Hex = axialNeighbor(originalHex, i);
-        let hexFromMap: HexShot | undefined = hexMap.get(generateHexMapKey(directNeighbor.q, directNeighbor.r));
+        let hexFromMap: HexShot | undefined = hexMap.get(generateMapKey(directNeighbor.q, directNeighbor.r));
         if (hexFromMap) {
             doIdw(originalHex, hexFromMap);
         }
         let doubleDirectNeighbor: Hex = axialNeighbor(directNeighbor, i);
-        hexFromMap = hexMap.get(generateHexMapKey(doubleDirectNeighbor.q, doubleDirectNeighbor.r));
+        hexFromMap = hexMap.get(generateMapKey(doubleDirectNeighbor.q, doubleDirectNeighbor.r));
         if (hexFromMap) {
             doIdw(originalHex, hexFromMap);
         }
         let diagonalNeighbor: Hex = axialDiagonalNeighbor(originalHex, i);
-        hexFromMap = hexMap.get(generateHexMapKey(diagonalNeighbor.q, diagonalNeighbor.r));
+        hexFromMap = hexMap.get(generateMapKey(diagonalNeighbor.q, diagonalNeighbor.r));
         if (hexFromMap) {
             doIdw(originalHex, hexFromMap);
         }

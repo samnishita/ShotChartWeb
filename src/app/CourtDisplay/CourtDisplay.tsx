@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './CourtDisplay.scss';
 import transparentCourt from '../../images/transparent.png';
-import { CLASSIC_DISPLAY, DisplayOption, GRID_DISPLAY, HEX_DISPLAY } from '../model/DisplayOption';
+import { CLASSIC_DISPLAY, DisplayOption, GRID_DISPLAY, HEAT_DISPLAY, HEX_DISPLAY } from '../model/DisplayOption';
 import DisplayOptions from '../DisplayOptions/DisplayOptions';
 import { Shot } from '../model/Shot';
 import { SeasonType } from '../model/SeasonType';
@@ -14,6 +14,8 @@ import { ZoneAverage } from '../model/ZoneAverage';
 import { getGridAveragesAllTimeAllSeason } from '../service/average-service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { analyzeNeighbors, convertPixelToPointyHex, Hex, HEX_HEIGHT_POINTY, HEX_POINTY_ALTERNATE_ROW_HORIZONTAL_OFFSET, HEX_POINTY_ROW_SPACING, HEX_WIDTH_POINTY, HexShot } from '../model/HexShot';
+import { HeatShot } from '../model/HeatShot';
+import CircleIcon from '@mui/icons-material/Circle';
 
 interface CourtDisplayProps {
   year: Year,
@@ -25,17 +27,18 @@ interface CourtDisplayProps {
 const fontRatioOrig: number = 16 / 400;
 //TranslateY value to move shot to center of hoop (px) / current image width (px)
 const hoopTranslateYToWidthRatio: number = 411 / 507;
+const HEAT_RANGE: number = 8;
 
 //k,v = `${hexShot.q}_${hexShot.r}`, HexShot
-export const generateHexMapKey = (q: number, r: number): string => {
+export const generateMapKey = (q: number, r: number): string => {
   return `(${q})-(${r})`;
 }
 
 const CourtDisplay: FC<CourtDisplayProps> = (props) => {
-  const [isLoaded, setIsLoaded] = useState(false);  // State to track if the image is loaded
-  const [imageWidth, setImageWidth] = useState<number | null>(null);  // State to store image width
-  const imageRef = useRef<HTMLImageElement>(null);  // Ref to access the image element
-  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(CLASSIC_DISPLAY);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [imageWidth, setImageWidth] = useState<number | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(HEAT_DISPLAY);
   const [classicShots, setClassicShots] = useState<Shot[] | null>(null);
   const [classicShotsDisplayNodes, setClassicShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
   // const [gridShots, setGridShots] = useState<Shot[] | null>(null);
@@ -44,7 +47,11 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   const [zoneAverages, setZoneAverages] = useState<Map<number, ZoneAverage> | null>(null);
   const [hexShots, setHexShots] = useState<Map<string, HexShot> | null>(null);
   const [hexDisplayNodes, setHexDisplayNodes] = useState<React.ReactNode[] | null>(null);
-
+  const [heatShots, setHeatShots] = useState<Map<string, HeatShot> | null>(null);
+  // const [heatShotsCondensed, setHeatShotsCondensed] = useState<Map<string, HeatShot> | null>(null);
+  const [heatDisplayNodes, setHeatDisplayNodes] = useState<React.ReactNode[] | null>(null);
+  const [largestWTotalShotsHex, setLargestWTotalShotsHex] = useState<number>(Number.NEGATIVE_INFINITY);
+  const [largestWHeat, setLargestWHeat] = useState<number>(Number.NEGATIVE_INFINITY);
   const processNewShotsClassic = (shots: Shot[]): void => {
     // shots.forEach((eachShot) => {
 
@@ -197,13 +204,13 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
           wMadeShots: 0,
           wTotalShots: 0
         };
-        hexMap.set(generateHexMapKey(hexShot.q, hexShot.r), hexShot);
+        hexMap.set(generateMapKey(hexShot.q, hexShot.r), hexShot);
       }
     }
     shots.forEach((eachShot: Shot) => {
 
       let hex: Hex = convertPixelToPointyHex(eachShot.x, eachShot.y);
-      let hexShot: HexShot | undefined = hexMap.get(generateHexMapKey(hex.q, hex.r));
+      let hexShot: HexShot | undefined = hexMap.get(generateMapKey(hex.q, hex.r));
       if (hexShot) {
         // if ((eachShot.x > -5 && eachShot.x < 5 && eachShot.y > -5 && eachShot.y < 5)) {
         // console.log(eachShot);
@@ -221,8 +228,20 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     });
     hexMap.forEach((value: HexShot) => {
       analyzeNeighbors(value, hexMap);
-    })
+    });
+    let largestWTotalShots: number = Number.NEGATIVE_INFINITY;
+    hexMap.forEach((eachHex: HexShot) => {
+      eachHex.wMadeShots = eachHex.aMadeShots / eachHex.bMadeShots;
+      eachHex.wTotalShots = eachHex.aTotalShots / eachHex.bTotalShots;
+      //is needed?
+      eachHex.wOverall = (eachHex.aMadeShots / eachHex.aTotalShots) / (eachHex.bMadeShots / eachHex.bTotalShots);
+      if (largestWTotalShots < eachHex.wTotalShots) {
+        largestWTotalShots = eachHex.wTotalShots;
+      }
+    });
+    largestWTotalShots = 0.15 * largestWTotalShots;
     setHexShots(hexMap);
+    setLargestWTotalShotsHex(largestWTotalShots);
   }
 
   const processExistingShotsHex = () => {
@@ -230,38 +249,215 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
       console.log(widthRatio)
       let hexagons: React.ReactNode[] = [];
-      let largestWTotalShots: number = Number.NEGATIVE_INFINITY;
-      hexShots?.forEach((eachHex: HexShot) => {
-        eachHex.wMadeShots = eachHex.aMadeShots / eachHex.bMadeShots;
-        eachHex.wTotalShots = eachHex.aTotalShots / eachHex.bTotalShots;
-        //is needed?
-        eachHex.wOverall = (eachHex.aMadeShots / eachHex.aTotalShots) / (eachHex.bMadeShots / eachHex.bTotalShots);
-        if (largestWTotalShots < eachHex.wTotalShots) {
-          largestWTotalShots = eachHex.wTotalShots;
-        }
-      });
-      largestWTotalShots = 0.15 * largestWTotalShots;
       hexShots?.forEach((eachHex: HexShot) => {
         if (eachHex.x > -250) {
           hexagons.push(<HexagonIcon className='hex-icon'
-            key={`hex-${generateHexMapKey(eachHex.q, eachHex.r)}`}
-            id={`hex-${generateHexMapKey(eachHex.q, eachHex.r)}`}
+            key={`hex-${generateMapKey(eachHex.q, eachHex.r)}`}
+            id={`hex-${generateMapKey(eachHex.q, eachHex.r)}`}
             sx={{
               fill: `${eachHex.q == 0 && eachHex.r == 0 ? "blue" : "white"}`,
               fontSize: `${HEX_HEIGHT_POINTY * widthRatio}px`,
               transform: `translate(${0}px, ${405 * widthRatio}px) 
            translate(${-eachHex.x * widthRatio}px, ${-eachHex.y * widthRatio}px)
             rotate(30deg)
-            scale(${eachHex.wTotalShots > largestWTotalShots ? 1 : eachHex.wTotalShots / largestWTotalShots})
+            scale(${eachHex.wTotalShots > largestWTotalShotsHex ? 1 : eachHex.wTotalShots / largestWTotalShotsHex})
             `
             }}
             onMouseEnter={handleHexMouseEnter}
-            data-coordinate={generateHexMapKey(Math.round(eachHex.x), eachHex.y)}
+            data-coordinate={generateMapKey(Math.round(eachHex.x), eachHex.y)}
           />);
         }
       });
       setHexDisplayNodes(hexagons);
     }
+  }
+
+  const processNewShotsHeat = (shots: Shot[]): void => {
+    let heatMap: Map<string, HeatShot> = new Map();
+    let heatMapCondensed: Map<string, HeatShot> = new Map();
+    for (let y = -55; y <= 400; y++) {
+      for (let x = -250; x <= 250; x++) {
+        heatMap.set(generateMapKey(x, y), {
+          x: x,
+          y: y,
+          a: 0,
+          b: 0,
+          w: 0,
+          totalShots: 0,
+          fill: 'transparent',
+          z: 0
+        })
+      }
+    }
+    let offset: number = 5;
+    for (let y = -55; y <= 400; y += offset) {
+      for (let x = -250; x <= 250; x += offset) {
+        heatMapCondensed.set(generateMapKey(x, y), {
+          x: x,
+          y: y,
+          a: 0,
+          b: 0,
+          w: 0,
+          totalShots: 0,
+          fill: 'transparent',
+          z: 0
+        })
+      }
+    }
+    shots.forEach((eachShot) => {
+      let heatShot: HeatShot | undefined = heatMap.get(generateMapKey(eachShot.x, eachShot.y));
+      if (heatShot) {
+        heatShot.totalShots++;
+        let heatShotCondensed = heatMapCondensed.get(generateMapKey(eachShot.x, eachShot.y));
+        if (heatShotCondensed) {
+          heatShotCondensed.totalShots++;
+        }
+      } else {
+        // console.log("HEAT SHOT DOES NOT EXIST");
+        // console.log(eachShot)
+      }
+    });
+    heatMapCondensed.forEach((eachHeatShot: HeatShot) => {
+      for (let x = eachHeatShot.x - HEAT_RANGE; x <= eachHeatShot.x + HEAT_RANGE; x++) {
+        for (let y = eachHeatShot.y - HEAT_RANGE; y <= eachHeatShot.y + HEAT_RANGE; y++) {
+          if (x == eachHeatShot.x && y == eachHeatShot.y) {
+            continue;
+          }
+          let neighborHeatShot: HeatShot | undefined = heatMap.get(generateMapKey(x, y));
+          if (neighborHeatShot) {
+            eachHeatShot.totalShots += neighborHeatShot.totalShots;
+            eachHeatShot.a += 1000 * neighborHeatShot.totalShots / Math.pow(distanceBetweenTwoPoints(eachHeatShot.x, eachHeatShot.y, neighborHeatShot.x, neighborHeatShot.y), 2);
+            eachHeatShot.b += 1 / Math.pow(distanceBetweenTwoPoints(eachHeatShot.x, eachHeatShot.y, neighborHeatShot.x, neighborHeatShot.y), 2);
+          }
+        }
+      }
+    });
+    let wList: number[] = [];
+    let largestW: number = Number.NEGATIVE_INFINITY;
+    heatMapCondensed.forEach((eachHeatShot: HeatShot) => {
+      if (eachHeatShot.b > 0) {
+        eachHeatShot.w = eachHeatShot.a / eachHeatShot.b;
+        wList.push(eachHeatShot.w);
+      }
+      if (eachHeatShot.w > largestW) {
+        largestW = eachHeatShot.w;
+      }
+    });
+    let sortedW: number[] = wList.sort((a, b) => b - a);
+    // console.log(sortedW)
+    let maxW: number = 200;
+    //increase frac to increase the minimum number of shots required for a circle to appear
+    let frac: number = 0.002;
+    let minShots: number = props.shots && props.shots.length * frac > 1 ? props.shots.length * frac : 1;
+    // console.log("minshots:" + minShots)
+    largestW = sortedW[Math.round(sortedW.length * 0.005)];
+    if (largestW > maxW) {
+      largestW = maxW;
+    }
+    // console.log("largestW:" + largestW)
+
+    let diff: number = largestW / 7;
+    heatMapCondensed.forEach((eachHeatShot: HeatShot) => {
+      if (eachHeatShot.totalShots > minShots) {
+        if (eachHeatShot.w > 6 * diff) {
+          eachHeatShot.fill = "gradient0";
+          eachHeatShot.z = 10;
+        } else if (eachHeatShot.w <= 6 * diff && eachHeatShot.w > 5 * diff) {
+          eachHeatShot.fill = "gradient1"
+          eachHeatShot.z = 9;
+        } else if (eachHeatShot.w <= 5 * diff && eachHeatShot.w > 4 * diff) {
+          eachHeatShot.fill = "gradient2"
+          eachHeatShot.z = 8;
+        } else if (eachHeatShot.w <= 4 * diff && eachHeatShot.w > 3 * diff) {
+          eachHeatShot.fill = "gradient3"
+          eachHeatShot.z = 7;
+        } else if (eachHeatShot.w <= 3 * diff && eachHeatShot.w > 2 * diff) {
+          eachHeatShot.fill = "gradient4"
+          eachHeatShot.z = 6;
+        } else if (eachHeatShot.w <= 2 * diff && eachHeatShot.w > 1 * diff) {
+          eachHeatShot.fill = "gradient5"
+          eachHeatShot.z = 5;
+        } else if (eachHeatShot.w <= 1 * diff && eachHeatShot.w > 0) {
+          eachHeatShot.fill = "gradient6"
+          eachHeatShot.z = 4;
+        }
+      }
+
+    });
+    setHeatShots(heatMapCondensed);
+    setLargestWHeat(largestW);
+  }
+
+  const processExistingShotsHeat = () => {
+    if (imageWidth) {
+      let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
+      console.log(widthRatio);
+      let circles: React.ReactElement[] = [];
+      let fontSize: number = 16;
+      heatShots?.forEach((eachHeatShot: HeatShot) => {
+        circles.push(<CircleIcon className='heat-icon'
+          key={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
+          id={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
+          sx={{
+            fill: `url(#${eachHeatShot.fill})`,
+            fontSize: `${fontSize}px`,
+            transform: `translate(${0}px, ${405 * widthRatio}px) 
+             translate(${-eachHeatShot.x * widthRatio}px, ${(-eachHeatShot.y) * widthRatio}px)
+             scale(3)`,
+            zIndex: eachHeatShot.z
+          }}
+          data-coordinate={generateMapKey(Math.round(eachHeatShot.x), eachHeatShot.y)}
+        />);
+      });
+      setHeatDisplayNodes(circles);
+    };
+  }
+
+  const distanceBetweenTwoPoints = (x1: number, y1: number, x2: number, y2: number): number => {
+    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+  }
+
+  const gradientDefs = () => {
+    let startOpacity: number = 0.2;
+    let middleOpacity: number = 0.15;
+    let middleOffset: number = 10;
+    return <svg style={{ height: 0, width: 0 }}>
+      <radialGradient id="gradient0" >
+        <stop offset="0%" style={{ stopColor: '#90ebff', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#90ebff', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#90ebff', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient1" >
+        <stop offset="0%" style={{ stopColor: '#62c8ff', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#62c8ff', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#62c8ff', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient2" >
+        <stop offset="0%" style={{ stopColor: '#6bb2f8', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#6bb2f8', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#6bb2f8', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient3" >
+        <stop offset="0%" style={{ stopColor: '#c4b8ff', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#c4b8ff', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#c4b8ff', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient4" >
+        <stop offset="0%" style={{ stopColor: '#e696fa', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#e696fa', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#e696fa', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient5" >
+        <stop offset="0%" style={{ stopColor: '#dd76ff', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#dd76ff', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#dd76ff', stopOpacity: 0 }} />
+      </radialGradient>
+      <radialGradient id="gradient6" >
+        <stop offset="0%" style={{ stopColor: '#bc53f8', stopOpacity: startOpacity }} />
+        <stop offset={`${middleOffset}%`} style={{ stopColor: '#bc53f8', stopOpacity: middleOpacity }} />
+        <stop offset="100%" style={{ stopColor: '#bc53f8', stopOpacity: 0 }} />
+      </radialGradient>
+    </svg>
   }
 
   const listenForResize = () => {
@@ -313,6 +509,15 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         processExistingShotsHex();
       }
     }
+    if (currentDisplayOption != HEAT_DISPLAY) {
+      setHeatDisplayNodes(null);
+    } else {
+      if (heatShots == null && props.shots != null) {
+        processNewShotsHeat(props.shots);
+      } else {
+        processExistingShotsHeat();
+      }
+    }
   }, [currentDisplayOption])
 
   useEffect(() => {
@@ -322,6 +527,8 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       processExistingShotsGrid();
     } else if (currentDisplayOption == HEX_DISPLAY && props.shots) {
       processExistingShotsHex();
+    } else if (currentDisplayOption == HEAT_DISPLAY && props.shots) {
+      processExistingShotsHeat();
     }
 
   }, [imageWidth])
@@ -330,12 +537,16 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     setClassicShots(null);
     setGridZones(null);
     setHexShots(null);
+    setLargestWTotalShotsHex(Number.NEGATIVE_INFINITY);
+    setHeatShots(null);
     if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
     } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
       processNewShotsGrid(props.shots);
     } else if (props.shots != null && currentDisplayOption == HEX_DISPLAY) {
       processNewShotsHex(props.shots);
+    } else if (props.shots != null && currentDisplayOption == HEAT_DISPLAY) {
+      processNewShotsHeat(props.shots);
     }
   }, [props.shots]);
 
@@ -356,6 +567,12 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       processExistingShotsHex();
     }
   }, [hexShots]);
+
+  useEffect(() => {
+    if (props.shots != null && currentDisplayOption == HEAT_DISPLAY) {
+      processExistingShotsHeat();
+    }
+  }, [heatShots]);
 
   useEffect(() => {
     listenForResize();
@@ -388,9 +605,8 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         {classicShotsDisplayNodes}
         {gridShotsDisplayNodes}
         {hexDisplayNodes}
-        {/* <div id='grid-shots-container' className={currentDisplayOption == GRID_DISPLAY ? "" : "hide"}>B</div>
-        <div id='hex-shots-container' className={currentDisplayOption == HEX_DISPLAY ? "" : "hide"}>C</div>
-        <div id='heat-shots-container' className={currentDisplayOption == HEAT_DISPLAY ? "" : "hide"}>D</div> */}
+        {heatDisplayNodes}
+        {gradientDefs()}
       </div>
       <DisplayOptions currentDisplayOption={currentDisplayOption} setCurrentDisplayOption={setCurrentDisplayOption} />
     </div>
