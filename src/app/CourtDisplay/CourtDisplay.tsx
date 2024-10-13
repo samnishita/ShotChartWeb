@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './CourtDisplay.scss';
 import transparentCourt from '../../images/transparent.png';
-import { CLASSIC_DISPLAY, DisplayOption, GRID_DISPLAY, HEAT_DISPLAY, HEX_DISPLAY } from '../model/DisplayOption';
+import { CLASSIC_DISPLAY, DisplayOption, GRID_DISPLAY, HEX_DISPLAY } from '../model/DisplayOption';
 import DisplayOptions from '../DisplayOptions/DisplayOptions';
 import { Shot } from '../model/Shot';
 import { SeasonType } from '../model/SeasonType';
@@ -9,11 +9,11 @@ import { Player } from '../model/Player';
 import { Year } from '../model/Year';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { ALL_ZONES, determineShotZones, FILL_ABOVE_AVERAGE, FILL_AVERAGE, FILL_BELOW_AVERAGE, FILL_DEFAULT, FILL_FAR_ABOVE_AVERAGE, FILL_FAR_BELOW_AVERAGE, FILL_SLIGHTLY_ABOVE_AVERAGE, FILL_SLIGHTLY_BELOW_AVERAGE, GridZone } from '../model/GridZone';
+import { determineShotZones, FILL_ABOVE_AVERAGE, FILL_AVERAGE, FILL_BELOW_AVERAGE, FILL_FAR_ABOVE_AVERAGE, FILL_FAR_BELOW_AVERAGE, FILL_SLIGHTLY_ABOVE_AVERAGE, FILL_SLIGHTLY_BELOW_AVERAGE, GridZone } from '../model/GridZone';
 import { ZoneAverage } from '../model/ZoneAverage';
 import { getGridAveragesAllTimeAllSeason } from '../service/average-service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
-import { convertPixelToPointyHex, Hex, HEX_HEIGHT_POINTY, HEX_POINTY_ALTERNATE_ROW_HORIZONTAL_OFFSET, HEX_POINTY_ROW_SPACING, HEX_SIZE_POINTY, HEX_STROKE_WIDTH, HEX_WIDTH_POINTY, HexShot } from '../model/HexShot';
+import { analyzeNeighbors, convertPixelToPointyHex, Hex, HEX_HEIGHT_POINTY, HEX_POINTY_ALTERNATE_ROW_HORIZONTAL_OFFSET, HEX_POINTY_ROW_SPACING, HEX_WIDTH_POINTY, HexShot } from '../model/HexShot';
 
 interface CourtDisplayProps {
   year: Year,
@@ -26,11 +26,16 @@ const fontRatioOrig: number = 16 / 400;
 //TranslateY value to move shot to center of hoop (px) / current image width (px)
 const hoopTranslateYToWidthRatio: number = 411 / 507;
 
+//k,v = `${hexShot.q}_${hexShot.r}`, HexShot
+export const generateHexMapKey = (q: number, r: number): string => {
+  return `(${q})-(${r})`;
+}
+
 const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   const [isLoaded, setIsLoaded] = useState(false);  // State to track if the image is loaded
   const [imageWidth, setImageWidth] = useState<number | null>(null);  // State to store image width
   const imageRef = useRef<HTMLImageElement>(null);  // Ref to access the image element
-  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(HEX_DISPLAY);
+  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(CLASSIC_DISPLAY);
   const [classicShots, setClassicShots] = useState<Shot[] | null>(null);
   const [classicShotsDisplayNodes, setClassicShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
   // const [gridShots, setGridShots] = useState<Shot[] | null>(null);
@@ -40,21 +45,10 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   const [hexShots, setHexShots] = useState<Map<string, HexShot> | null>(null);
   const [hexDisplayNodes, setHexDisplayNodes] = useState<React.ReactNode[] | null>(null);
 
-
   const processNewShotsClassic = (shots: Shot[]): void => {
-    shots.forEach((eachShot) => {
-      let currentImageWidth: number = (imageWidth ? imageWidth : 1);
-      //Scale font size with image size
-      let fontSize: number = fontRatioOrig * currentImageWidth;
-      //Move shot to hoop origin
-      let translateYToHoopOrigin: number = hoopTranslateYToWidthRatio * currentImageWidth;
-      //Move shot using shot coordinates
-      let shotXTranslate: number = (eachShot.x) / 500 * currentImageWidth;
-      let shotYTranslate: number = -(eachShot.y - 5) / 500 * currentImageWidth;
-      //Convert to px styling
-      let sxStyle = { fontSize: fontSize, transform: "translateX(" + shotXTranslate + "px) translateY(" + (translateYToHoopOrigin + shotYTranslate) + "px)" };
-      eachShot.sx = sxStyle;
-    });
+    // shots.forEach((eachShot) => {
+
+    // });
     setClassicShots(shots);
   }
 
@@ -62,6 +56,17 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     if (currentDisplayOption == CLASSIC_DISPLAY && classicShots != null) {
       let icons: React.ReactNode[] = [];
       classicShots.forEach((eachShot) => {
+        let currentImageWidth: number = (imageWidth ? imageWidth : 1);
+        //Scale font size with image size
+        let fontSize: number = fontRatioOrig * currentImageWidth;
+        //Move shot to hoop origin
+        let translateYToHoopOrigin: number = hoopTranslateYToWidthRatio * currentImageWidth;
+        //Move shot using shot coordinates
+        let shotXTranslate: number = (eachShot.x) / -500 * currentImageWidth;
+        let shotYTranslate: number = -(eachShot.y - 5) / 500 * currentImageWidth;
+        //Convert to px styling
+        let sxStyle = { fontSize: fontSize, transform: "translateX(" + shotXTranslate + "px) translateY(" + (translateYToHoopOrigin + shotYTranslate) + "px)" };
+        eachShot.sx = sxStyle;
         let icon: React.ReactNode = eachShot.shotMade ? <RadioButtonUncheckedIcon
           sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot make' /> : <CloseIcon sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot miss' />
         icons.push(icon);
@@ -134,7 +139,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       });
       if (imageWidth) {
         let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
-        console.log(widthRatio)
+        // console.log(widthRatio)
         let legendStyle = {
           transform: `translate( -${152 * widthRatio}px, ${8 * widthRatio}px )`,
         };
@@ -180,18 +185,43 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
           q: roundedHex.q,
           r: roundedHex.r,
           s: 0,
-          a: 0,
-          b: 0,
-          idwScore: 0,
           madeShots: 0,
           totalShots: 0,
+          aOverall: 0,
+          aMadeShots: 0,
+          aTotalShots: 0,
+          bOverall: 0,
+          bMadeShots: 0,
+          bTotalShots: 0,
+          wOverall: 0,
+          wMadeShots: 0,
+          wTotalShots: 0
         };
-        if (x <= -250) {
-          continue;
-        }
-        hexMap.set(`${hexShot.q}_${hexShot.r}`, hexShot);
+        hexMap.set(generateHexMapKey(hexShot.q, hexShot.r), hexShot);
       }
     }
+    shots.forEach((eachShot: Shot) => {
+
+      let hex: Hex = convertPixelToPointyHex(eachShot.x, eachShot.y);
+      let hexShot: HexShot | undefined = hexMap.get(generateHexMapKey(hex.q, hex.r));
+      if (hexShot) {
+        // if ((eachShot.x > -5 && eachShot.x < 5 && eachShot.y > -5 && eachShot.y < 5)) {
+        // console.log(eachShot);
+        // console.log(`Shot: (${eachShot.x},${eachShot.y})`);
+        // console.log(`Hex: q=${hexShot.q}, r=${hexShot.r}`)
+        // }
+        if (eachShot.shotMade) {
+          hexShot.madeShots++;
+        }
+        hexShot.totalShots++;
+      } else {
+        console.log("THIS SHOT DOESN'T EXIST");
+        console.log(eachShot)
+      }
+    });
+    hexMap.forEach((value: HexShot) => {
+      analyzeNeighbors(value, hexMap);
+    })
     setHexShots(hexMap);
   }
 
@@ -200,14 +230,35 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
       console.log(widthRatio)
       let hexagons: React.ReactNode[] = [];
+      let largestWTotalShots: number = Number.NEGATIVE_INFINITY;
       hexShots?.forEach((eachHex: HexShot) => {
-        hexagons.push(<HexagonIcon className='hex-icon'
-          key={`hex-(${eachHex.q})-(${eachHex.r})`}
-          id={`hex-(${eachHex.q})-(${eachHex.r})`}
-          sx={{ fontSize: `${HEX_HEIGHT_POINTY * widthRatio}px`, transform: `translate(${0}px, ${405 * widthRatio}px) translate(${eachHex.x * widthRatio}px, ${-eachHex.y * widthRatio}px) rotate(30deg) scale(${1})` }}
-          onMouseEnter={handleHexMouseEnter}
-          data-coordinate={`${eachHex.x}-${eachHex.y}`}
-        />);
+        eachHex.wMadeShots = eachHex.aMadeShots / eachHex.bMadeShots;
+        eachHex.wTotalShots = eachHex.aTotalShots / eachHex.bTotalShots;
+        //is needed?
+        eachHex.wOverall = (eachHex.aMadeShots / eachHex.aTotalShots) / (eachHex.bMadeShots / eachHex.bTotalShots);
+        if (largestWTotalShots < eachHex.wTotalShots) {
+          largestWTotalShots = eachHex.wTotalShots;
+        }
+      });
+      largestWTotalShots = 0.15 * largestWTotalShots;
+      hexShots?.forEach((eachHex: HexShot) => {
+        if (eachHex.x > -250) {
+          hexagons.push(<HexagonIcon className='hex-icon'
+            key={`hex-${generateHexMapKey(eachHex.q, eachHex.r)}`}
+            id={`hex-${generateHexMapKey(eachHex.q, eachHex.r)}`}
+            sx={{
+              fill: `${eachHex.q == 0 && eachHex.r == 0 ? "blue" : "white"}`,
+              fontSize: `${HEX_HEIGHT_POINTY * widthRatio}px`,
+              transform: `translate(${0}px, ${405 * widthRatio}px) 
+           translate(${-eachHex.x * widthRatio}px, ${-eachHex.y * widthRatio}px)
+            rotate(30deg)
+            scale(${eachHex.wTotalShots > largestWTotalShots ? 1 : eachHex.wTotalShots / largestWTotalShots})
+            `
+            }}
+            onMouseEnter={handleHexMouseEnter}
+            data-coordinate={generateHexMapKey(Math.round(eachHex.x), eachHex.y)}
+          />);
+        }
       });
       setHexDisplayNodes(hexagons);
     }
@@ -269,7 +320,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       processExistingShotsClassic();
     } else if (currentDisplayOption == GRID_DISPLAY && props.shots) {
       processExistingShotsGrid();
-    } else if (currentDisplayOption == HEX_DISPLAY) {
+    } else if (currentDisplayOption == HEX_DISPLAY && props.shots) {
       processExistingShotsHex();
     }
 
@@ -278,6 +329,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   useEffect(() => {
     setClassicShots(null);
     setGridZones(null);
+    setHexShots(null);
     if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
     } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
