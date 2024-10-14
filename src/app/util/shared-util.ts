@@ -14,3 +14,10 @@ export const buildYearString = (yearNumber: number): string => {
     // let second: string = (nextYearShort < 10 ? "0" + nextYearShort : nextYearShort).toString();
     return first + "-" + second;
 }
+
+export const sleep = (ms:number) => new Promise<void>((resolve) => {
+    setTimeout(() => {
+        // console.log("SLEEPING");
+        resolve()
+    }, ms);
+});

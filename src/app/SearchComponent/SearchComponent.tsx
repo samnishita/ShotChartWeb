@@ -25,9 +25,12 @@ const SearchComponent: FC<SearchComponentProps> = () => {
   const [seasonTypeList, setSeasonTypeList] = useState<SeasonType[]>(ALL_SEASON_TYPES);
   const [seasonType, setSeasonType] = useState<SeasonType>(seasonTypeList[1]);
   const [currentShots, setCurrentShots] = useState<Shot[] | null>(null);
+  const [isShotsLoading, setIsShotsLoading] = useState<boolean>(false);
   const handleSearchButtonClick = async () => {
     if (player != null) {
+      setIsShotsLoading(true);
       setCurrentShots(await getBasicShots(year, player, seasonType));
+      setIsShotsLoading(false)
     } else {
       //ALERT
     }
@@ -62,7 +65,7 @@ const SearchComponent: FC<SearchComponentProps> = () => {
         </Grid>
         <Grid size={{ sm: 12, md: 6 }}>
           <div className='grid-item-container'>
-            <CourtDisplay shots={currentShots} year={year} player={player} seasonType={seasonType} />
+            <CourtDisplay shots={currentShots} year={year} player={player} seasonType={seasonType} isShotsLoading={isShotsLoading} />
           </div>
         </Grid>
         <Grid size={{ sm: 12, md: 2 }}>

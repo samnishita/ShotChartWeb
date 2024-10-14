@@ -126,3 +126,19 @@ h3 {
 .heat-icon {
     position: absolute;
 }
+
+.backdrop-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.backdrop-text {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.backdrop-progress {
+    width: 100%;
+}

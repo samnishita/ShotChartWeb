@@ -9,19 +9,33 @@ import { Player } from '../model/Player';
 import { Year } from '../model/Year';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { determineShotZones, FILL_ABOVE_AVERAGE, FILL_AVERAGE, FILL_BELOW_AVERAGE, FILL_FAR_ABOVE_AVERAGE, FILL_FAR_BELOW_AVERAGE, FILL_SLIGHTLY_ABOVE_AVERAGE, FILL_SLIGHTLY_BELOW_AVERAGE, GridZone } from '../model/GridZone';
+import { ALL_ZONES, determineShotZone, FILL_ABOVE_AVERAGE, FILL_AVERAGE, FILL_BELOW_AVERAGE, FILL_FAR_ABOVE_AVERAGE, FILL_FAR_BELOW_AVERAGE, FILL_SLIGHTLY_ABOVE_AVERAGE, FILL_SLIGHTLY_BELOW_AVERAGE, GridZone } from '../model/GridZone';
 import { ZoneAverage } from '../model/ZoneAverage';
 import { getGridAveragesAllTimeAllSeason } from '../service/average-service';
 import HexagonIcon from '@mui/icons-material/Hexagon';
 import { analyzeNeighbors, convertPixelToPointyHex, Hex, HEX_HEIGHT_POINTY, HEX_POINTY_ALTERNATE_ROW_HORIZONTAL_OFFSET, HEX_POINTY_ROW_SPACING, HEX_WIDTH_POINTY, HexShot } from '../model/HexShot';
 import { HeatShot } from '../model/HeatShot';
 import CircleIcon from '@mui/icons-material/Circle';
+import { Backdrop, CircularProgress, LinearProgress } from '@mui/material';
+import { sleep } from '../util/shared-util';
 
 interface CourtDisplayProps {
   year: Year,
   player: Player | null,
   seasonType: SeasonType
-  shots: Shot[] | null
+  shots: Shot[] | null,
+  isShotsLoading: boolean
+}
+
+interface LoadingProgress {
+  currentIteration: number;
+  maxIterations: number;
+}
+
+interface combinedLoadingState {
+  combinedCurrentDisplayOption: DisplayOption,
+  combinedIsProcessingShots: boolean,
+  combinedProcessingShotsProgress: number
 }
 
 const fontRatioOrig: number = 16 / 400;
@@ -35,34 +49,40 @@ export const generateMapKey = (q: number, r: number): string => {
 }
 
 const CourtDisplay: FC<CourtDisplayProps> = (props) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  //States
+  const [isCourtImageLoaded, setIsCourtImageLoaded] = useState(false);
   const [imageWidth, setImageWidth] = useState<number | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [currentDisplayOption, setCurrentDisplayOption] = useState<DisplayOption>(HEAT_DISPLAY);
   const [classicShots, setClassicShots] = useState<Shot[] | null>(null);
   const [classicShotsDisplayNodes, setClassicShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
-  // const [gridShots, setGridShots] = useState<Shot[] | null>(null);
   const [gridZones, setGridZones] = useState<GridZone[] | null>(null);
   const [gridShotsDisplayNodes, setGridShotsDisplayNodes] = useState<React.ReactNode[] | null>(null);
   const [zoneAverages, setZoneAverages] = useState<Map<number, ZoneAverage> | null>(null);
   const [hexShots, setHexShots] = useState<Map<string, HexShot> | null>(null);
   const [hexDisplayNodes, setHexDisplayNodes] = useState<React.ReactNode[] | null>(null);
   const [heatShots, setHeatShots] = useState<Map<string, HeatShot> | null>(null);
-  // const [heatShotsCondensed, setHeatShotsCondensed] = useState<Map<string, HeatShot> | null>(null);
   const [heatDisplayNodes, setHeatDisplayNodes] = useState<React.ReactNode[] | null>(null);
   const [largestWTotalShotsHex, setLargestWTotalShotsHex] = useState<number>(Number.NEGATIVE_INFINITY);
   const [largestWHeat, setLargestWHeat] = useState<number>(Number.NEGATIVE_INFINITY);
-  const processNewShotsClassic = (shots: Shot[]): void => {
-    // shots.forEach((eachShot) => {
+  const [combinedLoadingState, setCombinedLoadingState] = useState<combinedLoadingState>({
+    combinedCurrentDisplayOption: CLASSIC_DISPLAY,
+    combinedIsProcessingShots: false,
+    combinedProcessingShotsProgress: 0
+  })
 
-    // });
+  //Shot processing
+  const processNewShotsClassic = (shots: Shot[]): void => {
     setClassicShots(shots);
   }
 
-  const processExistingShotsClassic = (): void => {
-    if (currentDisplayOption == CLASSIC_DISPLAY && classicShots != null) {
+  const processExistingShotsClassic = async (): Promise<void> => {
+    if (combinedLoadingState.combinedCurrentDisplayOption == CLASSIC_DISPLAY && classicShots != null) {
       let icons: React.ReactNode[] = [];
-      classicShots.forEach((eachShot) => {
+      let progress: LoadingProgress = {
+        currentIteration: 0,
+        maxIterations: classicShots.length
+      }
+      for (let eachShot of classicShots) {
         let currentImageWidth: number = (imageWidth ? imageWidth : 1);
         //Scale font size with image size
         let fontSize: number = fontRatioOrig * currentImageWidth;
@@ -77,24 +97,34 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         let icon: React.ReactNode = eachShot.shotMade ? <RadioButtonUncheckedIcon
           sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot make' /> : <CloseIcon sx={eachShot.sx} key={eachShot.uniqueShotId} className='classic-shot miss' />
         icons.push(icon);
-      })
+        await checkProgressUpdate(progress);
+      }
+      await sleep(500);
       setClassicShotsDisplayNodes(icons);
     }
   }
 
-  const processNewShotsGrid = (shots: Shot[]): void => {
-    let zones = determineShotZones(shots);
+  const processNewShotsGrid = async (shots: Shot[]): Promise<void> => {
+    let progressLimit: number = 90;
+    let progress: LoadingProgress = {
+      currentIteration: 0,
+      maxIterations: shots.length * (1 / progressLimit * 100)
+    }
+    let zones: GridZone[] = structuredClone(ALL_ZONES);
+    for (let shot of shots) {
+      determineShotZone(shot, zones);
+      await checkProgressUpdate(progress)
+    }
     setGridZones(zones);
+    setCombinedLoadingState({ ...combinedLoadingState, combinedProcessingShotsProgress: progressLimit })
   }
-  const processExistingShotsGrid = () => {
-    if (currentDisplayOption == GRID_DISPLAY && gridZones != null && zoneAverages != null) {
+  const processExistingShotsGrid = async () => {
+    if (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && gridZones != null && zoneAverages != null) {
       let icons: React.ReactNode[] = [];
       gridZones.forEach((eachZone) => {
         if (imageWidth) {
-
           // eachZone.madeShots = eachZone.madeShots * 1000;
           // eachZone.totalShots = eachZone.totalShots * 1000;
-
           let widthRatio: number = imageWidth ? imageWidth / 500 : 1;
           // console.log(widthRatio)
           let style = { transform: `translate( ${eachZone.translateX * widthRatio}px, ${eachZone.translateY * widthRatio}px )` };
@@ -173,8 +203,12 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
           </div>
         </div>)
       }
-
-
+      let progress: LoadingProgress = {
+        currentIteration: 0,
+        maxIterations: 1
+      }
+      await checkProgressUpdate(progress);
+      await sleep(500);
       setGridShotsDisplayNodes(icons);
     }
   }
@@ -419,10 +453,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     };
   }
 
-  const distanceBetweenTwoPoints = (x1: number, y1: number, x2: number, y2: number): number => {
-    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
-  }
-
+  //Generate react nodes
   const gradientDefs = () => {
     let startOpacity: number = 0.2;
     let middleOpacity: number = 0.15;
@@ -466,6 +497,73 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
     </svg>
   }
 
+  const backdropAppearance = (): React.ReactNode => {
+    let innerElements: React.ReactNode = <></>;
+    if (props.isShotsLoading) {
+      innerElements = <>
+        <span className='backdrop-text'>Finding shots...</span>
+        <CircularProgress className='backdrop-progress' color='secondary' />
+      </>;
+    } else if (!props.isShotsLoading && combinedLoadingState.combinedIsProcessingShots) {
+      innerElements = <>
+        <span className='backdrop-text'>Analyzing shots...</span>
+        <LinearProgress className='backdrop-progress' variant="determinate" value={combinedLoadingState.combinedProcessingShotsProgress} />
+      </>
+    }
+    return <div className='backdrop-container'>
+      {innerElements}
+    </div>
+  }
+
+  const getCourtStyle = () => {
+    let zIndex: number = 0;
+    let backgroundColor: string = "transparent";
+    let opacity: number = 1;
+    if (
+      combinedLoadingState.combinedCurrentDisplayOption != GRID_DISPLAY
+      ||
+      (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && !props.shots)
+      ||
+      (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && props.shots && props.isShotsLoading)
+      ||
+      (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && props.shots && combinedLoadingState.combinedIsProcessingShots)
+    ) {
+      backgroundColor = "rgb(80, 85, 91)";
+    }
+    if (
+      (combinedLoadingState.combinedCurrentDisplayOption != GRID_DISPLAY && gridShotsDisplayNodes != null)
+      ||
+      (combinedLoadingState.combinedCurrentDisplayOption != GRID_DISPLAY && combinedLoadingState.combinedIsProcessingShots)
+      ||
+      (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && props.shots && !combinedLoadingState.combinedIsProcessingShots)
+    ) {
+      zIndex = 3;
+      opacity = 0.7;
+    }
+    return { zIndex: zIndex, backgroundColor: backgroundColor, opacity: opacity };
+  }
+
+  //Other functions
+  const checkProgressUpdate = async (loadingProgress: LoadingProgress): Promise<void> => {
+    loadingProgress.currentIteration++;
+    if (loadingProgress.currentIteration % 10 == 0 || loadingProgress.currentIteration == loadingProgress.maxIterations) {
+      setCombinedLoadingState({ ...combinedLoadingState, combinedProcessingShotsProgress: (loadingProgress.currentIteration / loadingProgress.maxIterations * 100) })
+      // await sleep(20);
+    }
+  }
+
+  const distanceBetweenTwoPoints = (x1: number, y1: number, x2: number, y2: number): number => {
+    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+  }
+
+  const setCurrentDisplayOption = (currentDisplayOption: DisplayOption) => {
+    if (!props.shots) {
+      setCombinedLoadingState({ ...combinedLoadingState, combinedCurrentDisplayOption: currentDisplayOption });
+    } else {
+      setCombinedLoadingState({ combinedCurrentDisplayOption: currentDisplayOption, combinedIsProcessingShots: true, combinedProcessingShotsProgress: 0 });
+    }
+  }
+
   const listenForResize = () => {
     const handleResize = () => {
       if (imageRef.current) {
@@ -480,109 +578,142 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
   }
 
   const handleImageLoad = () => {
-    setIsLoaded(true);
+    setIsCourtImageLoaded(true);
   };
 
   const handleHexMouseEnter = (e: { target: any; }) => {
     console.log(e.target);
   }
 
+  //useEffects
   useEffect(() => {
-    if (currentDisplayOption != CLASSIC_DISPLAY) {
-      setClassicShotsDisplayNodes(null);
-    } else {
-      if (classicShots == null && props.shots != null) {
-        processNewShotsClassic(props.shots);
-      } else {
-        processExistingShotsClassic();
-      }
+    // console.log(`new view selection: ${combinedLoadingState.combinedCurrentDisplayOption.value}`)
+    switch (combinedLoadingState.combinedCurrentDisplayOption) {
+      case CLASSIC_DISPLAY:
+        if (classicShots == null && props.shots != null) {
+          processNewShotsClassic(props.shots);
+        } else {
+          processExistingShotsClassic();
+        }
+        break;
+      case GRID_DISPLAY:
+        if (gridZones == null && props.shots != null) {
+          processNewShotsGrid(props.shots);
+        } else {
+          processExistingShotsGrid();
+        }
+        break;
+      case HEX_DISPLAY:
+        if (hexShots == null && props.shots != null) {
+          processNewShotsHex(props.shots);
+        } else {
+          processExistingShotsHex();
+        }
+        break;
+      case HEAT_DISPLAY:
+        if (heatShots == null && props.shots != null) {
+          processNewShotsHeat(props.shots);
+        } else {
+          processExistingShotsHeat();
+        }
+        break;
     }
-    if (currentDisplayOption != GRID_DISPLAY) {
-      setGridShotsDisplayNodes(null);
-    } else {
-      if (gridZones == null && props.shots != null) {
-        processNewShotsGrid(props.shots);
-      } else {
-        processExistingShotsGrid();
-      }
-    }
-    if (currentDisplayOption != HEX_DISPLAY) {
-      setHexDisplayNodes(null);
-    } else {
-      if (hexShots == null && props.shots != null) {
-        processNewShotsHex(props.shots);
-      } else {
-        processExistingShotsHex();
-      }
-    }
-    if (currentDisplayOption != HEAT_DISPLAY) {
-      setHeatDisplayNodes(null);
-    } else {
-      if (heatShots == null && props.shots != null) {
-        processNewShotsHeat(props.shots);
-      } else {
-        processExistingShotsHeat();
-      }
-    }
-  }, [currentDisplayOption])
+  }, [combinedLoadingState.combinedCurrentDisplayOption])
 
   useEffect(() => {
-    if (currentDisplayOption == CLASSIC_DISPLAY && props.shots) {
+    if (combinedLoadingState.combinedCurrentDisplayOption == CLASSIC_DISPLAY && props.shots) {
       processExistingShotsClassic();
-    } else if (currentDisplayOption == GRID_DISPLAY && props.shots) {
+    } else if (combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY && props.shots) {
       processExistingShotsGrid();
-    } else if (currentDisplayOption == HEX_DISPLAY && props.shots) {
+    } else if (combinedLoadingState.combinedCurrentDisplayOption == HEX_DISPLAY && props.shots) {
       processExistingShotsHex();
-    } else if (currentDisplayOption == HEAT_DISPLAY && props.shots) {
+    } else if (combinedLoadingState.combinedCurrentDisplayOption == HEAT_DISPLAY && props.shots) {
       processExistingShotsHeat();
     }
 
   }, [imageWidth])
 
   useEffect(() => {
+    setCombinedLoadingState({ ...combinedLoadingState, combinedProcessingShotsProgress: 0 })
     setClassicShots(null);
     setGridZones(null);
     setHexShots(null);
     setLargestWTotalShotsHex(Number.NEGATIVE_INFINITY);
     setHeatShots(null);
-    if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
+    if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == CLASSIC_DISPLAY) {
       processNewShotsClassic(props.shots);
-    } else if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
+    } else if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY) {
       processNewShotsGrid(props.shots);
-    } else if (props.shots != null && currentDisplayOption == HEX_DISPLAY) {
+    } else if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == HEX_DISPLAY) {
       processNewShotsHex(props.shots);
-    } else if (props.shots != null && currentDisplayOption == HEAT_DISPLAY) {
+    } else if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == HEAT_DISPLAY) {
       processNewShotsHeat(props.shots);
     }
   }, [props.shots]);
 
   useEffect(() => {
-    if (props.shots != null && currentDisplayOption == CLASSIC_DISPLAY) {
+    if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == CLASSIC_DISPLAY) {
       processExistingShotsClassic();
     }
   }, [classicShots]);
 
   useEffect(() => {
-    if (props.shots != null && currentDisplayOption == GRID_DISPLAY) {
+    if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == GRID_DISPLAY) {
       processExistingShotsGrid();
     }
   }, [gridZones]);
 
   useEffect(() => {
-    if (props.shots != null && currentDisplayOption == HEX_DISPLAY) {
+    if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == HEX_DISPLAY) {
       processExistingShotsHex();
     }
   }, [hexShots]);
 
   useEffect(() => {
-    if (props.shots != null && currentDisplayOption == HEAT_DISPLAY) {
+    if (props.shots != null && combinedLoadingState.combinedCurrentDisplayOption == HEAT_DISPLAY) {
       processExistingShotsHeat();
     }
   }, [heatShots]);
 
   useEffect(() => {
     listenForResize();
-  }, [isLoaded]);
+  }, [isCourtImageLoaded]);
+
+  useEffect(() => {
+    if (props.isShotsLoading) {
+      setCombinedLoadingState({ ...combinedLoadingState, combinedIsProcessingShots: props.isShotsLoading })
+    }
+  }, [props.isShotsLoading]);
+
+  useEffect(() => {
+    // console.log(`new combinedLoadingState.combinedIsProcessingShots: ${combinedLoadingState.combinedIsProcessingShots}`)
+    if (!combinedLoadingState.combinedIsProcessingShots) {
+      if (combinedLoadingState.combinedCurrentDisplayOption != CLASSIC_DISPLAY) {
+        setClassicShotsDisplayNodes(null);
+      }
+      if (combinedLoadingState.combinedCurrentDisplayOption != GRID_DISPLAY) {
+        setGridShotsDisplayNodes(null);
+      }
+      if (combinedLoadingState.combinedCurrentDisplayOption != HEX_DISPLAY) {
+        setHexDisplayNodes(null);
+      }
+      if (combinedLoadingState.combinedCurrentDisplayOption != HEAT_DISPLAY) {
+        setHeatDisplayNodes(null);
+      }
+    }
+  }, [combinedLoadingState.combinedIsProcessingShots]);
+
+  useEffect(() => {
+    // console.log("display nodes have changed")
+    if (combinedLoadingState.combinedProcessingShotsProgress == 100) {
+      // console.log("loading completed")
+      setCombinedLoadingState({ ...combinedLoadingState, combinedIsProcessingShots: false, combinedProcessingShotsProgress: 0 })
+    }
+  }, [classicShotsDisplayNodes, gridShotsDisplayNodes, hexDisplayNodes, heatDisplayNodes])
+
+  useEffect(() => {
+
+  }, [combinedLoadingState])
 
   useEffect(() => {
     listenForResize();
@@ -605,7 +736,7 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         </h3>
       </div>
       <div className='court-container'>
-        <div className='court-background' style={{ zIndex: currentDisplayOption === GRID_DISPLAY ? 3 : 0, backgroundColor: currentDisplayOption === GRID_DISPLAY && gridShotsDisplayNodes != null ? "transparent" : "rgb(80, 85, 91)", opacity: currentDisplayOption === GRID_DISPLAY && gridShotsDisplayNodes != null ? 0.7 : 1 }}>
+        <div className='court-background' style={getCourtStyle()}>
           <img onLoad={handleImageLoad} ref={imageRef} className='court-image' src={transparentCourt} ></img>
         </div>
         {classicShotsDisplayNodes}
@@ -613,8 +744,15 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
         {hexDisplayNodes}
         {heatDisplayNodes}
         {gradientDefs()}
+        <Backdrop open={props.isShotsLoading || combinedLoadingState.combinedIsProcessingShots} sx={{
+          position: "absolute",
+          height: "100%",
+          zIndex: 10
+        }}>
+          {backdropAppearance()}
+        </Backdrop>
       </div>
-      <DisplayOptions currentDisplayOption={currentDisplayOption} setCurrentDisplayOption={setCurrentDisplayOption} />
+      <DisplayOptions currentDisplayOption={combinedLoadingState.combinedCurrentDisplayOption} setCurrentDisplayOption={setCurrentDisplayOption} />
     </div>
   )
 };
