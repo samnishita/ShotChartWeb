@@ -27,7 +27,7 @@ interface CourtDisplayProps {
 const fontRatioOrig: number = 16 / 400;
 //TranslateY value to move shot to center of hoop (px) / current image width (px)
 const hoopTranslateYToWidthRatio: number = 411 / 507;
-const HEAT_RANGE: number = 8;
+const HEAT_RANGE: number = 12;
 
 //k,v = `${hexShot.q}_${hexShot.r}`, HexShot
 export const generateMapKey = (q: number, r: number): string => {
@@ -394,21 +394,27 @@ const CourtDisplay: FC<CourtDisplayProps> = (props) => {
       console.log(widthRatio);
       let circles: React.ReactElement[] = [];
       let fontSize: number = 16;
+      let count: number = 0;
       heatShots?.forEach((eachHeatShot: HeatShot) => {
-        circles.push(<CircleIcon className='heat-icon'
-          key={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
-          id={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
-          sx={{
-            fill: `url(#${eachHeatShot.fill})`,
-            fontSize: `${fontSize}px`,
-            transform: `translate(${0}px, ${405 * widthRatio}px) 
+        if (eachHeatShot.fill !== "transparent") {
+          count++;
+          circles.push(<CircleIcon className='heat-icon'
+            key={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
+            id={`heat-${generateMapKey(eachHeatShot.x, eachHeatShot.y)}`}
+            sx={{
+              fill: `url(#${eachHeatShot.fill})`,
+              fontSize: `${fontSize}px`,
+              transform: `translate(${0}px, ${405 * widthRatio}px) 
              translate(${-eachHeatShot.x * widthRatio}px, ${(-eachHeatShot.y) * widthRatio}px)
              scale(3)`,
-            zIndex: eachHeatShot.z
-          }}
-          data-coordinate={generateMapKey(Math.round(eachHeatShot.x), eachHeatShot.y)}
-        />);
+              zIndex: eachHeatShot.z
+            }}
+            data-coordinate={generateMapKey(Math.round(eachHeatShot.x), eachHeatShot.y)}
+          />);
+        }
+
       });
+      // console.log("count: " + count);
       setHeatDisplayNodes(circles);
     };
   }
